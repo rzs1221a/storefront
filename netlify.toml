@@ -2,6 +2,18 @@
   command = "npm run build"
   publish = "dist"
 
+# SPA fallback for anything the prerender did not stamp out.
+#
+# Deliberately NOT forced: Netlify serves matching static files before applying
+# an unforced redirect, so /pricing still resolves to the prerendered
+# dist/pricing.html with its own title, canonical, and written content. Force
+# this and every route would collapse to the generic index, silently undoing
+# the entire SEO layer.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
 [[headers]]
 for = "/*"
   [headers.values]

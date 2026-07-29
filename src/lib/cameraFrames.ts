@@ -22,8 +22,20 @@ export interface CameraFrame {
 
 /** Frames keyed by the id registered on each section or work card. */
 export const FRAMES: Record<string, CameraFrame> = {
-  // The whole corridor — Camden County, Georgia down to St. Augustine.
-  top: { center: [-81.38, 30.3], zoom: 8.2, pitch: 38, bearing: -14 },
+  /*
+   * The opening frame: Amelia Island and the mouth of the St. Marys, with the
+   * Atlantic to the east.
+   *
+   * It used to open on the whole corridor at zoom 8.2, which was grander and
+   * unusable — all five project beacons sit within about ten miles of each
+   * other, so at that altitude they collapsed into one illegible pile. This is
+   * close enough that every marker is separately readable and clickable, and
+   * still wide enough to read as a coastline rather than a street map.
+   */
+  // Pitch is held to 40° here rather than the steeper angles used elsewhere:
+  // tilt compresses distance toward the horizon, and at 46° the two northern
+  // beacons crowded each other even though they are two and a half miles apart.
+  top: { center: [-81.458, 30.641], zoom: 11.65, pitch: 40, bearing: -14 },
 
   // The Aerial covers the entire coast, so it pulls back out to it.
   "work-the-aerial": { center: [-81.45, 30.42], zoom: 8.6, pitch: 44, bearing: -8 },
@@ -76,12 +88,19 @@ let pendingKey: string | null = null;
 let activeKey: string | null = null;
 let settleTimer = 0;
 
-/** Called by BackgroundMap once the map is ready. */
+/** Called by LiveMap once the map is ready. */
 export function registerCamera(next: CameraController | null) {
   controller = next;
-  // A section may have scrolled into view before the map finished loading;
-  // honour the last request rather than waiting for the next scroll.
-  if (controller && pendingKey) applyFrame(pendingKey);
+  if (!controller) return;
+
+  /*
+   * A destination is very often chosen before the map has finished loading —
+   * a deep link lands on /work/crane-island while tiles are still arriving.
+   * Honour whatever was last requested instead of stranding the camera at the
+   * opening frame until the visitor navigates again.
+   */
+  if (pendingFrame) controller.flyTo(pendingFrame, 1800);
+  else if (pendingKey) applyFrame(pendingKey);
 }
 
 function applyFrame(key: string) {
@@ -107,10 +126,28 @@ function applyFrame(key: string) {
   }, duration);
 }
 
-/** The section currently framed, or null. Used by the nav for active state. */
+/** The destination currently framed, or null. */
 export function currentFrameKey() {
   return activeKey;
 }
+
+/**
+ * Fly to an explicit frame. This is the route-driven path — the shell calls it
+ * on every navigation, so the camera follows the URL rather than the scroll
+ * position. Same queueing discipline as the observer path: only the latest
+ * target is flown to, and a flight already in the air shortens the next so the
+ * camera keeps up with the visitor instead of trailing several seconds behind.
+ */
+export function flyToFrame(frame: CameraFrame) {
+  pendingFrame = frame;
+  if (!controller) return;
+
+  const duration = controller.isFlying() ? 1600 : 2800;
+  controller.flyTo(frame, duration);
+}
+
+/** Held so a navigation that lands before the map is ready is not lost. */
+let pendingFrame: CameraFrame | null = null;
 
 /**
  * Observe every element carrying `data-frame` and fly to the one occupying the

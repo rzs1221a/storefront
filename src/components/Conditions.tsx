@@ -63,7 +63,14 @@ function islandTime() {
   return { time, partOfDay };
 }
 
-export default function Conditions({ className = "" }: { className?: string }) {
+export default function Conditions({
+  className = "",
+  compact = false,
+}: {
+  className?: string;
+  /** Phone top bar: the tide only, since there is no room for the sentence. */
+  compact?: boolean;
+}) {
   const [tide, setTide] = useState<Tide | null>(null);
   const [weather, setWeather] = useState<Weather | null>(null);
 
@@ -95,6 +102,18 @@ export default function Conditions({ className = "" }: { className?: string }) {
   if (!tide && !weather) return null;
 
   const { time, partOfDay } = islandTime();
+
+  if (compact) {
+    return (
+      <p className={`flex items-center gap-2 ${className}`}>
+        <span className="live-dot" />
+        <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-(--color-ink-muted)">
+          {time}
+          {tide && ` · ${tide.heightFt.toFixed(1)}ft ${tide.direction}`}
+        </span>
+      </p>
+    );
+  }
 
   return (
     <p

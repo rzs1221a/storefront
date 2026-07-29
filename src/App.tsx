@@ -1,55 +1,38 @@
-import { useEffect, useState } from "react";
-import { observeFrames } from "./lib/cameraFrames";
-import Atmosphere from "./components/Atmosphere";
-import Nav from "./components/Nav";
-import Footer from "./components/Footer";
-import Hero from "./sections/Hero";
-import Work from "./sections/Work";
-import Capabilities from "./sections/Capabilities";
-import Comparison from "./sections/Comparison";
-import Pricing from "./sections/Pricing";
-import Process from "./sections/Process";
-import Faq from "./sections/Faq";
-import Contact from "./sections/Contact";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Shell from "./components/Shell";
+import Coast from "./routes/Coast";
+import WorkDetail from "./routes/WorkDetail";
+import Contact from "./routes/Contact";
+import { Build, Pricing, Process, Questions } from "./routes/Studio";
+import { WorkIndex, StudioIndex } from "./routes/MobileList";
 
+/**
+ * Real routes, because a destination you cannot link to or share is not a
+ * page. Every one of these is also prerendered to static HTML at build time
+ * (scripts/prerender.mjs) so crawlers and no-JS visitors get the full written
+ * content rather than an empty map.
+ */
 export default function App() {
-  const [activeFrame, setActiveFrame] = useState<string | null>(null);
-
-  /*
-   * One observer drives two things: the background map flies to the place the
-   * current section is about, and the nav marks that section active. Runs
-   * after mount so every [data-frame] element exists to be observed.
-   */
-  useEffect(() => observeFrames(setActiveFrame), []);
-
   return (
-    <>
-      <a href="#main" className="skip-link btn btn-primary btn-sm">
-        Skip to content
-      </a>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Shell />}>
+          <Route index element={<Coast />} />
 
-      <Atmosphere />
+          {/* Phone-only indexes; the desktop rail lists these directly. */}
+          <Route path="work" element={<WorkIndex />} />
+          <Route path="studio" element={<StudioIndex />} />
 
-      <Nav activeFrame={activeFrame} />
+          <Route path="work/:slug" element={<WorkDetail />} />
+          <Route path="build" element={<Build />} />
+          <Route path="pricing" element={<Pricing />} />
+          <Route path="process" element={<Process />} />
+          <Route path="questions" element={<Questions />} />
+          <Route path="contact" element={<Contact />} />
 
-      <main id="main">
-        <Hero />
-        <Work />
-        <hr className="rule" />
-        <Capabilities />
-        <hr className="rule" />
-        <Comparison />
-        <hr className="rule" />
-        <Pricing />
-        <hr className="rule" />
-        <Process />
-        <hr className="rule" />
-        <Faq />
-        <hr className="rule" />
-        <Contact />
-      </main>
-
-      <Footer />
-    </>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }

@@ -24,11 +24,11 @@ const ORIGIN = process.argv[2] || "http://127.0.0.1:4319";
 
 /** Sections to walk, with the centre each one declares in lib/cameraFrames.ts. */
 const EXPECTED = [
-  { frame: "top", center: [-81.38, 30.3] },
-  { frame: "work-crane-island-bhhs", center: [-81.4773, 30.6125] },
-  { frame: "work-sold-on-amelia-island", center: [-81.4637, 30.6697] },
-  { frame: "capabilities", center: [-81.44, 30.65] },
-  { frame: "contact", center: [-81.47, 30.66] },
+  { frame: "/", center: [-81.458, 30.641] },
+  { frame: "/work/crane-island-bhhs", center: [-81.4773, 30.6125] },
+  { frame: "/work/sold-on-amelia-island", center: [-81.4637, 30.6697] },
+  { frame: "/build", center: [-81.44, 30.65] },
+  { frame: "/contact", center: [-81.47, 30.66] },
 ];
 
 /** Degrees of slack. The camera eases, so it need only be close. */
@@ -49,8 +49,8 @@ async function resolveChromium() {
  * map instance is found by reaching through the canvas MapLibre created.
  */
 const READ_CAMERA = `(() => {
-  const el = document.querySelector('.atmosphere-map .maplibregl-map')
-          || document.querySelector('.atmosphere-map');
+  const el = document.querySelector('.live-map .maplibregl-map')
+          || document.querySelector('.live-map');
   const key = el && Object.keys(el).find((k) => k.startsWith('__maplibre'));
   const map = key ? el[key] : window.__kedgeMap;
   if (!map || !map.getCenter) return null;
@@ -75,7 +75,7 @@ async function main() {
 
   // The map is imported lazily during idle; give it room to mount.
   await page.waitForFunction(
-    `document.querySelector('.atmosphere-map[data-loaded="true"]') !== null`,
+    `document.querySelector('.live-map[data-loaded="true"]') !== null`,
     null,
     { timeout: 30000 }
   );
@@ -83,10 +83,12 @@ async function main() {
 
   const seen = [];
   for (const target of EXPECTED) {
-    await page.evaluate((frame) => {
-      const el = document.querySelector(`[data-frame="${frame}"]`);
-      el?.scrollIntoView({ behavior: "instant", block: "center" });
-    }, target.frame);
+    await page.goto(`${ORIGIN}${target.frame}`, { waitUntil: "domcontentloaded" });
+    await page.waitForFunction(
+      `document.querySelector('.live-map[data-loaded="true"]') !== null`,
+      null,
+      { timeout: 30000 }
+    );
 
     // Flights run 3s; wait past that so the camera has settled.
     await page.waitForTimeout(4200);
@@ -124,7 +126,18 @@ async function main() {
   }
   await context.close();
 
-  // ── Reduced motion suppresses flight entirely ──────────────────────────
+  /*
+   * ── Reduced motion arrives without animating ──────────────────────────
+   *
+   * The assertion here changed with the redesign, deliberately. When the map
+   * was a backdrop, honouring the preference meant the camera held still.
+   * Now the camera position IS the destination, so holding still would strand
+   * a visitor on /contact looking at the wrong place. The camera must still
+   * arrive — it must simply arrive instantly rather than flying.
+   *
+   * So: navigate, wait far LESS than a flight would take, and assert it is
+   * already there.
+   */
   const rmContext = await browser.newContext({
     viewport: { width: 1440, height: 900 },
     reducedMotion: "reduce",
@@ -133,27 +146,36 @@ async function main() {
   await routeThroughCurl(rmPage);
   await rmPage.goto(ORIGIN, { waitUntil: "networkidle" });
   await rmPage.waitForFunction(
-    `document.querySelector('.atmosphere-map[data-loaded="true"]') !== null`,
+    `document.querySelector('.live-map[data-loaded="true"]') !== null`,
     null,
     { timeout: 30000 }
   );
 
-  const before = await rmPage.evaluate(READ_CAMERA);
-  await rmPage.evaluate(() => {
-    document.querySelector('[data-frame="contact"]')?.scrollIntoView({
-      behavior: "instant",
-      block: "center",
-    });
-  });
-  await rmPage.waitForTimeout(4200);
+  await rmPage.goto(`${ORIGIN}/contact`, { waitUntil: "domcontentloaded" });
+  await rmPage.waitForFunction(
+    `document.querySelector('.live-map[data-loaded="true"]') !== null`,
+    null,
+    { timeout: 30000 }
+  );
+  // A flight runs 2.8s; 700ms is nowhere near enough to complete one, so
+  // arriving by now proves the camera jumped rather than eased.
+  await rmPage.waitForTimeout(700);
   const after = await rmPage.evaluate(READ_CAMERA);
 
-  if (before && after) {
-    const moved =
-      Math.abs(before.lng - after.lng) > 0.01 ||
-      Math.abs(before.lat - after.lat) > 0.01;
-    console.log(`\nReduced motion\n  ${moved ? "✗" : "✓"} camera held its frame`);
-    if (moved) problems.push("reduced motion: camera flew when it should not have");
+  if (after) {
+    const target = [-81.47, 30.66];
+    const arrived =
+      Math.abs(after.lng - target[0]) < TOLERANCE &&
+      Math.abs(after.lat - target[1]) < TOLERANCE;
+    console.log(
+      `\nReduced motion\n  ${arrived ? "✓" : "✗"} camera arrived without animating` +
+        `  (${after.lng.toFixed(4)}, ${after.lat.toFixed(4)})`
+    );
+    if (!arrived) {
+      problems.push(
+        "reduced motion: camera did not arrive instantly — it either animated or never moved"
+      );
+    }
   }
   await rmContext.close();
 
