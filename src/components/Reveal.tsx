@@ -17,6 +17,12 @@ interface RevealProps {
   delay?: number;
   /** Stagger direct children marked with data-reveal-item by `step` ms each. */
   stagger?: number;
+  /**
+   * Which way the element travels in from. Varying this across a page turns a
+   * uniform fade into choreography: columns rise, side content drifts
+   * laterally toward its final position.
+   */
+  direction?: "up" | "left" | "right" | "none";
   className?: string;
   as?: ElementType;
   id?: string;
@@ -26,6 +32,7 @@ export default function Reveal({
   children,
   delay = 0,
   stagger,
+  direction = "up",
   className = "",
   as: Tag = "div",
   id,
@@ -74,7 +81,13 @@ export default function Reveal({
   }, [delay, stagger]);
 
   return (
-    <Tag ref={ref} id={id} data-reveal className={className}>
+    <Tag
+      ref={ref}
+      id={id}
+      data-reveal
+      data-reveal-dir={direction}
+      className={className}
+    >
       {children}
     </Tag>
   );

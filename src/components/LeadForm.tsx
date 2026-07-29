@@ -25,7 +25,19 @@ function encode(data: Record<string, string>) {
     .join("&");
 }
 
-export default function LeadForm() {
+export default function LeadForm({
+  /**
+   * A tier name to pre-select in the interest dropdown, from the `?package=`
+   * parameter an offer card carries. Asking someone to re-choose the thing
+   * they just clicked is the cheapest conversion leak there is.
+   *
+   * Pre-selected, never locked: it is a select the visitor can still change,
+   * because a card click is a signal of interest and not a commitment.
+   */
+  selectedPackage,
+}: {
+  selectedPackage?: string;
+} = {}) {
   const [status, setStatus] = useState<Status>("idle");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -147,7 +159,16 @@ export default function LeadForm() {
           <label htmlFor="lf-interest" className="mono-label mb-2 block">
             What are you after?
           </label>
-          <select id="lf-interest" name="interest" className="field" defaultValue="">
+          <select
+            id="lf-interest"
+            name="interest"
+            className={`field${selectedPackage ? " is-prefilled" : ""}`}
+            // Keyed on the package so arriving from a different offer card
+            // remounts the select with the new default. Without the key React
+            // would keep the first uncontrolled value it rendered.
+            key={selectedPackage ?? "none"}
+            defaultValue={selectedPackage ?? ""}
+          >
             <option value="" disabled>
               Choose one
             </option>
