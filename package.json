@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Kedge \u2014 custom real estate websites for BHHS agents.",
+  "description": "Kedge — custom real estate websites for BHHS agents.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && node scripts/prerender.mjs",
@@ -22,10 +22,12 @@
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
+    "@types/suncalc": "^1.9.2",
     "maplibre-gl": "^4.7.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "react-router-dom": "^7.18.2"
+    "react-router-dom": "^7.18.2",
+    "suncalc": "^1.9.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

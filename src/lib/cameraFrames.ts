@@ -37,44 +37,76 @@ export const FRAMES: Record<string, CameraFrame> = {
   // beacons crowded each other even though they are two and a half miles apart.
   top: { center: [-81.458, 30.641], zoom: 11.65, pitch: 40, bearing: -14 },
 
-  // The Aerial covers the entire coast, so it pulls back out to it.
-  "work-the-aerial": { center: [-81.45, 30.42], zoom: 8.6, pitch: 44, bearing: -8 },
+  /*
+   * Project frames descend into the buildings.
+   *
+   * mapStyle.ts has carried real OSM footprints and heights from minzoom 14
+   * since the first commit, fading in between 14 and 15 — and the site never
+   * showed a single one, because the deepest frame here stopped at 14.6. These
+   * now sit at 16–17 with a steep pitch, so arriving at a project means
+   * descending among actual structures rather than looking at a flat plate.
+   */
 
-  // Heymann Williams — Amelia Island and Nassau County.
-  "work-heymann-williams-coastal": {
-    center: [-81.48, 30.61],
-    zoom: 11.2,
-    pitch: 50,
-    bearing: 16,
+  // The Aerial covers the whole corridor, so it descends over the island it
+  // knows best rather than pulling back to a midpoint out at sea.
+  "work-the-aerial": {
+    center: [-81.4472, 30.5724],
+    zoom: 16.1,
+    pitch: 64,
+    bearing: -22,
   },
 
-  // Sold on Amelia Island — downtown Fernandina, where the two agents work.
+  // Heymann Williams — Amelia Park, where the brokerage sits.
+  "work-heymann-williams-coastal": {
+    center: [-81.4531, 30.6362],
+    zoom: 16.4,
+    pitch: 66,
+    bearing: 18,
+  },
+
+  // Sold on Amelia Island — downtown Fernandina. The densest built fabric on
+  // the island, and the best of the five for showing extrusions.
   "work-sold-on-amelia-island": {
     center: [-81.4637, 30.6697],
-    zoom: 13.4,
-    pitch: 56,
-    bearing: -24,
+    zoom: 16.8,
+    pitch: 67,
+    bearing: -28,
   },
 
-  // Crane Island — the exact USGS coordinate.
+  // Crane Island — the exact USGS coordinate, low over the water.
   "work-crane-island-bhhs": {
     center: [-81.4773, 30.6125],
-    zoom: 14.6,
-    pitch: 60,
-    bearing: 32,
+    zoom: 16.2,
+    pitch: 68,
+    bearing: 34,
   },
 
-  // Ron Heymann — the island's north end, Fort Clinch.
+  // Ron Heymann — the island's north end, over Fort Clinch.
   "work-ron-heymann-agent-page": {
     center: [-81.4545, 30.7047],
-    zoom: 12.8,
-    pitch: 52,
-    bearing: -30,
+    zoom: 16.0,
+    pitch: 62,
+    bearing: -34,
   },
 
-  capabilities: { center: [-81.44, 30.65], zoom: 11.6, pitch: 54, bearing: 8 },
-  pricing: { center: [-81.46, 30.62], zoom: 10.6, pitch: 46, bearing: -20 },
-  contact: { center: [-81.47, 30.66], zoom: 11.8, pitch: 58, bearing: 24 },
+  // Studio destinations stay higher: they are arguments rather than places, and
+  // the coast reads better behind them than a rooftop would.
+  capabilities: { center: [-81.44, 30.65], zoom: 12.4, pitch: 58, bearing: 8 },
+  pricing: { center: [-81.46, 30.62], zoom: 11.4, pitch: 50, bearing: -20 },
+  contact: { center: [-81.47, 30.66], zoom: 12.6, pitch: 60, bearing: 24 },
+
+};
+
+/**
+ * Where the arrival begins: far out over the corridor and flat, the way you
+ * would actually approach this coast. The opening descends from here into the
+ * `top` frame. Ported in spirit from the-aerial's APPROACH_VIEW.
+ */
+export const APPROACH: CameraFrame = {
+  center: [-81.2, 30.15],
+  zoom: 7.6,
+  pitch: 0,
+  bearing: 0,
 };
 
 /** What BackgroundMap hands us. Kept minimal so the map stays swappable. */
@@ -148,6 +180,95 @@ export function flyToFrame(frame: CameraFrame) {
 
 /** Held so a navigation that lands before the map is ready is not lost. */
 let pendingFrame: CameraFrame | null = null;
+
+/* ── The tour ─────────────────────────────────────────────────────────── */
+
+/**
+ * The tour needs the raw map rather than the flyTo seam above, because it
+ * wants MapLibre's `flyTo` — which arcs up and back down between stops — where
+ * navigation wants `easeTo`, which interpolates directly. The arc is the whole
+ * character of a tour and would be nauseating on every click.
+ */
+type TourMap = {
+  flyTo(opts: Record<string, unknown>): void;
+  once(event: string, handler: () => void): void;
+};
+
+let tourMap: TourMap | null = null;
+let tourTimer = 0;
+
+export function registerTourMap(map: TourMap | null) {
+  tourMap = map;
+}
+
+export interface TourStop {
+  frame: CameraFrame;
+  name: string;
+  line: string;
+  path: string;
+}
+
+/**
+ * Fly every project in order, banking alternately, and cancel the moment the
+ * visitor takes the controls back.
+ *
+ * This is the answer to the one genuine weakness of a map interface: it cannot
+ * be skimmed. One control, and it shows you everything.
+ *
+ * Modeled on the-aerial/components/Aerial.tsx `startTour`.
+ */
+export function runTour(
+  stops: TourStop[],
+  onStop: (stop: TourStop | null, index: number) => void,
+  holdMs = 6200
+): () => void {
+  const map = tourMap;
+  if (!map || !stops.length) return () => {};
+
+  let index = 0;
+  let stopped = false;
+
+  const end = () => {
+    if (stopped) return;
+    stopped = true;
+    window.clearTimeout(tourTimer);
+    onStop(null, -1);
+  };
+
+  const next = () => {
+    if (stopped) return;
+    if (index >= stops.length) {
+      // Land back on the coast so the tour resolves rather than abandoning
+      // the camera at the last stop.
+      map.flyTo({ ...FRAMES.top, speed: 0.45, curve: 1.4, essential: true });
+      end();
+      return;
+    }
+    const stop = stops[index];
+    onStop(stop, index);
+    map.flyTo({
+      center: stop.frame.center,
+      zoom: stop.frame.zoom,
+      pitch: stop.frame.pitch,
+      // Bank alternately, so consecutive stops do not read as the same shot.
+      bearing: index % 2 === 0 ? stop.frame.bearing : -stop.frame.bearing,
+      speed: 0.5,
+      curve: 1.4,
+      essential: true,
+    });
+    index += 1;
+    tourTimer = window.setTimeout(next, holdMs);
+  };
+
+  // Any attempt to steer ends it immediately — a tour you cannot escape is a
+  // hostage situation, not a feature.
+  for (const ev of ["dragstart", "wheel", "touchstart"]) {
+    map.once(ev, end);
+  }
+
+  next();
+  return end;
+}
 
 /**
  * Observe every element carrying `data-frame` and fly to the one occupying the

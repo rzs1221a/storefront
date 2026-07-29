@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerCamera, FRAMES } from "../lib/cameraFrames";
+import { registerCamera, registerTourMap, FRAMES, APPROACH } from "../lib/cameraFrames";
 import { BEACONS } from "../lib/destinations";
+import StarSky from "./StarSky";
 
 /**
  * The living coast — and now the interface itself, not a backdrop.
@@ -23,9 +24,15 @@ import { BEACONS } from "../lib/destinations";
 /** Degrees of bearing per second while idle. Slow enough to notice only if you wait. */
 const ORBIT_SPEED = 0.4;
 
+/** How long the arrival takes. Matches the opening card's hold. */
+const ARRIVAL_MS = 7000;
+
 export default function LiveMap({ dimmed }: { dimmed: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false);
+  // The star field has to know where the camera is looking to place the sky
+  // correctly; throttled to whole degrees so it is not a per-frame re-render.
+  const [camera, setCamera] = useState({ bearing: 0, pitch: 0 });
   const navigate = useNavigate();
   /*
    * Markers are created once and live for the session, so their click handlers
@@ -59,7 +66,13 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
         ]);
         if (cancelled) return;
 
-        const opening = FRAMES.top;
+        /*
+         * The arrival: the map opens far out over the corridor and flat, then
+         * descends into Amelia Island — the way you would actually approach
+         * this coast, rather than cutting to it. Under reduced motion it just
+         * starts where it is going.
+         */
+        const opening = reduced ? FRAMES.top : APPROACH;
 
         map = new Map({
           container,
@@ -84,6 +97,25 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
         map.on("load", () => {
           if (cancelled || !map) return;
           setLoaded(true);
+
+          // Hand the raw map to the tour, which needs flyTo's arc rather than
+          // easeTo's straight interpolation.
+          registerTourMap(map);
+
+          /* Begin the descent once tiles are actually on screen. */
+          if (!reduced) {
+            const home = FRAMES.top;
+            flyingUntil = performance.now() + ARRIVAL_MS;
+            map.easeTo({
+              center: home.center,
+              zoom: home.zoom,
+              pitch: home.pitch,
+              bearing: home.bearing,
+              duration: ARRIVAL_MS,
+              // A long settling tail, so it lands rather than stops.
+              easing: (t) => 1 - Math.pow(1 - t, 4),
+            });
+          }
 
           /* Beacons. Built once, kept for the life of the map. */
           for (const dest of BEACONS) {
@@ -114,6 +146,19 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
           };
           syncLabels();
           map.on("zoom", syncLabels);
+
+          // Feed the sky. Rounded to whole degrees so a slow orbit does not
+          // re-render React sixty times a second for sub-pixel movement.
+          const syncCamera = () => {
+            if (!map) return;
+            const b = Math.round(map.getBearing());
+            const p = Math.round(map.getPitch());
+            setCamera((prev) =>
+              prev.bearing === b && prev.pitch === p ? prev : { bearing: b, pitch: p }
+            );
+          };
+          syncCamera();
+          map.on("move", syncCamera);
 
           registerCamera({
             flyTo: (frame, durationMs) => {
@@ -183,11 +228,16 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className="live-map"
-      data-loaded={loaded ? "true" : "false"}
-      data-dimmed={dimmed ? "true" : "false"}
-    />
+    <>
+      <div
+        ref={containerRef}
+        className="live-map"
+        data-loaded={loaded ? "true" : "false"}
+        data-dimmed={dimmed ? "true" : "false"}
+      />
+      {/* The real sky, above the plate and below the chrome. Draws nothing
+          while the sun is up. */}
+      <StarSky bearing={camera.bearing} pitch={camera.pitch} />
+    </>
   );
 }
