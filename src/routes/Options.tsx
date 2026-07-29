@@ -46,9 +46,9 @@ export default function Options() {
     >
       <p className="lede">
         Every site type a real estate business needs, as a catalog rather than
-        a sales call. {CATALOG_TOTALS.shipped} of these patterns are running
-        today in shipped work and say which project proves them. The rest are
-        marked{" "}
+        a sales call. {numberWord(CATALOG_TOTALS.shipped)} of these patterns are
+        running today in shipped work and say which project proves them. The
+        rest are marked{" "}
         <span className="badge badge-concept">Concept</span> — build-ready,
         priced, and honestly not yet anyone's live site. Nothing here pretends
         otherwise.
