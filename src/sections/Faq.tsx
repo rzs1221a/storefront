@@ -25,7 +25,7 @@ export default function Faq() {
               <details
                 key={item.q}
                 data-reveal-item
-                className={`group py-5 ${i === 0 ? "" : "border-t border-[--line]"}`}
+                className={`group py-5 ${i === 0 ? "" : "border-t border-(--line)"}`}
               >
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-[1.0625rem] font-medium tracking-[-0.015em] [&::-webkit-details-marker]:hidden">
                   {item.q}
@@ -35,7 +35,7 @@ export default function Faq() {
                     viewBox="0 0 14 14"
                     fill="none"
                     aria-hidden="true"
-                    className="flex-none text-[--color-ink-muted] transition-transform duration-300 group-open:rotate-45"
+                    className="flex-none text-(--color-ink-muted) transition-transform duration-300 group-open:rotate-45"
                   >
                     <path
                       d="M7 2.5V11.5M2.5 7H11.5"
@@ -45,7 +45,7 @@ export default function Faq() {
                     />
                   </svg>
                 </summary>
-                <p className="mt-3 max-w-[62ch] text-[0.9375rem] leading-relaxed text-[--color-ink-soft]">
+                <p className="mt-3 max-w-[62ch] text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
                   {item.a}
                 </p>
               </details>

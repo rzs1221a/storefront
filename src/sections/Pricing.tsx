@@ -45,12 +45,12 @@ export default function Pricing() {
                 data-reveal-item
                 className={`panel-flat lift relative flex h-full flex-col p-7 ${
                   tier.featured
-                    ? "border-[--color-signal]/35 lg:-mt-4 lg:pb-9 lg:pt-9"
+                    ? "border-(--color-signal)/35 lg:-mt-4 lg:pb-9 lg:pt-9"
                     : ""
                 }`}
               >
                 {tier.featured && (
-                  <span className="absolute -top-2.5 left-7 rounded-full border border-[--color-signal]/40 bg-[--color-plate] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-[--color-signal]">
+                  <span className="absolute -top-2.5 left-7 rounded-full border border-(--color-signal)/40 bg-(--color-plate) px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-(--color-signal)">
                     Most agents start here
                   </span>
                 )}
@@ -58,7 +58,7 @@ export default function Pricing() {
                 <h3 className="text-lg font-medium tracking-[-0.015em]">
                   {tier.name}
                 </h3>
-                <p className="mt-1.5 text-[0.875rem] text-[--color-ink-muted]">
+                <p className="mt-1.5 text-[0.875rem] text-(--color-ink-muted)">
                   {tier.audience}
                 </p>
 
@@ -68,7 +68,7 @@ export default function Pricing() {
                       <span className="font-mono text-4xl tracking-tight">
                         {money(tier.price)}
                       </span>
-                      <span className="text-xs text-[--color-ink-faint]">
+                      <span className="text-xs text-(--color-ink-faint)">
                         {tier.priceNote}
                       </span>
                     </>
@@ -79,15 +79,15 @@ export default function Pricing() {
                   )}
                 </p>
 
-                <p className="mt-5 text-[0.9375rem] leading-relaxed text-[--color-ink-soft]">
+                <p className="mt-5 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
                   {tier.summary}
                 </p>
 
-                <ul className="mt-6 flex-1 space-y-2.5 border-t border-[--line] pt-6">
+                <ul className="mt-6 flex-1 space-y-2.5 border-t border-(--line) pt-6">
                   {tier.includes.map((line) => (
                     <li
                       key={line}
-                      className="flex gap-2.5 text-[0.875rem] leading-relaxed text-[--color-ink-soft]"
+                      className="flex gap-2.5 text-[0.875rem] leading-relaxed text-(--color-ink-soft)"
                     >
                       <svg
                         width="13"
@@ -95,7 +95,7 @@ export default function Pricing() {
                         viewBox="0 0 13 13"
                         fill="none"
                         aria-hidden="true"
-                        className="mt-[0.28em] flex-none text-[--color-signal]"
+                        className="mt-[0.28em] flex-none text-(--color-signal)"
                       >
                         <path
                           d="M2.5 6.8L5 9.3L10.5 3.8"
@@ -110,16 +110,16 @@ export default function Pricing() {
                   ))}
                 </ul>
 
-                <div className="mt-7 space-y-3 border-t border-[--line] pt-6">
+                <div className="mt-7 space-y-3 border-t border-(--line) pt-6">
                   <p className="mono-label">
                     Timeline · {tier.timeline}
                   </p>
                   {example && (
-                    <p className="text-xs text-[--color-ink-faint]">
+                    <p className="text-xs text-(--color-ink-faint)">
                       Example:{" "}
                       <a
                         href="#work"
-                        className="text-[--color-ink-muted] underline decoration-[--line-strong] underline-offset-4 transition-colors hover:text-[--color-ink]"
+                        className="text-(--color-ink-muted) underline decoration-(--line-strong) underline-offset-4 transition-colors hover:text-(--color-ink)"
                       >
                         {example.name}
                       </a>
@@ -140,7 +140,7 @@ export default function Pricing() {
         </Reveal>
 
         <Reveal delay={120}>
-          <p className="mt-8 text-center text-sm text-[--color-ink-faint]">
+          <p className="mt-8 text-center text-sm text-(--color-ink-faint)">
             Hosting runs on Netlify's free tier in your own account. Your only
             ongoing cost is the domain — around $15 a year.
           </p>

@@ -1,4 +1,4 @@
-# Storefront — Blackline Systems
+# Storefront — Kedge
 
 The commercial front door: a single-page site that sells custom websites to
 real estate agents, using five real shipped projects as the proof.
@@ -20,8 +20,8 @@ Four things are placeholders. Each lives in exactly one file.
 |---|---|---|
 | **Prices** | `src/lib/offer.ts` → `TIERS` | $1,500 / $3,500 / $6,500 are invented. Confirm or replace. |
 | **Phone + email** | `src/lib/brand.ts` → `CONTACT` | Currently a 555 number. Lead notifications go to `CONTACT.email`. |
-| **Brand name** | `src/lib/brand.ts` → `BRAND` | Carried over from The Aerial's README. |
-| **Domain** | `index.html`, `public/sitemap.xml`, `public/robots.txt` | Canonical, OG, and sitemap URLs all say `blacklinesystems.com`. |
+| **Brand name** | `src/lib/brand.ts` → `BRAND` | "Kedge". Worth a trademark and domain check before printing it on anything. |
+| **Domain** | `src/lib/brand.ts`, `index.html`, `public/sitemap.xml`, `public/robots.txt` | Canonical, OG, and sitemap URLs all say `kedge.studio` — not yet registered. |
 
 `SHOW_PRICING` in `src/lib/brand.ts` flips every price to "Let's talk" if you
 would rather gate the numbers behind a conversation.

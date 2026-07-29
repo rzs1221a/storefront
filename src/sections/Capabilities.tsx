@@ -66,24 +66,24 @@ export default function Capabilities() {
         <Reveal
           stagger={70}
           as="ul"
-          className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-[--line] bg-[--line] sm:grid-cols-2 lg:grid-cols-3"
+          className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-(--line) bg-(--line) sm:grid-cols-2 lg:grid-cols-3"
         >
           {CAPABILITIES.map((cap) => (
             <li
               key={cap.title}
               data-reveal-item
-              className="group flex flex-col bg-[--color-plate-raised] p-7 transition-colors duration-500 hover:bg-[--color-plate-high]"
+              className="group flex flex-col bg-(--color-plate-raised) p-7 transition-colors duration-500 hover:bg-(--color-plate-high)"
             >
               <h3 className="text-[1.0625rem] font-medium leading-snug tracking-[-0.015em]">
                 {cap.title}
               </h3>
-              <p className="mt-3 flex-1 text-[0.9375rem] leading-relaxed text-[--color-ink-soft]">
+              <p className="mt-3 flex-1 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
                 {cap.body}
               </p>
               <p className="mono-label mt-6 flex items-center gap-2">
                 <span
                   aria-hidden="true"
-                  className="h-px w-4 bg-[--color-signal] transition-all duration-500 group-hover:w-7"
+                  className="h-px w-4 bg-(--color-signal) transition-all duration-500 group-hover:w-7"
                 />
                 {cap.proof}
               </p>

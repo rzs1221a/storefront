@@ -22,31 +22,31 @@ export default function Contact() {
               turn down work than build something that does not earn its keep.
             </p>
 
-            <div className="mt-10 space-y-px overflow-hidden rounded-2xl border border-[--line] bg-[--line]">
+            <div className="mt-10 space-y-px overflow-hidden rounded-2xl border border-(--line) bg-(--line)">
               <a
                 href={`tel:${CONTACT.phone}`}
-                className="flex items-center justify-between gap-4 bg-[--color-plate-raised] px-5 py-4 transition-colors hover:bg-[--color-plate-high]"
+                className="flex items-center justify-between gap-4 bg-(--color-plate-raised) px-5 py-4 transition-colors hover:bg-(--color-plate-high)"
               >
                 <span className="mono-label">Call</span>
                 <span className="text-[0.9375rem]">{CONTACT.phoneDisplay}</span>
               </a>
               <a
                 href={`sms:${CONTACT.phone}`}
-                className="flex items-center justify-between gap-4 bg-[--color-plate-raised] px-5 py-4 transition-colors hover:bg-[--color-plate-high]"
+                className="flex items-center justify-between gap-4 bg-(--color-plate-raised) px-5 py-4 transition-colors hover:bg-(--color-plate-high)"
               >
                 <span className="mono-label">Text</span>
                 <span className="text-[0.9375rem]">{CONTACT.phoneDisplay}</span>
               </a>
               <a
                 href={`mailto:${CONTACT.email}`}
-                className="flex items-center justify-between gap-4 bg-[--color-plate-raised] px-5 py-4 transition-colors hover:bg-[--color-plate-high]"
+                className="flex items-center justify-between gap-4 bg-(--color-plate-raised) px-5 py-4 transition-colors hover:bg-(--color-plate-high)"
               >
                 <span className="mono-label">Email</span>
                 <span className="truncate text-[0.9375rem]">{CONTACT.email}</span>
               </a>
             </div>
 
-            <p className="mt-6 flex items-center gap-2 text-sm text-[--color-ink-faint]">
+            <p className="mt-6 flex items-center gap-2 text-sm text-(--color-ink-faint)">
               <span className="live-dot" />
               Based in {CONTACT.location}. I reply within one business day.
             </p>

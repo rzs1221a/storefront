@@ -26,43 +26,43 @@ export default function Comparison() {
           </p>
         </Reveal>
 
-        <Reveal className="mt-12 overflow-hidden rounded-2xl border border-[--line]">
+        <Reveal className="mt-12 overflow-hidden rounded-2xl border border-(--line)">
           {/* Column headers, desktop only — the stacked mobile layout labels
               each cell inline instead. */}
-          <div className="hidden grid-cols-[1.1fr_1fr_1fr] gap-px bg-[--line] md:grid">
-            <div className="bg-[--color-plate-high] px-6 py-4" />
-            <div className="bg-[--color-plate-high] px-6 py-4">
+          <div className="hidden grid-cols-[1.1fr_1fr_1fr] gap-px bg-(--line) md:grid">
+            <div className="bg-(--color-plate-high) px-6 py-4" />
+            <div className="bg-(--color-plate-high) px-6 py-4">
               <span className="mono-label">A platform site</span>
             </div>
-            <div className="bg-[--color-plate-high] px-6 py-4">
-              <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-[--color-signal]">
+            <div className="bg-(--color-plate-high) px-6 py-4">
+              <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-(--color-signal)">
                 Built by me
               </span>
             </div>
           </div>
 
-          <div className="grid gap-px bg-[--line]">
+          <div className="grid gap-px bg-(--line)">
             {COMPARISON.rows.map((row) => (
               <div
                 key={row.question}
-                className="grid gap-px bg-[--line] md:grid-cols-[1.1fr_1fr_1fr]"
+                className="grid gap-px bg-(--line) md:grid-cols-[1.1fr_1fr_1fr]"
               >
-                <div className="bg-[--color-plate-raised] px-6 py-5">
+                <div className="bg-(--color-plate-raised) px-6 py-5">
                   <p className="text-[0.9375rem] font-medium">{row.question}</p>
                 </div>
-                <div className="bg-[--color-plate-raised] px-6 py-5">
+                <div className="bg-(--color-plate-raised) px-6 py-5">
                   <span className="mono-label mb-1.5 block md:hidden">
                     A platform site
                   </span>
-                  <p className="text-[0.9375rem] leading-relaxed text-[--color-ink-muted]">
+                  <p className="text-[0.9375rem] leading-relaxed text-(--color-ink-muted)">
                     {row.platform}
                   </p>
                 </div>
-                <div className="bg-[--color-plate-raised] px-6 py-5">
-                  <span className="mb-1.5 block font-mono text-[11px] uppercase tracking-[0.1em] text-[--color-signal] md:hidden">
+                <div className="bg-(--color-plate-raised) px-6 py-5">
+                  <span className="mb-1.5 block font-mono text-[11px] uppercase tracking-[0.1em] text-(--color-signal) md:hidden">
                     Built by me
                   </span>
-                  <p className="text-[0.9375rem] leading-relaxed text-[--color-ink-soft]">
+                  <p className="text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
                     {row.us}
                   </p>
                 </div>

@@ -50,7 +50,7 @@ export default function Hero() {
 
         {/* Measured facts, not adjectives. Every number here is derived from
             the portfolio data rather than typed by hand. */}
-        <dl className="mt-14 grid max-w-2xl grid-cols-3 gap-6 border-t border-[--line] pt-8">
+        <dl className="mt-14 grid max-w-2xl grid-cols-3 gap-6 border-t border-(--line) pt-8">
           <div>
             <dt className="mono-label">Sites shipped</dt>
             <dd className="mt-1.5 font-mono text-3xl tracking-tight sm:text-4xl">

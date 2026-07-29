@@ -2,14 +2,15 @@
  * Single source of truth for who is selling. Change the name here and it
  * changes everywhere — nav, hero, footer, meta tags, JSON-LD.
  *
- * `Blackline Systems` is carried over from The Aerial's README, which already
- * credits the work that way ("Independent product — no brokerage branding.
- * Built under Blackline Systems").
+ * A kedge is the light anchor a crew rows out ahead of a ship to warp it into
+ * position when there is no wind — the small, deliberate thing that moves
+ * something much larger. Fitting for coastal work, and short enough to say
+ * once and have it stick.
  */
 
 export const BRAND = {
-  name: "Blackline Systems",
-  short: "Blackline",
+  name: "Kedge",
+  short: "Kedge",
   tagline: "Custom websites for real estate professionals.",
   /**
    * The one-line positioning statement. Deliberately concrete: it names the
@@ -17,8 +18,9 @@ export const BRAND = {
    */
   positioning:
     "Bespoke, high-performance websites for BHHS agents — built once, owned outright, no monthly platform fee.",
-  domain: "blacklinesystems.com",
-  origin: "https://blacklinesystems.com",
+  /** PLACEHOLDER — confirm the domain before launch. */
+  domain: "kedge.studio",
+  origin: "https://kedge.studio",
 } as const;
 
 /**

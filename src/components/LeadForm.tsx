@@ -53,7 +53,7 @@ export default function LeadForm() {
   if (status === "sent") {
     return (
       <div className="panel p-8 text-center sm:p-10" role="status">
-        <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-[--color-signal] text-[--color-signal]">
+        <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-(--color-signal) text-(--color-signal)">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
             <path
               d="M4 9.5L7.5 13L14 5.5"
@@ -70,7 +70,7 @@ export default function LeadForm() {
           usually the same evening. If it is urgent, call or text{" "}
           <a
             href={`tel:${CONTACT.phone}`}
-            className="text-[--color-ink] underline decoration-[--line-strong] underline-offset-4"
+            className="text-(--color-ink) underline decoration-(--line-strong) underline-offset-4"
           >
             {CONTACT.phoneDisplay}
           </a>
@@ -197,7 +197,7 @@ export default function LeadForm() {
         </p>
       )}
 
-      <p className="mt-5 text-xs leading-relaxed text-[--color-ink-faint]">
+      <p className="mt-5 text-xs leading-relaxed text-(--color-ink-faint)">
         Goes straight to {BRAND.short}. No list, no newsletter, no third party.
       </p>
     </form>

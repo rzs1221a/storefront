@@ -1,4 +1,6 @@
+<!-- The Kedge mark. Keep in sync with src/components/BrandMark.tsx. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <rect width="32" height="32" rx="7" fill="#08090b"/>
-  <rect x="13" y="7" width="6" height="18" rx="3" fill="#4fd6e3"/>
+  <path d="M16 6.5 25.5 16 16 25.5 6.5 16Z"
+        fill="#4fd6e3" stroke="#4fd6e3" stroke-width="2" stroke-linejoin="round"/>
 </svg>

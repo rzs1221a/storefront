@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { BRAND } from "../lib/brand";
+import BrandMark from "./BrandMark";
 
 const LINKS = [
   { href: "#work", label: "Work" },
@@ -26,7 +27,7 @@ export default function Nav() {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "border-b border-[--line] bg-[--color-plate]/85 backdrop-blur-xl"
+          ? "border-b border-(--line) bg-(--color-plate)/85 backdrop-blur-xl"
           : "border-b border-transparent"
       }`}
     >
@@ -36,12 +37,9 @@ export default function Nav() {
       >
         <a
           href="#top"
-          className="flex min-h-[36px] items-center gap-2.5 text-[0.9375rem] font-medium tracking-[-0.01em]"
+          className="flex min-h-[36px] items-center gap-2 text-[0.9375rem] font-medium tracking-[-0.01em]"
         >
-          <span
-            aria-hidden="true"
-            className="h-3.5 w-[3px] rounded-full bg-[--color-signal]"
-          />
+          <BrandMark size={17} className="text-(--color-signal)" />
           {BRAND.name}
         </a>
 
@@ -50,7 +48,7 @@ export default function Nav() {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-sm text-[--color-ink-soft] transition-colors hover:text-[--color-ink]"
+                className="text-sm text-(--color-ink-soft) transition-colors hover:text-(--color-ink)"
               >
                 {link.label}
               </a>

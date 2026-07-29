@@ -48,7 +48,7 @@ export default function WorkCard({
 
         <div
           aria-hidden="true"
-          className="absolute -bottom-6 right-5 hidden w-[104px] overflow-hidden rounded-[16px] border border-[--line-strong] bg-[--color-plate-high] shadow-[var(--shadow-deep)] lg:block"
+          className="absolute -bottom-6 right-5 hidden w-[104px] overflow-hidden rounded-[16px] border border-(--line-strong) bg-(--color-plate-high) shadow-[var(--shadow-deep)] lg:block"
         >
           <img
             src={item.mobile}
@@ -69,7 +69,7 @@ export default function WorkCard({
           {item.liveUrl && (
             <span className="flex items-center gap-1.5">
               <span className="live-dot" />
-              <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-[--color-signal]">
+              <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-(--color-signal)">
                 Live
               </span>
             </span>
@@ -85,14 +85,14 @@ export default function WorkCard({
           {item.stack.map((tech) => (
             <span
               key={tech}
-              className="rounded-full border border-[--line] bg-white/[0.03] px-2.5 py-1 font-mono text-[11px] text-[--color-ink-muted]"
+              className="rounded-full border border-(--line) bg-white/[0.03] px-2.5 py-1 font-mono text-[11px] text-(--color-ink-muted)"
             >
               {tech}
             </span>
           ))}
         </div>
 
-        <p className="mt-5 font-mono text-xs text-[--color-ink-faint]">
+        <p className="mt-5 font-mono text-xs text-(--color-ink-faint)">
           {item.loc.toLocaleString("en-US")} lines of source
         </p>
 
@@ -126,20 +126,20 @@ export default function WorkCard({
         <div
           id={detailId}
           hidden={!open}
-          className="mt-5 border-l border-[--line-strong] pl-5"
+          className="mt-5 border-l border-(--line-strong) pl-5"
         >
-          <p className="text-[0.9375rem] leading-relaxed text-[--color-ink-soft]">
+          <p className="text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
             {item.detail}
           </p>
           <ul className="mt-4 space-y-2">
             {item.highlights.map((h) => (
               <li
                 key={h}
-                className="flex gap-2.5 text-[0.875rem] leading-relaxed text-[--color-ink-soft]"
+                className="flex gap-2.5 text-[0.875rem] leading-relaxed text-(--color-ink-soft)"
               >
                 <span
                   aria-hidden="true"
-                  className="mt-[0.5em] h-1 w-1 flex-none rounded-full bg-[--color-signal]"
+                  className="mt-[0.5em] h-1 w-1 flex-none rounded-full bg-(--color-signal)"
                 />
                 {h}
               </li>
@@ -153,7 +153,7 @@ export default function WorkCard({
               href={item.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[32px] items-center gap-1.5 text-sm text-[--color-ink] underline decoration-[--line-strong] underline-offset-4 transition-colors hover:decoration-[--color-signal]"
+              className="inline-flex min-h-[32px] items-center gap-1.5 text-sm text-(--color-ink) underline decoration-(--line-strong) underline-offset-4 transition-colors hover:decoration-(--color-signal)"
             >
               Visit the live site
               <svg

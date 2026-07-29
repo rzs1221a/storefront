@@ -25,7 +25,7 @@ export default function BrowserFrame({
         <span className="browser-dot" />
         <span className="browser-dot" />
         {url && (
-          <span className="ml-3 truncate font-mono text-[11px] text-[--color-ink-faint]">
+          <span className="ml-3 truncate font-mono text-[11px] text-(--color-ink-faint)">
             {url}
           </span>
         )}

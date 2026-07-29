@@ -25,17 +25,17 @@ export default function Process() {
                 key={step.step}
                 data-reveal-item
                 className={`flex gap-6 py-6 sm:gap-10 ${
-                  i === 0 ? "" : "border-t border-[--line]"
+                  i === 0 ? "" : "border-t border-(--line)"
                 }`}
               >
-                <span className="font-mono text-sm text-[--color-signal]">
+                <span className="font-mono text-sm text-(--color-signal)">
                   {step.step}
                 </span>
                 <div>
                   <h3 className="text-[1.0625rem] font-medium tracking-[-0.015em]">
                     {step.name}
                   </h3>
-                  <p className="mt-2 max-w-[52ch] text-[0.9375rem] leading-relaxed text-[--color-ink-soft]">
+                  <p className="mt-2 max-w-[52ch] text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
                     {step.detail}
                   </p>
                 </div>
