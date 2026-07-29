@@ -1,6 +1,7 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { BRAND, CONTACT } from "../lib/brand";
 import { PRIMARY_NAV, WORK_DESTINATIONS } from "../lib/destinations";
+import { CATEGORIES } from "../lib/catalog";
 import BrandMark from "./BrandMark";
 import Conditions from "./Conditions";
 import MagneticButton from "./MagneticButton";
@@ -65,6 +66,20 @@ export default function Rail() {
                 </span>
                 <span className="truncate">{dest.label}</span>
               </NavLink>
+            </li>
+          ))}
+        </ul>
+
+        {/* The catalog, by category rather than all 24 options — the rail must
+            stay skimmable. Each link lands on that section of the shelf. */}
+        <p className="mono-label rail-group">What I can build</p>
+        <ul>
+          {CATEGORIES.map((cat) => (
+            <li key={cat.slug}>
+              <Link to={`/options#${cat.slug}`} className="rail-link">
+                <span className="rail-index" aria-hidden="true" />
+                <span className="truncate">{cat.name}</span>
+              </Link>
             </li>
           ))}
         </ul>

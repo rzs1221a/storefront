@@ -35,8 +35,15 @@ export default function LeadForm({
    * because a card click is a signal of interest and not a commitment.
    */
   selectedPackage,
+  /**
+   * A catalog offering name, from the `?option=` parameter an option page
+   * carries. Rendered as its own entry in the dropdown — the enquiry then
+   * names the exact thing the visitor was reading, not just its build size.
+   */
+  selectedOption,
 }: {
   selectedPackage?: string;
+  selectedOption?: string;
 } = {}) {
   const [status, setStatus] = useState<Status>("idle");
 
@@ -162,16 +169,20 @@ export default function LeadForm({
           <select
             id="lf-interest"
             name="interest"
-            className={`field${selectedPackage ? " is-prefilled" : ""}`}
-            // Keyed on the package so arriving from a different offer card
-            // remounts the select with the new default. Without the key React
-            // would keep the first uncontrolled value it rendered.
-            key={selectedPackage ?? "none"}
-            defaultValue={selectedPackage ?? ""}
+            className={`field${selectedPackage || selectedOption ? " is-prefilled" : ""}`}
+            // Keyed on the selection so arriving from a different offer card
+            // or option page remounts the select with the new default. Without
+            // the key React would keep the first uncontrolled value it
+            // rendered.
+            key={selectedOption ?? selectedPackage ?? "none"}
+            defaultValue={selectedOption ?? selectedPackage ?? ""}
           >
             <option value="" disabled>
               Choose one
             </option>
+            {selectedOption && (
+              <option value={selectedOption}>{selectedOption}</option>
+            )}
             {TIERS.map((tier) => (
               <option key={tier.slug} value={tier.name}>
                 {tier.name}

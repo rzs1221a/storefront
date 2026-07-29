@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { WORK, TOTALS } from "../lib/work";
 import { TIERS } from "../lib/offer";
+import { numberWord } from "../lib/format";
 import Sheet from "../components/Sheet";
 
 /**
@@ -21,7 +22,10 @@ const TIER_FOR = new Map(TIERS.map((t) => [t.exampleSlug, t]));
 
 export default function Work() {
   return (
-    <Sheet eyebrow="Work & case studies" title="Five sites. All of them real">
+    <Sheet
+      eyebrow="Work & case studies"
+      title={`${numberWord(TOTALS.projects)} sites. All of them real`}
+    >
       <p className="lede">
         Every one of these is the actual site, captured from the live deployment
         or a production build — no mockups and no concepts. {TOTALS.live} are

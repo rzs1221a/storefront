@@ -405,6 +405,113 @@ body {
   max-width: 11rem;
 }
 
+/*
+ * Concept beacons — the honesty line drawn on the map itself. A shipped site
+ * is a solid dot at its real coordinate; a build-ready concept is a hollow
+ * dashed ring wearing the word Concept, pinned to the kind of place that
+ * build belongs. The two must never be mistaken for each other at a glance.
+ */
+.beacon--concept {
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(8, 11, 15, 0.45);
+}
+.beacon--concept .beacon-dot {
+  background: transparent;
+  border: 1.5px dashed var(--color-signal);
+  box-shadow: none;
+  opacity: 0.85;
+}
+.beacon-tag {
+  display: inline-block;
+  margin-left: 0.45rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.5625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+/*
+ * Concept labels run on their own threshold (data-concept-labels, from
+ * CONCEPT_LABEL_MIN_ZOOM in LiveMap): strung down eighty miles of corridor,
+ * they stay named from far higher than the clustered work beacons can.
+ * Ordered after the shared rules above so these win at equal specificity.
+ */
+.live-map[data-labels="off"] .beacon--concept {
+  padding: 0.3rem 0.6rem 0.3rem 0.35rem;
+}
+.live-map[data-labels="off"] .beacon--concept .beacon-name {
+  display: block;
+}
+.live-map[data-concept-labels="off"] .beacon--concept {
+  padding: 0.35rem;
+}
+.live-map[data-concept-labels="off"] .beacon--concept .beacon-name {
+  display: none;
+}
+
+/* ── Shipped / Concept badges ─────────────────────────────────────────── */
+
+/* The same distinction the beacons draw, carried into the sheets: solid means
+   running today, dashed-hollow means build-ready. */
+.badge {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+.badge-shipped {
+  border: 1px solid rgba(79, 214, 227, 0.45);
+  background: rgba(79, 214, 227, 0.12);
+  color: var(--color-signal);
+}
+.badge-concept {
+  border: 1px dashed var(--line-strong);
+  background: transparent;
+  color: var(--color-ink-muted);
+}
+
+/* The banner on every concept detail page. Visually calm, verbally absolute. */
+.concept-banner {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-ink-muted);
+}
+
+/* The schematic that stands where a concept's screenshot would be. */
+.concept-figure {
+  position: relative;
+  overflow: hidden;
+  border: 1px dashed var(--line-strong);
+  border-radius: 0.875rem;
+  background:
+    linear-gradient(
+      165deg,
+      hsl(var(--concept-hue, 200) 45% 14% / 0.55),
+      rgba(8, 9, 11, 0.7)
+    );
+}
+.concept-figure-tag {
+  position: absolute;
+  right: 0.875rem;
+  top: 0.75rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
 /* ── The rail ─────────────────────────────────────────────────────────── */
 
 .shell-frame .rail {

@@ -1,7 +1,8 @@
 # Storefront — Kedge
 
 The commercial front door: a map you navigate, selling custom websites to real
-estate agents, using five real shipped projects as the proof.
+estate agents — a 24-option catalog of everything on offer, with five real
+shipped projects as the proof layer.
 
 ```bash
 npm install
@@ -21,6 +22,15 @@ descends while a glass sheet rises with the case study — read about Crane Isla
 and you are looking at Crane Island. Pricing, Process, Questions and Contact are
 destinations on the same plane. A rail on the left names every one of them.
 
+The catalog (`/options`) is 24 offerings in five categories, each a real
+prerendered route. Two kinds, and the map draws the line itself: **shipped**
+patterns are solid beacons proven by a named project in `work.ts`; **concepts**
+are hollow dashed beacons spread down the corridor — St. Marys to St. Augustine
+— labeled Concept everywhere they appear. `work.ts` keeps its "nothing
+aspirational" rule absolutely; `catalog.ts` holds the mirror rule (everything is
+for sale, nothing is presented as shipped without a `proofSlug`), and the
+prerender fails the build on any violation.
+
 **The document never scrolls.** `html, body { height: 100%; overflow: hidden }`.
 Sheets scroll inside themselves. That is the brief, and `scripts/verify.mjs`
 asserts it on every route at every breakpoint rather than trusting it.
@@ -33,13 +43,15 @@ self-demonstrating — it claims maps are the product, and it is one.
 | | |
 |---|---|
 | `src/lib/destinations.ts` | the route table: URL, camera frame, rail label, beacon |
+| `src/lib/work.ts` | the five shipped projects — verifiable claims only |
+| `src/lib/catalog.ts` | the 24 offerings, five categories, the honesty contract |
 | `src/lib/cameraFrames.ts` | verified coordinates and the flight queue |
 | `src/components/Shell.tsx` | the app frame; the map mounts here **once** |
-| `src/components/LiveMap.tsx` | MapLibre, beacons, idle orbit |
+| `src/components/LiveMap.tsx` | MapLibre, beacons (solid work / hollow concept), idle orbit |
 | `src/components/Sheet.tsx` | the glass panel, focus handling, swipe dismiss |
 | `src/components/Rail.tsx` | desktop navigation |
-| `src/components/MobileFrame.tsx` | phone tab bar and indexes |
-| `src/routes/*` | one file per destination |
+| `src/components/MobileFrame.tsx` | phone tab bar, derived from `PRIMARY_NAV` |
+| `src/routes/*` | route components; `/work/:slug` and `/options/:slug` are generic |
 
 The map instance must **never remount on navigation** — the whole effect depends
 on the camera flying between destinations rather than the plate reloading.
@@ -63,15 +75,17 @@ content** by `scripts/prerender.mjs`, wired into `npm run build`. React renders
 over it on load.
 
 Ported from `heymann-williams-coastal/scripts/prerender.mjs`, which does the same
-for 26 neighborhood routes. No headless browser, so it runs unchanged on
-Netlify's build image.
+for 26 neighborhood routes. No headless browser — the script runs through `tsx`
+(a devDependency) so it can **import the real `src/lib` modules** rather than
+carry duplicated content. Adding a destination means editing
+`src/lib/destinations.ts` (or the data it derives from) and nothing else; the
+script ends with assertions over the actual invariants — one page per
+destination, unique paths, every camera frame resolvable, every beacon
+coordinate finite, every "shipped" offering carrying a real proof — and fails
+the build loudly on any violation.
 
-Two things that will silently destroy this if you are not careful:
+One thing that will silently destroy this if you are not careful:
 
-- **The route list in `scripts/prerender.mjs` is duplicated from
-  `src/lib/destinations.ts`** — Node cannot load the `.ts` modules directly. The
-  script asserts an expected route count and **fails the build** if they drift.
-  Add a destination in one place and you must add it in the other.
 - **The SPA fallback in `netlify.toml` is deliberately not forced.** Netlify
   serves matching static files before applying an unforced redirect, so
   `/pricing` resolves to the prerendered `dist/pricing.html`. Force it and every
@@ -119,9 +133,15 @@ sheet silently fell into flow and rendered half off-screen.
 
 ```bash
 npm run preview &
-node scripts/verify.mjs        # routes, no-scroll, no-JS content, contrast, keyboard
+npm run verify                 # routes, no-scroll, no-JS content, contrast, keyboard
+npx tsx scripts/verify.mjs http://127.0.0.1:4319 --quick   # faster iteration pass
 node scripts/camera-check.mjs  # the camera actually goes where the URL says
 ```
+
+`verify.mjs` derives its route list (and each route's expected phrase) from
+`src/lib/destinations.ts`, so a new destination is verified without touching the
+script. `--quick` runs every route at mobile + desktop and samples the rest of
+the viewport matrix.
 
 `verify.mjs` covers four breakpoints: every route renders, the document never
 scrolls, sheets scroll internally when they overflow, prerendered HTML carries

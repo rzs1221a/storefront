@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { TIERS, type Tier } from "../lib/offer";
 import { SHOW_PRICING } from "../lib/brand";
 import { WORK } from "../lib/work";
+import { CATALOG } from "../lib/catalog";
 
 /**
  * The offer matrix — three productized packages, side by side.
@@ -32,6 +33,9 @@ const money = (n: number) =>
 function TierCard({ tier, order }: { tier: Tier; order: number }) {
   const example = WORK.find((w) => w.slug === tier.exampleSlug);
   const priced = SHOW_PRICING && tier.price !== null;
+  // Every catalog option maps to a build size; the card names a few so a
+  // buyer sees the tier as a family of things, not an abstraction.
+  const covers = CATALOG.filter((o) => o.tierSlug === tier.slug);
 
   return (
     <article
@@ -111,6 +115,29 @@ function TierCard({ tier, order }: { tier: Tier; order: number }) {
           ))}
         </ul>
       </div>
+
+      {covers.length > 0 && (
+        <div className="tier-section">
+          <p className="mono-label">Covers</p>
+          <p className="mt-2 text-[0.8125rem] leading-relaxed text-(--color-ink-muted)">
+            {covers
+              .slice(0, 4)
+              .map((o) => o.name)
+              .join(", ")}
+            {covers.length > 4 && (
+              <>
+                {" "}
+                <Link
+                  to="/options"
+                  className="text-(--color-ink-soft) underline decoration-(--line-strong) underline-offset-4"
+                >
+                  and {covers.length - 4} more →
+                </Link>
+              </>
+            )}
+          </p>
+        </div>
+      )}
     </article>
   );
 }

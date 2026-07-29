@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { TOTALS } from "../lib/work";
+import { numberWord } from "../lib/format";
 
 /**
  * The orienting moment.
@@ -85,7 +87,8 @@ export default function Opening() {
           Your website should be the reason they call you.
         </p>
         <p className="opening-sub">
-          Five sites, along this coast. Open one.
+          {numberWord(TOTALS.projects)} shipped sites on this coast — and
+          everything I'll build next. Open one.
         </p>
         {/* Says out loud that this is not a gate. Any key or click dismisses
             it, and it never blocks the interface behind it. */}
