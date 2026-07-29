@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { observeFrames } from "./lib/cameraFrames";
 import Atmosphere from "./components/Atmosphere";
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
@@ -11,6 +13,15 @@ import Faq from "./sections/Faq";
 import Contact from "./sections/Contact";
 
 export default function App() {
+  const [activeFrame, setActiveFrame] = useState<string | null>(null);
+
+  /*
+   * One observer drives two things: the background map flies to the place the
+   * current section is about, and the nav marks that section active. Runs
+   * after mount so every [data-frame] element exists to be observed.
+   */
+  useEffect(() => observeFrames(setActiveFrame), []);
+
   return (
     <>
       <a href="#main" className="skip-link btn btn-primary btn-sm">
@@ -19,7 +30,7 @@ export default function App() {
 
       <Atmosphere />
 
-      <Nav />
+      <Nav activeFrame={activeFrame} />
 
       <main id="main">
         <Hero />

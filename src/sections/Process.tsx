@@ -1,5 +1,6 @@
 import { PROCESS } from "../lib/offer";
 import Reveal from "../components/Reveal";
+import SectionHeader from "../components/SectionHeader";
 
 /**
  * What happens after they say yes. Buying a website is unfamiliar and feels
@@ -10,16 +11,15 @@ export default function Process() {
     <section className="section">
       <div className="shell">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-          <Reveal className="lg:col-span-4">
-            <p className="eyebrow">How it goes</p>
-            <h2 className="headline mt-4">No surprises.</h2>
-            <p className="lede mt-5">
-              You will know the price, the timeline, and what the site looks
-              like before any real money changes hands.
-            </p>
-          </Reveal>
+          <SectionHeader
+            index="05"
+            eyebrow="How it goes"
+            headline="No surprises."
+            lede="You will know the price, the timeline, and what the site looks like before any real money changes hands."
+            className="lg:col-span-4"
+          />
 
-          <Reveal stagger={80} as="ol" className="lg:col-span-8">
+          <Reveal stagger={80} direction="right" as="ol" className="lg:col-span-8">
             {PROCESS.map((step, i) => (
               <li
                 key={step.step}

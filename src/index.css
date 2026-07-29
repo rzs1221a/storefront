@@ -300,21 +300,108 @@ body {
 
 /* ── Surfaces ─────────────────────────────────────────────────────────── */
 
-.panel {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.035),
-    rgba(255, 255, 255, 0.012)
-  );
-  border: 1px solid var(--line);
+/*
+ * Glass, ported from heymann-williams-coastal/src/index.css.
+ *
+ * Four things make a surface read as material rather than a painted rectangle:
+ *   1. a base tint with real weight
+ *   2. a fine noise grain, so it is not a flat wash
+ *   3. a lit rim — a highlight down the top-left edge
+ *   4. borders bright at the top, faint at the bottom (lit from above)
+ *
+ * The base tint is deliberately opaque enough to work on its OWN, with no
+ * backdrop-filter. That is the important part, and the reason the client site
+ * does it this way: some browsers — and any machine with GPU acceleration
+ * disabled — report `backdrop-filter` as supported and then render it fully
+ * transparent, which makes a low-alpha tint vanish entirely. Blur is layered
+ * on below as pure enhancement. If it never paints, this still looks like glass.
+ */
+
+.panel,
+.panel-raised {
+  position: relative;
+  isolation: isolate;
   border-radius: 1.25rem;
-  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--line);
+  border-top-color: rgba(255, 255, 255, 0.16);
+  border-bottom-color: rgba(255, 255, 255, 0.045);
 }
 
-.panel-flat {
-  background: var(--color-plate-raised);
-  border: 1px solid var(--line);
-  border-radius: 1.25rem;
+/* Grain. A single inline SVG turbulence, no network request. */
+.panel::before,
+.panel-raised::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
+  opacity: 0.055;
+  mix-blend-mode: overlay;
+}
+
+/* The lit rim. */
+.panel::after,
+.panel-raised::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(
+    150% 78% at 18% 0%,
+    rgba(255, 255, 255, 0.1),
+    transparent 58%
+  );
+}
+
+/* Content must clear the two decorative pseudo-elements. */
+.panel > *,
+.panel-raised > * {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * Two layers, and the order matters. The light tint on top is what reads as
+ * glass; the dark base underneath is what makes the surface predictable.
+ *
+ * Without that base the effective background is whatever the satellite camera
+ * happens to be framing, so contrast drifts as the map flies — `.mono-label`
+ * measured 4.4:1 over a bright stretch of shoreline, under the 4.5 minimum.
+ * The base sets a floor, so text on glass has a guaranteed worst case no
+ * matter where the coast has moved to.
+ */
+.panel {
+  background:
+    linear-gradient(
+      150deg,
+      rgba(126, 142, 156, 0.14),
+      rgba(78, 90, 103, 0.09) 55%,
+      rgba(100, 114, 128, 0.12)
+    ),
+    rgba(9, 12, 16, 0.58);
+}
+
+/* The heavier tier, for cards carrying dense text over bright imagery. */
+.panel-raised {
+  background: linear-gradient(
+    150deg,
+    rgba(24, 30, 37, 0.82),
+    rgba(16, 21, 27, 0.86) 55%,
+    rgba(21, 27, 34, 0.84)
+  );
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .panel {
+    backdrop-filter: blur(16px) saturate(170%) brightness(1.08);
+  }
+  .panel-raised {
+    backdrop-filter: blur(20px) saturate(150%);
+  }
 }
 
 /* Interactive lift. Transform-only so it never triggers layout. */
@@ -463,6 +550,17 @@ select.field option {
 [data-reveal] {
   opacity: 0;
   transform: translateY(18px);
+}
+/* Directional variants. Lateral drift is smaller than vertical rise — a big
+   sideways travel reads as a slide-in widget rather than as settling. */
+[data-reveal][data-reveal-dir="left"] {
+  transform: translateX(-22px);
+}
+[data-reveal][data-reveal-dir="right"] {
+  transform: translateX(22px);
+}
+[data-reveal][data-reveal-dir="none"] {
+  transform: none;
 }
 [data-reveal].is-visible {
   opacity: 1;

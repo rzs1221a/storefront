@@ -1,5 +1,6 @@
 import { COMPARISON } from "../lib/offer";
 import Reveal from "../components/Reveal";
+import SectionHeader from "../components/SectionHeader";
 
 /**
  * The ownership argument — the strongest objection-handler on the page.
@@ -13,18 +14,13 @@ export default function Comparison() {
   return (
     <section className="section">
       <div className="shell">
-        <Reveal>
-          <p className="eyebrow">The honest comparison</p>
-          <h2 className="headline mt-4 max-w-[18ch]">
-            {COMPARISON.headline}
-          </h2>
-          <p className="lede mt-5">
-            Platform sites typically run a setup fee plus a few hundred dollars
-            a month, for as long as you want the site to stay up. That is a
-            reasonable business — it is just worth being clear about what you
-            get and what you are renting.
-          </p>
-        </Reveal>
+        <SectionHeader
+          index="03"
+          eyebrow="The honest comparison"
+          variant="centered"
+          headline={COMPARISON.headline}
+          lede="Platform sites typically run a setup fee plus a few hundred dollars a month, for as long as you want the site to stay up. That is a reasonable business — it is just worth being clear about what you get and what you are renting."
+        />
 
         <Reveal className="mt-12 overflow-hidden rounded-2xl border border-(--line)">
           {/* Column headers, desktop only — the stacked mobile layout labels

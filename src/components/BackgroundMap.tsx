@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { registerCamera, FRAMES } from "../lib/cameraFrames";
 
 /**
  * The living coast, behind everything.
@@ -38,24 +39,30 @@ export default function BackgroundMap() {
     let raf = 0;
     let cancelled = false;
     let idleHandle = 0;
+    /** Timestamp until which a scripted flight owns the camera. */
+    let flyingUntil = 0;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const start = async () => {
       try {
-        const [{ Map }, { coastStyle, HOME_VIEW }] = await Promise.all([
+        const [{ Map }, { coastStyle }] = await Promise.all([
           import("maplibre-gl"),
           import("../lib/mapStyle"),
         ]);
         if (cancelled) return;
 
+        // The opening frame is the same one the hero section registers, so the
+        // camera never jumps when the first observer callback lands.
+        const opening = FRAMES.top;
+
         map = new Map({
           container,
           style: coastStyle,
-          center: HOME_VIEW.center,
-          zoom: HOME_VIEW.zoom,
-          pitch: HOME_VIEW.pitch,
-          bearing: HOME_VIEW.bearing,
+          center: opening.center,
+          zoom: opening.zoom,
+          pitch: opening.pitch,
+          bearing: opening.bearing,
           interactive: false,
           attributionControl: false,
           // The background is decorative; a crisp 2× plate is not worth the
@@ -65,19 +72,54 @@ export default function BackgroundMap() {
           fadeDuration: 120,
         });
 
+        /*
+         * Debug/test handle. The camera flight is this site's signature
+         * interaction and is otherwise unobservable from outside the module —
+         * MapLibre attaches nothing to the DOM, so scripts/camera-check.mjs
+         * would have to assert our own bookkeeping rather than the real camera.
+         * A read-only reference to a decorative background map exposes nothing
+         * sensitive.
+         */
+        (window as unknown as { __kedgeMap?: unknown }).__kedgeMap = map;
+
         map.on("load", () => {
           if (cancelled) return;
           setLoaded(true);
+
+          /*
+           * Hand the camera to the frame system. `flyTo` is deliberately
+           * `easeTo` rather than MapLibre's `flyTo`: the latter arcs out to a
+           * low zoom and back in, which is dramatic between continents and
+           * nauseating between two points ten miles apart.
+           */
+          registerCamera({
+            flyTo: (frame, durationMs) => {
+              if (!map) return;
+              flyingUntil = performance.now() + durationMs;
+              map.easeTo({
+                center: frame.center,
+                zoom: frame.zoom,
+                pitch: frame.pitch,
+                bearing: frame.bearing,
+                duration: durationMs,
+                easing: (t) => 1 - Math.pow(1 - t, 3),
+              });
+            },
+            isFlying: () => performance.now() < flyingUntil,
+          });
+
           if (reduced) return;
 
           // Idle orbit. rotateTo/easeTo would fight each frame, so the bearing
-          // is advanced directly against elapsed time.
+          // is advanced directly against elapsed time — and it yields entirely
+          // while a scripted flight owns the camera.
           let last = performance.now();
           const tick = (now: number) => {
             raf = requestAnimationFrame(tick);
             const dt = (now - last) / 1000;
             last = now;
             if (document.hidden || !map) return;
+            if (now < flyingUntil) return;
             map.setBearing(map.getBearing() + ORBIT_SPEED * dt);
           };
           raf = requestAnimationFrame(tick);
@@ -104,12 +146,14 @@ export default function BackgroundMap() {
 
     return () => {
       cancelled = true;
+      registerCamera(null);
       window.clearTimeout(timeout);
       cancelAnimationFrame(raf);
       const cancelIdle = (
         window as Window & { cancelIdleCallback?: (h: number) => void }
       ).cancelIdleCallback;
       if (idleHandle && cancelIdle) cancelIdle(idleHandle);
+      delete (window as unknown as { __kedgeMap?: unknown }).__kedgeMap;
       map?.remove();
     };
   }, []);

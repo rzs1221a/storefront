@@ -1,5 +1,6 @@
 import { FAQ } from "../lib/offer";
 import Reveal from "../components/Reveal";
+import SectionHeader from "../components/SectionHeader";
 
 /**
  * Objection handling. Native <details>/<summary> so it works without
@@ -11,16 +12,15 @@ export default function Faq() {
     <section id="faq" className="section">
       <div className="shell">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-          <Reveal className="lg:col-span-4">
-            <p className="eyebrow">Questions</p>
-            <h2 className="headline mt-4">The things people ask.</h2>
-            <p className="lede mt-5">
-              If yours is not here, ask it directly — I would rather answer than
-              have you guess.
-            </p>
-          </Reveal>
+          <SectionHeader
+            index="06"
+            eyebrow="Questions"
+            headline="The things people ask."
+            lede="If yours is not here, ask it directly — I would rather answer than have you guess."
+            className="lg:col-span-4"
+          />
 
-          <Reveal stagger={60} className="lg:col-span-8">
+          <Reveal stagger={60} direction="right" className="lg:col-span-8">
             {FAQ.map((item, i) => (
               <details
                 key={item.q}

@@ -2,6 +2,8 @@ import { TIERS } from "../lib/offer";
 import { SHOW_PRICING } from "../lib/brand";
 import { WORK } from "../lib/work";
 import Reveal from "../components/Reveal";
+import SectionHeader from "../components/SectionHeader";
+import MagneticButton from "../components/MagneticButton";
 
 const money = (n: number) =>
   n.toLocaleString("en-US", {
@@ -17,24 +19,20 @@ const money = (n: number) =>
  */
 export default function Pricing() {
   return (
-    <section id="pricing" className="section">
+    <section id="pricing" data-frame="pricing" className="section">
       <div className="shell">
-        <Reveal>
-          <p className="eyebrow">Pricing</p>
-          <h2 className="headline mt-4 max-w-[18ch]">
-            Pay once. Own it forever.
-          </h2>
-          <p className="lede mt-5">
-            One fee, agreed in writing before anything starts. After launch you
-            owe me nothing — hosting is free at the traffic these sites see, and
-            the code is yours.
-          </p>
-        </Reveal>
+        <SectionHeader
+          index="04"
+          eyebrow="Pricing"
+          variant="split"
+          headline="Pay once. Own it forever."
+          lede="One fee, agreed in writing before anything starts. After launch you owe me nothing — hosting is free at the traffic these sites see, and the code is yours."
+        />
 
         <Reveal
           stagger={110}
           as="ul"
-          className="mt-14 grid gap-5 lg:grid-cols-3 lg:items-start"
+          className="mt-14 grid gap-5 lg:grid-cols-3 lg:items-start lg:gap-7"
         >
           {TIERS.map((tier) => {
             const example = WORK.find((w) => w.slug === tier.exampleSlug);
@@ -43,7 +41,7 @@ export default function Pricing() {
               <li
                 key={tier.slug}
                 data-reveal-item
-                className={`panel-flat lift relative flex h-full flex-col p-7 ${
+                className={`panel lift relative flex h-full flex-col p-7 ${
                   tier.featured
                     ? "border-(--color-signal)/35 lg:-mt-4 lg:pb-9 lg:pt-9"
                     : ""
@@ -125,14 +123,17 @@ export default function Pricing() {
                       </a>
                     </p>
                   )}
-                  <a
-                    href="#contact"
-                    className={`btn w-full ${
-                      tier.featured ? "btn-primary" : "btn-ghost"
-                    }`}
-                  >
-                    Start with {tier.name}
-                  </a>
+                  {tier.featured ? (
+                    <MagneticButton className="block w-full">
+                      <a href="#contact" className="btn btn-primary w-full">
+                        Start with {tier.name}
+                      </a>
+                    </MagneticButton>
+                  ) : (
+                    <a href="#contact" className="btn btn-ghost w-full">
+                      Start with {tier.name}
+                    </a>
+                  )}
                 </div>
               </li>
             );

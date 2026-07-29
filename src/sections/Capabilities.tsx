@@ -1,4 +1,6 @@
 import Reveal from "../components/Reveal";
+import SectionHeader from "../components/SectionHeader";
+import { WORK } from "../lib/work";
 
 /**
  * The technical differentiator, in the buyer's language.
@@ -48,31 +50,80 @@ const CAPABILITIES = [
 ];
 
 export default function Capabilities() {
-  return (
-    <section id="capabilities" className="section">
-      <div className="shell">
-        <Reveal>
-          <p className="eyebrow">What I build</p>
-          <h2 className="headline mt-4 max-w-[20ch]">
-            Things a template cannot do for you.
-          </h2>
-          <p className="lede mt-5">
-            Not a longer feature list — a different category of thing. Each of
-            these is running in one of the sites above, so any of it can be
-            demonstrated rather than described.
-          </p>
-        </Reveal>
+  const [lead, ...others] = CAPABILITIES;
+  // The flagship map, used as the lead cell's own illustration.
+  const mapShot = WORK[0];
 
+  return (
+    <section id="capabilities" data-frame="capabilities" className="section">
+      <div className="shell">
+        <SectionHeader
+          index="02"
+          eyebrow="What I build"
+          headline="Things a template cannot do for you."
+          lede="Not a longer feature list — a different category of thing. Each of these is running in one of the sites above, so any of it can be demonstrated rather than described."
+        />
+
+        {/*
+          An asymmetric bento rather than the 3×2 of equal boxes this used to
+          be. The lead capability earns a double-width cell; the rest fill
+          around it. Cards are glass, not opaque slabs — the coast reads
+          through them, which is the entire reason there is a map back there.
+        */}
         <Reveal
           stagger={70}
           as="ul"
-          className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-(--line) bg-(--line) sm:grid-cols-2 lg:grid-cols-3"
+          className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {CAPABILITIES.map((cap) => (
+          {/*
+            The lead cell is double-width and double-height, which left a large
+            empty middle when it held text alone. It now shows the thing it is
+            describing — the flagship map, cropped — so the claim illustrates
+            itself and the cell earns its size.
+          */}
+          <li
+            data-reveal-item
+            className="panel lift group flex flex-col overflow-hidden sm:col-span-2 lg:row-span-2"
+          >
+            <div className="p-8 pb-6">
+              <h3 className="text-2xl font-medium leading-snug tracking-[-0.022em]">
+                {lead.title}
+              </h3>
+              <p className="lede mt-4 max-w-[46ch]">{lead.body}</p>
+              <p className="mono-label mt-6 flex items-center gap-2">
+                <span
+                  aria-hidden="true"
+                  className="h-px w-5 bg-(--color-signal) transition-all duration-500 group-hover:w-9"
+                />
+                {lead.proof}
+              </p>
+            </div>
+
+            <div className="relative mt-auto min-h-[13rem] flex-1 overflow-hidden">
+              <img
+                src={mapShot.desktop}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+                width={1440}
+                height={900}
+                className="absolute inset-0 h-full w-full scale-[1.04] object-cover object-top transition-transform duration-[1.4s] ease-[var(--ease-out-expo)] group-hover:scale-[1.09]"
+              />
+              {/* Feather the top edge so the screenshot emerges from the card
+                  rather than sitting in it like a pasted rectangle. */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-b from-(--color-plate) via-transparent to-transparent"
+              />
+            </div>
+          </li>
+
+          {others.map((cap) => (
             <li
               key={cap.title}
               data-reveal-item
-              className="group flex flex-col bg-(--color-plate-raised) p-7 transition-colors duration-500 hover:bg-(--color-plate-high)"
+              className="panel lift group flex flex-col p-7"
             >
               <h3 className="text-[1.0625rem] font-medium leading-snug tracking-[-0.015em]">
                 {cap.title}

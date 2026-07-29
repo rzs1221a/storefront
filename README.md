@@ -64,6 +64,43 @@ point putting a map there. If you touch those alpha values, re-run
 `scripts/verify.mjs` — it measures real text contrast against the rendered
 background (see below), and the current values sit just above the line.
 
+### The camera follows the reader
+
+The map does not just orbit — it flies. Each section declares a frame in
+`src/lib/cameraFrames.ts`, and as that section becomes the dominant thing on
+screen the coast beneath the page moves there. Hovering a project card flies to
+where that project actually is. Read about Crane Island and you are looking at
+Crane Island.
+
+Every coordinate is real, taken from `the-aerial/lib/geo.ts` and the USGS
+figure for Crane Island. **Do not invent coordinates here** — a map that flies
+to the wrong place is worse than one that does not fly.
+
+One IntersectionObserver drives it, not a scroll listener. Only the most recent
+target is ever flown to, so a fast scroll past four sections does not queue four
+flights; a flight already in the air shortens the next so the camera keeps up
+with the reader instead of trailing behind. The idle orbit yields while a
+scripted flight owns the camera, and under `prefers-reduced-motion` nothing
+flies at all.
+
+`scripts/camera-check.mjs` asserts this directly — see Verification.
+
+### Live conditions
+
+`src/components/Conditions.tsx` shows the real tide and weather in the hero:
+*"It is 9:57 pm on the coast. The tide at Fernandina Beach is 5.9 feet and
+falling."* Backed by two Netlify Functions ported from The Aerial
+(`netlify/functions/tide.ts`, `conditions.ts`) hitting NOAA CO-OPS station
+8720030 and the National Weather Service. Both APIs are key-free.
+
+This is the one place the site proves rather than claims — the capabilities
+section says I wire up live local data, and this is that, running, two screens
+above the claim.
+
+**Silence is a required behaviour, not a fallback.** On `npm run preview` the
+functions do not exist and this renders nothing at all. Nothing in the hero
+layout may depend on its height.
+
 Esri's terms require visible attribution wherever World Imagery is displayed.
 The map's own control is off, so the credit lives in the footer. Keep it.
 
@@ -128,6 +165,25 @@ screenshots the page with every glyph turned transparent, samples the true
 surface behind each text block, and computes the WCAG ratio. (Sampling a fixed
 offset below the text does not work: under a label sits its own value, and you
 end up measuring cream against cream.)
+
+Then, separately:
+
+```bash
+node scripts/camera-check.mjs
+```
+
+This proves the background camera actually follows the reader — the signature
+interaction is invisible to every other check, since the page passes contrast,
+layout, and accessibility whether or not the map ever moves. It scrolls to each
+registered section, reads the real MapLibre camera, and asserts it arrived near
+the declared coordinate. It also confirms the camera moved *between* sections
+rather than sitting somewhere that happens to satisfy every tolerance, and that
+reduced motion suppresses flight entirely.
+
+A note on what the verifier ignores: a camera that flies cancels tile requests
+for viewports it has already left, which produces dozens of `net::ERR_ABORTED`
+entries per scroll. That is MapLibre working correctly. Any other failed
+request is still reported, with its URL and reason.
 
 Note it forces `scroll-behavior: auto` first. The site sets smooth scrolling,
 and a stepped `scrollTo` loop retargets the in-flight animation on every

@@ -56,8 +56,31 @@ async function main() {
     await routeThroughCurl(page);
 
     const consoleErrors = [];
-    page.on("console", (m) => m.type() === "error" && consoleErrors.push(m.text()));
+    page.on("console", (m) => {
+      if (m.type() !== "error") return;
+      /*
+       * Resource-level failures are covered properly below via `requestfailed`,
+       * which reports the URL and the reason. The console version carries
+       * neither, so keeping both means every aborted map tile is reported twice
+       * with no way to tell it from a real fault.
+       */
+      if (m.text().startsWith("Failed to load resource")) return;
+      consoleErrors.push(m.text());
+    });
     page.on("pageerror", (e) => consoleErrors.push(String(e)));
+
+    /*
+     * A camera that flies cancels tile requests for viewports it has already
+     * left — that is MapLibre working correctly, not a defect, and it produces
+     * dozens of ERR_ABORTED entries per scroll. Anything else that fails to
+     * load is a genuine problem and still reported.
+     */
+    const requestFailures = new Set();
+    page.on("requestfailed", (req) => {
+      const reason = req.failure()?.errorText ?? "unknown";
+      if (reason === "net::ERR_ABORTED") return;
+      requestFailures.add(`${reason} — ${req.url().slice(0, 90)}`);
+    });
 
     await page.goto(ORIGIN, { waitUntil: "networkidle", timeout: 45000 });
     await page.waitForTimeout(1200);
@@ -327,6 +350,7 @@ async function main() {
     }
 
     consoleErrors.forEach((e) => note(vp.name, `console error: ${e.slice(0, 140)}`));
+    requestFailures.forEach((f) => note(vp.name, `request failed: ${f}`));
 
     await page.screenshot({
       path: path.join(OUT, `${vp.name}.png`),
