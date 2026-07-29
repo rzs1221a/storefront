@@ -28,14 +28,15 @@ const VIEWPORTS = [
 
 /** Every route, with a phrase that must appear once it has rendered. */
 const ROUTES = [
-  { path: "/", expect: "Every marker on this coast" },
+  { path: "/", expect: "interactive real estate platforms" },
+  { path: "/work", expect: "Five sites. All of them real" },
   { path: "/work/the-aerial", expect: "living 3D map" },
   { path: "/work/heymann-williams-coastal", expect: "seventeen-route" },
   { path: "/work/sold-on-amelia-island", expect: "guided buyer and seller" },
   { path: "/work/crane-island-bhhs", expect: "single-community authority" },
   { path: "/work/ron-heymann-agent-page", expect: "property-alert" },
-  { path: "/build", expect: "Maps that are the product" },
-  { path: "/pricing", expect: "Own it forever" },
+  { path: "/capabilities", expect: "Maps that are the product" },
+  { path: "/packages", expect: "Own it forever" },
   { path: "/process", expect: "No surprises" },
   { path: "/questions", expect: "Do I really own it" },
   { path: "/contact", expect: "Tell me what you need" },
@@ -166,7 +167,7 @@ async function main() {
 
     // Several camera positions: the background is whatever the map is framing,
     // so one sample proves nothing.
-    for (const route of ["/", "/work/crane-island-bhhs", "/pricing", "/contact"]) {
+    for (const route of ["/", "/work/crane-island-bhhs", "/packages", "/contact"]) {
       await page.goto(`${ORIGIN}${route}`, { waitUntil: "domcontentloaded" });
       await page.waitForTimeout(4500);
 
@@ -296,9 +297,9 @@ async function main() {
     });
     const page = await context.newPage();
     await routeThroughCurl(page);
-    await page.goto(`${ORIGIN}/pricing`, { waitUntil: "domcontentloaded" });
+    await page.goto(`${ORIGIN}/packages`, { waitUntil: "domcontentloaded" });
     await skipOpening(page);
-    await page.goto(`${ORIGIN}/pricing`, { waitUntil: "domcontentloaded" });
+    await page.goto(`${ORIGIN}/packages`, { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(1200);
 
     // Tab through and confirm the close control and rail are reachable.
@@ -315,7 +316,7 @@ async function main() {
     if (![...reached].some((r) => r?.includes("Close"))) {
       note("keyboard", "the sheet close control is not reachable by Tab");
     }
-    if (![...reached].some((r) => r === "Pricing" || r === "What I build")) {
+    if (![...reached].some((r) => r === "Packages" || r === "Capabilities demo")) {
       note("keyboard", "rail destinations are not reachable by Tab");
     }
 
@@ -335,7 +336,7 @@ async function main() {
     });
     const page = await context.newPage();
     await routeThroughCurl(page);
-    await page.goto(`${ORIGIN}/build`, { waitUntil: "domcontentloaded" });
+    await page.goto(`${ORIGIN}/capabilities`, { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(1500);
     const visible = await page.evaluate(() => {
       const s = document.querySelector(".sheet");

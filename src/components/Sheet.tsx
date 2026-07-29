@@ -22,10 +22,18 @@ export default function Sheet({
   title,
   eyebrow,
   children,
+  /**
+   * Widen the sheet on desktop. For the two destinations that compare things
+   * side by side — the packages grid and the capability showcase — where a
+   * narrow column would force a buyer to hold one card in memory while
+   * reading the next. The map still shows through beside it.
+   */
+  wide = false,
 }: {
   title: string;
   eyebrow?: string;
   children: ReactNode;
+  wide?: boolean;
 }) {
   const navigate = useNavigate();
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -64,7 +72,11 @@ export default function Sheet({
   }, []);
 
   return (
-    <aside ref={sheetRef} className="sheet panel" aria-label={title}>
+    <aside
+      ref={sheetRef}
+      className={`sheet panel${wide ? " is-wide" : ""}`}
+      aria-label={title}
+    >
       <div className="sheet-grip" aria-hidden="true" />
 
       <header className="sheet-head">

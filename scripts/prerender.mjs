@@ -101,24 +101,33 @@ const WORK = [
 
 const STUDIO = [
   {
-    path: "/build",
+    path: "/capabilities",
     title: "Things a template cannot do for you",
     blurb:
-      "Live 3D mapping, plain-English property search, prerendered pages that actually rank, and lead routing into BoldTrail. Each one is running in a site you can visit.",
+      "Live 3D mapping, real-time NOAA tide and weather feeds, plain-English property search, prerendered pages that actually rank, and lead routing into BoldTrail. Each one is running right now, on this page or a site you can visit.",
     body: [
+      "Real-time API integration engine — live maps, marine tides, and dynamic data feeds, built into client sites through direct NOAA and National Weather Service integrations.",
       "Maps that are the product — real terrain, satellite imagery, and 3D buildings you descend into, not an embedded Google Map with a pin on it.",
       "Search that speaks English — the search field parses plain phrasing into structured criteria against the same fields an MLS feed carries.",
       "Pages that actually rank — neighborhood pages stamped out as real static HTML at build time, so crawlers and AI assistants see complete written content.",
       "Leads into BoldTrail, properly — validated submissions ingested through the Lead Dropbox parser, so your follow-up and reporting keep working exactly as they do today.",
       "You edit it yourself — log in, change your photos, bio, listings and text, hit publish. Live in about a minute.",
-      "Live local data — real tide readings from the NOAA gauge, conditions from the National Weather Service, and golden-hour times computed for a specific address.",
     ],
   },
   {
-    path: "/pricing",
-    title: "Pay once. Own it forever",
+    path: "/work",
+    title: "Five sites. All of them real",
     blurb:
-      "One fee, agreed in writing before anything starts. After launch you owe nothing — hosting is free at the traffic these sites see, and the code is yours.",
+      "Five shipped real estate sites along the Amelia Island coast — a flagship 3D map, a full brokerage site, a two-agent team site, a community microsite, and a single-agent page.",
+    body: WORK.map(
+      (w) => `${w.name} — ${w.kind}. ${w.summary}`
+    ),
+  },
+  {
+    path: "/packages",
+    title: "Three packages. Pay once, own it forever",
+    blurb:
+      "An agent page, a community site, or a full flagship build. One fee agreed in writing before anything starts, and after launch you owe nothing — hosting is free at the traffic these sites see, and the code is yours.",
     body: [
       "Agent Page — one authoritative page that loads instantly, ranks for your name, and routes every enquiry into your CRM. About one week.",
       "Community Site — take a single community and become the definitive source for it. Two to three weeks.",
@@ -213,13 +222,14 @@ function inject(html, bodyHtml) {
 /** Every page carries the same navigation, so no prerendered page is a dead end. */
 function navHtml(currentPath) {
   const links = [
-    ["/", "The coast"],
+    ["/", "Home"],
+    ["/packages", "Packages"],
+    ["/work", "Work & case studies"],
     ...WORK.map((w) => [`/work/${w.slug}`, w.name]),
-    ["/build", "What I build"],
-    ["/pricing", "Pricing"],
+    ["/capabilities", "Capabilities demo"],
+    ["/contact", "Contact"],
     ["/process", "How it goes"],
     ["/questions", "Questions"],
-    ["/contact", "Get a quote"],
   ]
     .filter(([href]) => href !== currentPath)
     .map(([href, label]) => `<li><a href="${href}">${esc(label)}</a></li>`)
@@ -229,15 +239,15 @@ function navHtml(currentPath) {
 
 const pages = [];
 
-// The coast.
+// Home.
 pages.push({
   route: "/",
-  title: `${BRAND} — ${TAGLINE}`,
+  title: `${BRAND} — High-Converting Custom Web Systems & Interactive Real Estate Platforms`,
   description:
     "Bespoke, high-performance websites for BHHS agents — built once, owned outright, no monthly platform fee. Five sites shipped along the Amelia Island coast.",
   body: `
-    <header><h1>${BRAND} — ${esc(TAGLINE)}</h1></header>
-    <p>Bespoke, high-performance websites for real estate agents. Built once, owned outright, no monthly platform fee. Five sites shipped along the Amelia Island coast, totalling ${WORK.reduce((n, w) => n + w.loc, 0).toLocaleString("en-US")} lines of production source.</p>
+    <header><h1>High-converting custom web systems and interactive real estate platforms.</h1></header>
+    <p>Built once, owned outright, no monthly platform fee. Static-fast pages that rank on their own, live map and market data wired in, and every lead routed straight into BoldTrail. Five sites shipped along the Amelia Island coast, totalling ${WORK.reduce((n, w) => n + w.loc, 0).toLocaleString("en-US")} lines of production source.</p>
     <h2>Selected work</h2>
     <ul>${WORK.map((w) => `<li><a href="/work/${w.slug}"><strong>${esc(w.name)}</strong></a> — ${esc(w.kind)}. ${esc(w.summary)}</li>`).join("")}</ul>
     ${navHtml("/")}
@@ -323,7 +333,7 @@ await writeFile(path.join(dist, "sitemap.xml"), sitemap, "utf8");
  * here, the counts diverge and the build fails loudly rather than silently
  * shipping a page with no crawlable content.
  */
-const EXPECTED_ROUTES = 11;
+const EXPECTED_ROUTES = 12;
 if (pages.length !== EXPECTED_ROUTES) {
   console.error(
     `\nPrerender: expected ${EXPECTED_ROUTES} routes, built ${pages.length}.\n` +

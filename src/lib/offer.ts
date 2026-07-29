@@ -1,41 +1,67 @@
 /**
- * Pricing and packaging — the single file to edit when the numbers change.
+ * The productized offer — the single file to edit when packaging changes.
  *
- * ⚠️  THE PRICES BELOW ARE PLACEHOLDERS and must be confirmed before launch.
+ * ⚠️  THE PRICES BELOW ARE PLACEHOLDERS. They are not published: `SHOW_PRICING`
+ * in lib/brand.ts is false, so every tier reads "Let's talk" until the figures
+ * are confirmed. Set the numbers here, flip that boolean, and all three go live
+ * at once.
  *
  * The model is deliberate: one-time build fee, no recurring platform charge,
  * the agent owns the code and the hosting account. That is the one claim the
- * subscription platforms structurally cannot match, so the whole page is built
+ * subscription platforms structurally cannot match, so the whole offer is built
  * around it.
+ *
+ * On the naming: each tier carries both a `name` and a `system`. The name is
+ * what an agent recognises themselves in — "I need an agent page" — and the
+ * system is the same thing described as an engineering deliverable, for the
+ * team lead or broker who wants to know what they are actually buying. Leading
+ * with the system alone would be jargon at a reader who sells houses.
  */
 
 export interface Tier {
   slug: string;
+  /** What the buyer calls it. */
   name: string;
-  /** Price in whole dollars. `null` renders as "Let's talk". */
+  /** The same thing as a productized system, for the technical reader. */
+  system: string;
+  /** Price in whole dollars. `null`, or SHOW_PRICING false, renders "Let's talk". */
   price: number | null;
   /** Shown after the price, e.g. "one-time". */
   priceNote: string;
   /** Who this is for, in one line. */
   audience: string;
   summary: string;
-  includes: string[];
+  /** Concrete buyer profiles. Answers "is this me?" faster than prose can. */
+  idealFor: string[];
+  /** What is actually handed over at the end. */
+  deliverables: string[];
+  /** Plain-language delivery window. */
+  turnaroundTime: string;
+  /** The button on the card. Written as the buyer's next step, not a demand. */
+  ctaLabel: string;
   /** Slug from work.ts — the real project that proves this tier. */
   exampleSlug: string;
-  timeline: string;
   featured?: boolean;
+  /** Ribbon on the featured card. */
+  badge?: string;
 }
 
 export const TIERS: Tier[] = [
   {
     slug: "agent-page",
     name: "Agent Page",
+    system: "High-Performance Landing System",
     price: 1500,
     priceNote: "one-time",
     audience: "A single agent who needs a real home online.",
     summary:
       "One authoritative page that loads instantly, ranks for your name, and routes every enquiry into your CRM.",
-    includes: [
+    idealFor: [
+      "You are an individual agent with no site, or a brokerage profile page",
+      "Your BoldTrail property-alert emails send traffic somewhere that is not yours",
+      "You want one link that works on a business card, a sign, and a phone",
+    ],
+    deliverables: [
       "Custom design — not a template with your headshot dropped in",
       "Bio, listings, testimonials, and contact",
       "Lead form routed into BoldTrail or your inbox",
@@ -43,18 +69,25 @@ export const TIERS: Tier[] = [
       "Full SEO: metadata, Open Graph, schema.org, sitemap",
       "Free hosting on Netlify, in your account",
     ],
+    turnaroundTime: "About one week",
+    ctaLabel: "Inquire about this tier",
     exampleSlug: "ron-heymann-agent-page",
-    timeline: "About one week",
   },
   {
     slug: "community-site",
     name: "Community Site",
+    system: "Interactive Coastal Platform",
     price: 3500,
     priceNote: "one-time",
     audience: "An agent who wants to own one niche completely.",
     summary:
       "Stop fighting the whole county for one keyword. Take a single community — a neighborhood, a development, a price band — and become the definitive source for it.",
-    includes: [
+    idealFor: [
+      "You already have a farm area and want to be the obvious authority in it",
+      "You sell waterfront, a named development, or one distinct price band",
+      "You want to update your own content without filing a request",
+    ],
+    deliverables: [
       "Everything in Agent Page",
       "Deep single-community authority content",
       "Geo-targeted metadata and structured data for that specific search intent",
@@ -62,19 +95,27 @@ export const TIERS: Tier[] = [
       "Guided buyer and seller lead flows",
       "Content editor so you update it yourself, no developer needed",
     ],
+    turnaroundTime: "Two to three weeks",
+    ctaLabel: "Inquire about this tier",
     exampleSlug: "crane-island-bhhs",
-    timeline: "Two to three weeks",
     featured: true,
+    badge: "Most popular",
   },
   {
     slug: "flagship",
     name: "Flagship",
+    system: "Custom Enterprise Build",
     price: 6500,
     priceNote: "starting, one-time",
     audience: "A team or brokerage that wants something nobody else has.",
     summary:
       "The full build. Multi-route, map-driven, prerendered for search, with whatever the business actually needs rather than whatever the template allowed.",
-    includes: [
+    idealFor: [
+      "You are a team or brokerage with a roster and more than one market",
+      "You need pages for every neighborhood you cover, each one able to rank",
+      "You want the site itself to be the reason someone calls you",
+    ],
+    deliverables: [
       "Everything in Community Site",
       "Multi-route architecture with a full agent roster",
       "Live 3D mapping — real terrain, buildings, satellite imagery",
@@ -83,10 +124,17 @@ export const TIERS: Tier[] = [
       "Live local data — tide, weather, light, market signals",
       "Complete design system documented for future work",
     ],
+    turnaroundTime: "Four to eight weeks",
+    ctaLabel: "Discuss a custom build",
     exampleSlug: "heymann-williams-coastal",
-    timeline: "Four to eight weeks",
   },
 ];
+
+/** Look a tier up by the slug a `?package=` parameter carries. */
+export function tierBySlug(slug: string | null | undefined): Tier | undefined {
+  if (!slug) return undefined;
+  return TIERS.find((t) => t.slug === slug);
+}
 
 /**
  * The comparison argument.

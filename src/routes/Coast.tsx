@@ -1,58 +1,128 @@
 import { Link } from "react-router-dom";
-import { WORK_DESTINATIONS } from "../lib/destinations";
-import { TOTALS } from "../lib/work";
+import { WORK, TOTALS } from "../lib/work";
+import { TIERS } from "../lib/offer";
+import BrowserFrame from "../components/BrowserFrame";
+import MagneticButton from "../components/MagneticButton";
 import CountUp from "../components/CountUp";
 
 /**
- * The coast — what you see when no destination is open.
+ * Home — the hero, over the live coast.
  *
- * Deliberately almost nothing: a short orientation and the way in. The map is
- * the content here, and covering it with a panel would defeat the point of the
- * whole redesign. On a phone the list of projects is the primary way through,
- * since tapping small beacons is harder than tapping rows.
+ * The map is still the interface and still the reason this site does not look
+ * like anything else. But a visitor who lands on a beautiful map and cannot
+ * tell what is being sold leaves, so the hero states the offer in words, shows
+ * one project running, and gives two ways forward: the packages for someone
+ * comparing, and a consultation for someone ready.
+ *
+ * The visual proof is the top project in a browser frame — and because The
+ * Aerial is publicly reachable, the frame's "Run it live" control boots the
+ * actual application inside the hero. Nothing else on this page is as
+ * persuasive as an agent flying a real 3D map before they have spoken to me.
+ * It stays click-to-load: mounting a deck.gl app unasked would wreck the page.
  */
+
+const FEATURED = WORK[0];
+
 export default function Coast() {
   return (
     <div className="coast-layer" id="sheet">
-      <div className="coast-card panel">
-        <p className="eyebrow">Start anywhere</p>
-        <p className="mt-3 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
-          Every marker on this coast is a site I built and shipped. Open one, or
-          take the studio in order from the rail.
-        </p>
+      <div className="hero panel">
+        <div className="hero-copy">
+          <p className="eyebrow">Kedge — Amelia Island, Florida</p>
 
-        <dl className="mt-5 flex items-baseline gap-6 border-t border-(--line) pt-4">
-          <div>
-            <dt className="mono-label">Sites</dt>
-            <dd className="mt-1 font-mono text-xl">
-              <CountUp to={TOTALS.projects} />
-            </dd>
+          <h1 className="hero-title">
+            High-converting custom web systems and interactive real estate
+            platforms.
+          </h1>
+
+          <p className="hero-sub">
+            Built once, owned outright, no monthly platform fee. Static-fast
+            pages that rank on their own, live map and market data wired in, and
+            every lead routed straight into BoldTrail.
+          </p>
+
+          <div className="hero-actions">
+            <MagneticButton>
+              <Link to="/packages" className="btn btn-primary">
+                View packages
+              </Link>
+            </MagneticButton>
+            <Link to="/contact" className="btn btn-ghost">
+              Schedule a consultation
+            </Link>
           </div>
-          <div>
-            <dt className="mono-label">Lines</dt>
-            <dd className="mt-1 font-mono text-xl">
-              <CountUp to={TOTALS.loc} />
-            </dd>
-          </div>
-          <div>
-            <dt className="mono-label">Monthly fee</dt>
-            <dd className="mt-1 font-mono text-xl">$0</dd>
-          </div>
-        </dl>
+
+          <dl className="hero-stats">
+            <div>
+              <dt className="mono-label">Sites shipped</dt>
+              <dd>
+                <CountUp to={TOTALS.projects} />
+              </dd>
+            </div>
+            <div>
+              <dt className="mono-label">Lines of source</dt>
+              <dd>
+                <CountUp to={TOTALS.loc} />
+              </dd>
+            </div>
+            <div>
+              <dt className="mono-label">Monthly fee</dt>
+              <dd>$0</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div className="hero-proof">
+          <BrowserFrame
+            url={FEATURED.liveUrl?.replace(/^https:\/\//, "")}
+            liveUrl={FEATURED.liveUrl}
+          >
+            <picture>
+              <source media="(max-width: 640px)" srcSet={FEATURED.mobile} />
+              <img
+                src={FEATURED.desktop}
+                alt={`The ${FEATURED.name} website — ${FEATURED.kind.toLowerCase()}`}
+                width={1440}
+                height={900}
+                decoding="async"
+                className="block w-full"
+              />
+            </picture>
+          </BrowserFrame>
+
+          <p className="hero-proof-caption">
+            <Link to={`/work/${FEATURED.slug}`} className="hover:text-(--color-ink)">
+              {FEATURED.name} — {FEATURED.kind.toLowerCase()}
+            </Link>
+            <span className="text-(--color-ink-faint)">
+              {" "}
+              · one of {TOTALS.projects} shipped along this coast
+            </span>
+          </p>
+        </div>
       </div>
 
-      {/* Phones get the projects as a list; beacons are a pointer affordance. */}
+      {/* Phones get the packages as chips: the fastest route to the offer on a
+          screen where the hero already fills the panel. The map stays the
+          atmosphere and the reward, never the only way through. */}
       <ul className="coast-list">
-        {WORK_DESTINATIONS.map((dest, i) => (
-          <li key={dest.path}>
-            <Link to={dest.path} className="coast-chip">
-              <span className="font-mono text-[0.625rem] text-(--color-ink-faint)">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              {dest.label}
+        <li>
+          <Link to="/packages" className="coast-chip is-primary">
+            Packages
+          </Link>
+        </li>
+        {TIERS.map((tier) => (
+          <li key={tier.slug}>
+            <Link to={`/contact?package=${tier.slug}`} className="coast-chip">
+              {tier.name}
             </Link>
           </li>
         ))}
+        <li>
+          <Link to="/work" className="coast-chip">
+            Case studies
+          </Link>
+        </li>
       </ul>
     </div>
   );

@@ -1,6 +1,5 @@
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { BRAND } from "../lib/brand";
-import { WORK_DESTINATIONS, STUDIO_DESTINATIONS } from "../lib/destinations";
 import BrandMark from "./BrandMark";
 import Conditions from "./Conditions";
 
@@ -12,60 +11,18 @@ import Conditions from "./Conditions";
  * top, and the sheets doing the rest. Modeled on The Aerial's mobile profile.
  */
 
+/**
+ * The five commercial destinations, with labels short enough to sit in a tab.
+ * `match` is the path prefix that keeps a tab lit — a project route keeps Work
+ * lit, so a visitor two levels deep still knows where they are.
+ */
 const TABS = [
-  { path: "/", label: "Coast" },
-  { path: "/work", label: "Work" },
-  { path: "/studio", label: "Studio" },
-  { path: "/contact", label: "Contact" },
+  { path: "/", label: "Home", match: "/" },
+  { path: "/packages", label: "Packages", match: "/packages" },
+  { path: "/work", label: "Work", match: "/work" },
+  { path: "/capabilities", label: "Demo", match: "/capabilities" },
+  { path: "/contact", label: "Contact", match: "/contact" },
 ];
-
-/** The Work and Studio tabs open an index rather than a single destination. */
-export function MobileIndex({ group }: { group: "work" | "studio" }) {
-  const items = group === "work" ? WORK_DESTINATIONS : STUDIO_DESTINATIONS;
-  const navigate = useNavigate();
-
-  return (
-    <ul className="divide-y divide-(--line)">
-      {items.map((dest, i) => (
-        <li key={dest.path}>
-          <button
-            type="button"
-            onClick={() => navigate(dest.path)}
-            className="flex w-full items-start gap-4 py-4 text-left transition-colors hover:bg-white/[0.03]"
-          >
-            <span className="mt-1 font-mono text-[0.6875rem] text-(--color-ink-faint)">
-              {String(i + 1).padStart(2, "0")}
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-[1.0625rem] font-medium tracking-[-0.015em]">
-                {dest.label}
-              </span>
-              <span className="mt-1 block text-[0.875rem] leading-relaxed text-(--color-ink-soft)">
-                {dest.blurb}
-              </span>
-            </span>
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              aria-hidden="true"
-              className="mt-1.5 flex-none text-(--color-ink-faint)"
-            >
-              <path
-                d="M5 3L9.5 7L5 11"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        </li>
-      ))}
-    </ul>
-  );
-}
 
 export function MobileTopBar() {
   return (
@@ -82,20 +39,13 @@ export function MobileTopBar() {
 export function TabBar() {
   const { pathname } = useLocation();
 
-  /** A project route keeps the Work tab lit; a studio route keeps Studio lit. */
-  const activeFor = (tabPath: string) => {
-    if (tabPath === "/") return pathname === "/";
-    if (tabPath === "/work") return pathname.startsWith("/work");
-    if (tabPath === "/contact") return pathname === "/contact";
-    return STUDIO_DESTINATIONS.some(
-      (d) => d.path === pathname && d.path !== "/contact"
-    ) || pathname === "/studio";
-  };
+  const activeFor = (match: string) =>
+    match === "/" ? pathname === "/" : pathname.startsWith(match);
 
   return (
     <nav className="tab-bar" aria-label="Primary">
       {TABS.map((tab) => {
-        const active = activeFor(tab.path);
+        const active = activeFor(tab.match);
         return (
           <NavLink
             key={tab.path}

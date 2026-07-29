@@ -188,6 +188,172 @@ body {
   transition: opacity 0.9s var(--ease-out-expo);
 }
 
+/* The real sky. Above the plate, below every piece of chrome, never
+   interactive. Draws nothing at all while the sun is up. */
+.star-sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── The tour ─────────────────────────────────────────────────────────── */
+
+.tour-button {
+  width: 100%;
+  min-height: 38px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.8125rem;
+  color: var(--color-ink);
+  transition:
+    background-color 0.24s ease,
+    border-color 0.24s ease;
+}
+.tour-button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+.tour-button.is-active {
+  border-color: var(--color-signal);
+  color: var(--color-signal);
+}
+
+/* The caption rides above the map, clear of the rail and the sheet. */
+.tour-caption {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--gutter) + 0.5rem);
+  z-index: 45;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  white-space: nowrap;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(8, 11, 15, 0.82);
+  backdrop-filter: blur(16px) saturate(160%);
+  padding: 0.625rem 1.125rem;
+  animation: captionIn 0.5s var(--ease-out-expo) both;
+}
+.tour-caption-name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.tour-caption-line {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-ink-muted);
+}
+@keyframes captionIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ── The command bar ──────────────────────────────────────────────────── */
+
+.command {
+  margin-top: 0.875rem;
+}
+.command-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.625rem;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.035);
+  padding: 0.5rem 0.625rem;
+  transition:
+    border-color 0.22s ease,
+    background-color 0.22s ease;
+}
+.command-field:focus-within {
+  border-color: var(--color-signal);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 3px var(--color-signal-glow);
+}
+.command-input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: 0;
+  outline: none;
+  color: var(--color-ink);
+  /* 16px so iOS does not zoom the whole app frame when it gains focus. */
+  font-size: 16px;
+}
+@media (min-width: 900px) {
+  .command-input {
+    font-size: 0.8125rem;
+  }
+}
+.command-input::placeholder {
+  color: var(--color-ink-faint);
+}
+.command-key {
+  flex: none;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  padding: 0 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--color-ink-faint);
+}
+.command-said:not(:empty) {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--color-ink-muted);
+}
+
+/* ── Live embeds ──────────────────────────────────────────────────────── */
+
+.browser-live {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex: none;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.6875rem;
+  color: var(--color-ink-soft);
+  transition:
+    color 0.22s ease,
+    border-color 0.22s ease,
+    background-color 0.22s ease;
+}
+.browser-live:hover {
+  color: var(--color-ink);
+  border-color: var(--color-signal);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Hold the poster's shape so swapping to the iframe never jumps the sheet. */
+.browser-live-stage {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--color-plate);
+}
+.browser-iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
 /* ── Beacons ──────────────────────────────────────────────────────────── */
 
 .beacon {
@@ -364,6 +530,15 @@ body {
     bottom: var(--gutter);
     width: min(34rem, 46vw);
   }
+  /*
+   * The two destinations that compare things side by side — packages and the
+   * capability showcase. Wider, but still short of the rail: the map has to
+   * stay visible between the two or this stops being a map interface and
+   * becomes a page with a picture behind it.
+   */
+  .shell-frame .sheet.is-wide {
+    width: min(52rem, 60vw);
+  }
   .sheet-grip {
     display: none;
   }
@@ -463,6 +638,13 @@ body {
 
 .sheet-body {
   padding: 0 1.5rem 2rem;
+  /*
+   * The grids inside a sheet must size against the sheet, not the window.
+   * A viewport media query would put three package cards side by side on a
+   * 1000px screen where the sheet is only 460px wide, giving each card about
+   * eleven characters a line. Container queries ask the right question.
+   */
+  container-type: inline-size;
 }
 
 /* ── The coast layer ──────────────────────────────────────────────────── */
@@ -480,7 +662,13 @@ body {
   .shell-frame .coast-layer {
     right: var(--gutter);
     bottom: var(--gutter);
-    width: min(24rem, 34vw);
+    /* Wide enough to carry a headline, two calls to action, and a live
+       project preview — while still leaving the coast reading as the
+       subject rather than as wallpaper behind a slab. */
+    width: min(40rem, 52vw);
+    /* So the hero splits into two columns on its own width rather than the
+       window's — see .offer-grid for the same reasoning. */
+    container-type: inline-size;
   }
   .coast-list {
     display: none;
@@ -492,11 +680,101 @@ body {
     left: 0.75rem;
     right: 0.75rem;
     bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+    /* The hero can outgrow a short phone; let it scroll inside its own layer
+       rather than pushing the chips off the bottom of the screen. */
+    top: 3.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 0;
   }
 }
 
-.coast-card {
-  padding: 1.25rem;
+/* ── The hero ─────────────────────────────────────────────────────────── */
+
+.hero {
+  padding: 1.5rem;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}
+
+@media (min-width: 900px) {
+  .hero {
+    padding: 1.75rem;
+    max-height: calc(100dvh - var(--gutter) * 2);
+  }
+}
+
+/*
+ * Two columns once there is room for both to be legible: the argument on the
+ * left, the running proof on the right. Below this the proof stacks under the
+ * copy, because a 15rem-wide browser frame proves nothing.
+ */
+@container (min-width: 34rem) {
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.75rem;
+    align-items: start;
+  }
+}
+
+.hero-title {
+  margin-top: 0.875rem;
+  font-size: clamp(1.5rem, 2.6vw, 2.125rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+  text-wrap: balance;
+}
+
+.hero-sub {
+  margin-top: 0.875rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+
+.hero-actions {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.hero-stats {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+.hero-stats dd {
+  margin-top: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+}
+
+.hero-proof {
+  margin-top: 1.5rem;
+}
+@container (min-width: 34rem) {
+  .hero-proof {
+    margin-top: 0;
+  }
+}
+
+.hero-proof-caption {
+  margin-top: 0.625rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--color-ink-muted);
 }
 
 .coast-list {
@@ -522,6 +800,327 @@ body {
   padding: 0.5rem 0.875rem;
   font-size: 0.8125rem;
 }
+/* The one chip that leads somewhere commercial reads as an action. */
+.coast-chip.is-primary {
+  border-color: var(--color-signal);
+  color: var(--color-signal);
+}
+
+/* ── The offer matrix ─────────────────────────────────────────────────── */
+
+.offer-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+/*
+ * Three abreast once each card can hold a readable line — measured against the
+ * sheet, not the window. The wide sheet (Sheet `wide`) is what buys the room;
+ * below it the cards stack, and source order — featured first — is what the
+ * reader gets.
+ */
+@container (min-width: 44rem) {
+  .offer-grid {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+  }
+  .offer-grid > .tier-card {
+    order: var(--tier-order, 0);
+  }
+}
+
+.tier-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  border-radius: 0.875rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 1.25rem;
+}
+
+.tier-card.is-featured {
+  border-color: color-mix(in srgb, var(--color-signal) 38%, transparent);
+  background: rgba(255, 255, 255, 0.045);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-signal) 12%, transparent);
+}
+
+.tier-badge {
+  position: absolute;
+  top: 0;
+  right: 1.25rem;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-signal) 45%, transparent);
+  background: #0b1016;
+  padding: 0.1875rem 0.625rem;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-signal);
+}
+
+.tier-name {
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: -0.018em;
+}
+.tier-system {
+  margin-top: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-ink-muted);
+}
+
+.tier-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid var(--line);
+}
+.tier-figure {
+  font-family: var(--font-mono);
+  font-size: 1.375rem;
+  letter-spacing: -0.02em;
+}
+.tier-note {
+  font-size: 0.75rem;
+  color: var(--color-ink-faint);
+}
+
+.tier-summary {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+
+.tier-meta {
+  display: grid;
+  gap: 0.625rem;
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.8125rem;
+}
+.tier-meta dd {
+  margin-top: 0.125rem;
+  color: var(--color-ink-soft);
+}
+.tier-example {
+  color: var(--color-signal);
+  transition: opacity 0.24s ease;
+}
+.tier-example:hover {
+  opacity: 0.78;
+}
+
+.tier-section {
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--line);
+}
+.tier-list {
+  margin-top: 0.625rem;
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-ink-soft);
+}
+.tier-list li {
+  display: flex;
+  gap: 0.5rem;
+}
+.tier-list.is-plain li {
+  color: var(--color-ink-muted);
+}
+.tier-tick {
+  margin-top: 0.5em;
+  height: 0.25rem;
+  width: 0.25rem;
+  flex: none;
+  border-radius: 999px;
+  background: var(--color-signal);
+}
+
+/* ── Case studies ─────────────────────────────────────────────────────── */
+
+.case-row {
+  display: flex;
+  gap: 1rem;
+  padding: 1.125rem 0.25rem;
+  transition: background-color 0.24s ease;
+}
+.case-row:hover {
+  background: rgba(255, 255, 255, 0.025);
+}
+.case-index {
+  margin-top: 0.25rem;
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--color-ink-faint);
+}
+.case-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.case-name {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.case-kind {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-ink-muted);
+}
+.case-summary {
+  display: block;
+  margin-top: 0.375rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--color-ink-soft);
+}
+.case-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.625rem;
+}
+.case-tier,
+.case-live {
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  padding: 0.125rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  color: var(--color-ink-muted);
+}
+.case-live {
+  border-color: color-mix(in srgb, var(--color-signal) 35%, transparent);
+  color: var(--color-signal);
+}
+
+.case-facts {
+  display: grid;
+  gap: 0.875rem;
+  margin-top: 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 1rem 1.125rem;
+}
+.case-facts dd {
+  margin-top: 0.25rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+
+.case-cta {
+  margin-top: 2rem;
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-signal) 26%, transparent);
+  background: rgba(255, 255, 255, 0.035);
+  padding: 1.125rem;
+}
+.case-cta-line {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+
+/* ── The capability showcase ──────────────────────────────────────────── */
+
+.showcase {
+  border-radius: 0.875rem;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1.375rem;
+}
+.showcase-title {
+  margin-top: 0.625rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.022em;
+}
+.showcase-body {
+  margin-top: 0.625rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+.showcase-panels {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 1rem;
+}
+@container (min-width: 38rem) {
+  .showcase-panels {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.showcase-panel {
+  border-radius: 0.625rem;
+  border: 1px solid var(--line);
+  background: rgba(6, 8, 11, 0.4);
+  padding: 1rem;
+}
+.showcase-note {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--color-ink-faint);
+}
+
+.cap-matters {
+  margin-top: 0.875rem;
+  border-left: 2px solid color-mix(in srgb, var(--color-signal) 40%, transparent);
+  padding-left: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-ink-muted);
+}
+.cap-matters .mono-label {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* The tier a visitor arrived with, acknowledged above the form. */
+.selected-package {
+  margin-top: 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-signal) 30%, transparent);
+  background: rgba(255, 255, 255, 0.035);
+  padding: 1rem 1.125rem;
+}
+.selected-package-name {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.selected-package-system {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  color: var(--color-ink-muted);
+}
+/* Marks the pre-filled choice without implying it is locked. */
+.field.is-prefilled {
+  border-color: color-mix(in srgb, var(--color-signal) 40%, transparent);
+}
 
 /* ── Phone chrome ─────────────────────────────────────────────────────── */
 
@@ -546,7 +1145,12 @@ body {
   bottom: 0;
   z-index: 40;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* Five commercial destinations — Home, Packages, Work, Demo, Contact. Was
+     hard-coded to 4 columns and left the fifth tab wrapping onto its own
+     row; grid-auto-flow: column with an explicit count keeps this correct
+     if a tab is ever added or removed instead of drifting silently again. */
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   border-top: 1px solid var(--line);
   background: rgba(8, 10, 14, 0.94);
   backdrop-filter: blur(20px);
@@ -557,9 +1161,11 @@ body {
   place-items: center;
   /* 48px clears the WCAG target-size minimum with room for a thumb. */
   min-height: 48px;
+  padding: 0 0.25rem;
   font-size: 0.75rem;
   letter-spacing: -0.005em;
   color: var(--color-ink-muted);
+  text-align: center;
   transition: color 0.22s ease;
 }
 .tab.is-active {
@@ -578,9 +1184,11 @@ body {
   padding: var(--gutter);
   background: rgba(6, 8, 11, 0.9);
   backdrop-filter: blur(6px);
+  /* 0.7s, matching FADE_MS in Opening.tsx — the component removes the node on
+     that timer, so a slower fade here would cut the dissolve off mid-way. */
   transition:
-    opacity 0.9s var(--ease-out-expo),
-    backdrop-filter 0.9s var(--ease-out-expo);
+    opacity 0.7s var(--ease-out-expo),
+    backdrop-filter 0.7s var(--ease-out-expo);
 }
 .opening[data-leaving="true"] {
   opacity: 0;
@@ -607,6 +1215,15 @@ body {
   margin-top: 1rem;
   font-size: 0.9375rem;
   color: var(--color-ink-muted);
+}
+
+.opening-skip {
+  margin-top: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-ink-faint);
 }
 
 @keyframes openingIn {

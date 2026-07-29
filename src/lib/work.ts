@@ -10,6 +10,17 @@ export interface WorkItem {
   name: string;
   /** What kind of site this is, in the buyer's language. */
   kind: string;
+  /** Who it was built for. Factual — the brokerage, the team, or in-house. */
+  client: string;
+  /**
+   * What the site accomplishes, stated as a result.
+   *
+   * Deliberately NOT a conversion statistic. I do not have access to these
+   * clients' analytics, and inventing "+40% leads" for a portfolio page would
+   * be the one lie that discredits every true claim beside it. What is here
+   * is what the site verifiably does.
+   */
+  outcome: string;
   /** One honest sentence about what it DOES, not how it looks. */
   summary: string;
   /** The longer story, shown on the expanded card. */
@@ -34,6 +45,9 @@ export const WORK: WorkItem[] = [
     slug: "the-aerial",
     name: "The Aerial",
     kind: "Flagship product",
+    client: "Kedge — in-house flagship",
+    outcome:
+      "One interface covering seventy named areas across four regions, where a buyer explores by flying rather than by filtering a list.",
     summary:
       "The entire coast from Camden County, Georgia to St. Augustine as a living 3D map — no homepage, no nav, no scroll feed. You open it and you are above the real county.",
     detail:
@@ -57,6 +71,9 @@ export const WORK: WorkItem[] = [
     slug: "heymann-williams-coastal",
     name: "Heymann Williams",
     kind: "Full brokerage site",
+    client: "Heymann Williams Coastal Properties",
+    outcome:
+      "Twenty-six neighborhood pages shipped as real static HTML — each one a separate entry point from search — on a seventeen-route site carrying the full agent roster.",
     summary:
       "A seventeen-route brokerage site with a cinematic map-synced community story, twenty-six prerendered neighborhood pages, and a full agent roster.",
     detail:
@@ -79,6 +96,9 @@ export const WORK: WorkItem[] = [
     slug: "sold-on-amelia-island",
     name: "Sold on Amelia Island",
     kind: "Two-agent team site",
+    client: "A two-agent team on Amelia Island",
+    outcome:
+      "Two guided lead funnels delivering validated submissions into BoldTrail, with the agents publishing their own content changes in about a minute.",
     summary:
       "A team site with guided buyer and seller flows, live lead delivery into BoldTrail, and a built-in editor so the agents change their own content without calling anyone.",
     detail:
@@ -101,6 +121,9 @@ export const WORK: WorkItem[] = [
     slug: "crane-island-bhhs",
     name: "Crane Island",
     kind: "Community microsite",
+    client: "Heymann Williams — Crane Island",
+    outcome:
+      "One community owned completely: metadata, schema, and content built for a single high-value search intent instead of competing county-wide, deployed on the brokerage's own subdomain.",
     summary:
       "A single-community authority page built to own the search results for one high-value niche — deep-water waterfront on Amelia Island.",
     detail:
@@ -123,6 +146,9 @@ export const WORK: WorkItem[] = [
     slug: "ron-heymann-agent-page",
     name: "Ron Heymann",
     kind: "Individual agent page",
+    client: "Ron Heymann, individual agent",
+    outcome:
+      "BoldTrail property-alert traffic resolves on the agent's own domain instead of dead-ending — the difference between an email campaign that works and one that quietly leaks.",
     summary:
       "A single-agent page that catches BoldTrail's property-alert email traffic instead of letting it 404 on the wrong domain.",
     detail:

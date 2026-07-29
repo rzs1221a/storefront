@@ -47,8 +47,11 @@ async function resolveChromium() {
 /**
  * Expose the live camera to the test. MapLibre keeps no global handle, so the
  * map instance is found by reaching through the canvas MapLibre created.
+ *
+ * Kept as a named function declaration (rather than inlined at each call
+ * site) so the settle-poll below can reuse the exact same lookup.
  */
-const READ_CAMERA = `(() => {
+const READ_CAMERA_FN = `function readCamera() {
   const el = document.querySelector('.live-map .maplibregl-map')
           || document.querySelector('.live-map');
   const key = el && Object.keys(el).find((k) => k.startsWith('__maplibre'));
@@ -56,7 +59,8 @@ const READ_CAMERA = `(() => {
   if (!map || !map.getCenter) return null;
   const c = map.getCenter();
   return { lng: c.lng, lat: c.lat, zoom: map.getZoom() };
-})()`;
+}`;
+const READ_CAMERA = `(() => { ${READ_CAMERA_FN} return readCamera(); })()`;
 
 async function main() {
   const browser = await chromium.launch({
@@ -90,8 +94,33 @@ async function main() {
       { timeout: 30000 }
     );
 
-    // Flights run 3s; wait past that so the camera has settled.
-    await page.waitForTimeout(4200);
+    /*
+     * Poll until the camera stops moving rather than waiting a fixed 4.2s.
+     * A flight to a project is ~3s, but "/" now opens with a 7s arrival
+     * descent (LiveMap's APPROACH -> FRAMES.top), and a fixed wait tuned for
+     * the shorter flights would read the camera mid-descent. Settling is
+     * "center unchanged across two 300ms samples", generous enough that
+     * MapLibre's easing tail doesn't read as still-moving.
+     */
+    await page.waitForFunction(
+      `${READ_CAMERA_FN}
+       (async () => {
+         let prev = readCamera();
+         for (let i = 0; i < 40; i++) {
+           await new Promise((r) => setTimeout(r, 300));
+           const next = readCamera();
+           if (
+             prev && next &&
+             Math.abs(prev.lng - next.lng) < 0.0001 &&
+             Math.abs(prev.lat - next.lat) < 0.0001
+           ) return true;
+           prev = next;
+         }
+         return false;
+       })()`,
+      null,
+      { timeout: 12000 }
+    ).catch(() => {});
     const cam = await page.evaluate(READ_CAMERA);
 
     if (!cam) {

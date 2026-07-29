@@ -27,6 +27,15 @@ export interface Destination {
   blurb: string;
   /** Grouping for the rail and the mobile tab bar. */
   group: "coast" | "work" | "studio";
+  /**
+   * Position in the primary commercial navigation, if it belongs there.
+   *
+   * Only five destinations carry one — Home, Packages, Work, Capabilities,
+   * Contact. Everything else is real, linkable, and prerendered, but reached
+   * from within a sheet rather than from the top level. A nav that lists
+   * everything ranks nothing.
+   */
+  navOrder?: number;
   /** Projects carry a marker on the plane; studio destinations do not. */
   beacon?: { center: [number, number]; name: string };
 }
@@ -71,30 +80,53 @@ export const DESTINATIONS: Destination[] = [
   {
     path: "/",
     frame: "top",
-    label: "The coast",
+    label: "Home",
     title: "Custom websites for real estate professionals",
     blurb:
       "Bespoke, high-performance websites for BHHS agents — built once, owned outright, no monthly platform fee. Five sites shipped along this coast.",
     group: "coast",
+    navOrder: 1,
   },
   ...workDestinations,
   {
-    path: "/build",
-    frame: "capabilities",
-    label: "What I build",
-    title: "Things a template cannot do for you",
+    path: "/packages",
+    frame: "pricing",
+    label: "Packages",
+    title: "Three packages. Pay once, own it forever",
     blurb:
-      "Live 3D mapping, plain-English property search, prerendered pages that actually rank, and lead routing into BoldTrail. Each one is running in a site you can visit.",
+      "An agent page, a community site, or a full flagship build. One fee agreed in writing before anything starts, and after launch you owe nothing — hosting is free at the traffic these sites see, and the code is yours.",
     group: "studio",
+    navOrder: 2,
   },
   {
-    path: "/pricing",
-    frame: "pricing",
-    label: "Pricing",
-    title: "Pay once. Own it forever",
+    path: "/work",
+    frame: "top",
+    label: "Work & case studies",
+    title: "Five sites. All of them real",
     blurb:
-      "One fee, agreed in writing before anything starts. After launch you owe nothing — hosting is free at the traffic these sites see, and the code is yours.",
+      "Five shipped real estate sites along the Amelia Island coast — a flagship 3D map, a full brokerage site, a two-agent team site, a community microsite, and a single-agent page.",
     group: "studio",
+    navOrder: 3,
+  },
+  {
+    path: "/capabilities",
+    frame: "capabilities",
+    label: "Capabilities demo",
+    title: "Things a template cannot do for you",
+    blurb:
+      "Live 3D mapping, real-time NOAA tide and weather feeds, plain-English property search, prerendered pages that actually rank, and lead routing into BoldTrail. Each one is running right now, on this page or a site you can visit.",
+    group: "studio",
+    navOrder: 4,
+  },
+  {
+    path: "/contact",
+    frame: "contact",
+    label: "Contact",
+    title: "Tell me what you need",
+    blurb:
+      "Twenty minutes on the phone and you will know whether this is worth doing. Call (904) 548-8222 or send a note.",
+    group: "studio",
+    navOrder: 5,
   },
   {
     path: "/process",
@@ -114,19 +146,30 @@ export const DESTINATIONS: Destination[] = [
       "Who owns the site, what it costs to run, whether your leads still reach BoldTrail, and what happens if you change brokerages.",
     group: "studio",
   },
-  {
-    path: "/contact",
-    frame: "contact",
-    label: "Get a quote",
-    title: "Tell me what you need",
-    blurb:
-      "Twenty minutes on the phone and you will know whether this is worth doing. Call (904) 548-8222 or send a note.",
-    group: "studio",
-  },
 ];
 
 export const WORK_DESTINATIONS = DESTINATIONS.filter((d) => d.group === "work");
 export const STUDIO_DESTINATIONS = DESTINATIONS.filter((d) => d.group === "studio");
+
+/**
+ * The commercial navigation, in order: Home, Packages, Work, Capabilities,
+ * Contact. This is what the rail and the tab bar lead with — the five things a
+ * buyer looks for by name on any site that sells something.
+ */
+export const PRIMARY_NAV = DESTINATIONS.filter(
+  (d): d is Destination & { navOrder: number } => d.navOrder !== undefined
+).sort((a, b) => a.navOrder - b.navOrder);
+
+/**
+ * Paths that moved when the site was productized. Kept as redirects rather
+ * than deleted: they were prerendered, submitted to the sitemap, and may be
+ * linked from anywhere. A 404 on a page that used to rank is a lead lost.
+ */
+export const LEGACY_REDIRECTS: Record<string, string> = {
+  "/build": "/capabilities",
+  "/pricing": "/packages",
+  "/studio": "/packages",
+};
 
 /** Every project marker the map draws. */
 export const BEACONS = DESTINATIONS.filter(

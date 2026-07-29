@@ -16,7 +16,17 @@ import { useEffect, useState } from "react";
  */
 
 const SEEN_KEY = "kedge:opened";
-const HOLD_MS = 2600;
+
+/**
+ * How long the claim holds before dissolving.
+ *
+ * Deliberately short. With the 700ms fade that follows, a visitor is looking
+ * at the value proposition and both calls to action inside two seconds — well
+ * under the three-second window where a cold visitor decides whether to stay.
+ * An opening that costs a conversion is not worth the atmosphere.
+ */
+const HOLD_MS = 1300;
+const FADE_MS = 700;
 
 export default function Opening() {
   const [present, setPresent] = useState(() => {
@@ -42,7 +52,7 @@ export default function Opening() {
         /* ignore */
       }
       // Match the CSS fade so the node leaves after it has finished fading.
-      window.setTimeout(() => setPresent(false), 900);
+      window.setTimeout(() => setPresent(false), FADE_MS);
     };
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -77,6 +87,9 @@ export default function Opening() {
         <p className="opening-sub">
           Five sites, along this coast. Open one.
         </p>
+        {/* Says out loud that this is not a gate. Any key or click dismisses
+            it, and it never blocks the interface behind it. */}
+        <p className="opening-skip">Click anywhere to skip</p>
       </div>
     </div>
   );
