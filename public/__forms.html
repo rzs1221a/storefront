@@ -1,0 +1,23 @@
+<!doctype html>
+<!--
+  Netlify Forms detection stub.
+
+  Netlify scans deployed HTML at build time to register forms. The real form
+  is rendered by React and therefore invisible to that scan, so this static
+  file declares the same form name and fields. Keep the field list in sync
+  with src/components/LeadForm.tsx — a field missing here is silently dropped
+  from the submission.
+-->
+<html lang="en">
+  <head><meta charset="utf-8" /><title>Form detection</title></head>
+  <body>
+    <form name="storefront-enquiry" netlify netlify-honeypot="company-website" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="tel" name="phone" />
+      <input type="text" name="interest" />
+      <textarea name="message"></textarea>
+      <input type="text" name="company-website" />
+    </form>
+  </body>
+</html>

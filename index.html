@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#08090b" />
+
+    <title>Blackline Systems — Custom websites for real estate agents</title>
+    <meta
+      name="description"
+      content="Bespoke, high-performance websites for real estate agents. Built once, owned outright, no monthly platform fee. Five sites shipped, including live 3D mapping and BoldTrail lead routing."
+    />
+    <link rel="canonical" href="https://blacklinesystems.com/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://blacklinesystems.com/" />
+    <meta
+      property="og:title"
+      content="Blackline Systems — Custom websites for real estate agents"
+    />
+    <meta
+      property="og:description"
+      content="Your website should be the reason they call you. Built once, owned outright, no monthly platform fee."
+    />
+    <meta property="og:image" content="https://blacklinesystems.com/og.webp" />
+    <meta property="og:site_name" content="Blackline Systems" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Blackline Systems — Custom websites for real estate agents"
+    />
+    <meta
+      name="twitter:description"
+      content="Built once, owned outright, no monthly platform fee."
+    />
+    <meta name="twitter:image" content="https://blacklinesystems.com/og.webp" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <!-- The largest above-the-fold image, and therefore the largest
+         contentful paint. Preloaded per breakpoint so a phone fetches the
+         phone capture and never pays for the desktop one. Must stay in sync
+         with the <picture> in src/sections/Hero.tsx. -->
+    <link
+      rel="preload"
+      as="image"
+      href="/work/the-aerial/desktop.webp"
+      type="image/webp"
+      media="(min-width: 641px)"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="/work/the-aerial/mobile.webp"
+      type="image/webp"
+      media="(max-width: 640px)"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "Blackline Systems",
+        "description": "Custom website design and development for real estate agents and brokerages.",
+        "url": "https://blacklinesystems.com/",
+        "areaServed": "United States",
+        "serviceType": "Website design and development",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Amelia Island",
+          "addressRegion": "FL",
+          "addressCountry": "US"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
