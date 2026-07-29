@@ -1,3 +1,4 @@
+import Atmosphere from "./components/Atmosphere";
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
 import Hero from "./sections/Hero";
@@ -15,6 +16,8 @@ export default function App() {
       <a href="#main" className="skip-link btn btn-primary btn-sm">
         Skip to content
       </a>
+
+      <Atmosphere />
 
       <Nav />
 

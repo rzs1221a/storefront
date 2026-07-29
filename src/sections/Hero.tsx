@@ -14,18 +14,9 @@ export default function Hero() {
   const flagship = WORK[0];
 
   return (
-    <section id="top" className="relative overflow-hidden pt-32 sm:pt-40">
-      {/* Ambient wash. Purely decorative, kept subtle enough to read as depth
-          rather than decoration. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[46rem]"
-        style={{
-          background:
-            "radial-gradient(60% 50% at 50% 0%, rgba(79,214,227,0.09), transparent 70%)",
-        }}
-      />
-
+    // No local wash here — the site-wide Atmosphere owns the backdrop, and a
+    // second gradient stacked on it only muddied the coast.
+    <section id="top" className="relative pt-32 sm:pt-40">
       <div className="shell">
         <p className="eyebrow" data-reveal-item>
           Websites for real estate professionals

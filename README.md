@@ -37,6 +37,36 @@ or that field is silently dropped from every submission.
 After the first deploy: Netlify → Forms → `storefront-enquiry` → add an email
 notification pointing at wherever you want enquiries to land.
 
+## The background
+
+A single MapLibre instance sits fixed behind the whole page: real Esri
+satellite imagery of Amelia Island and the Nassau County coast, dark-graded,
+slowly orbiting. It is the ground all five portfolio projects cover, so the
+page answers "where am I" before a word is read. Ported from
+`heymann-williams-coastal/src/components/BackgroundMap.tsx` and reduced to what
+a single-page site needs — no routes, no markers, no interaction.
+
+- `src/lib/mapStyle.ts` — the style and camera. Both tile sources are key-free.
+- `src/components/BackgroundMap.tsx` — lazy MapLibre + idle orbit.
+- `src/components/Atmosphere.tsx` — map, tint, vignette as one fixed stack.
+
+maplibre-gl is ~210 kB gzipped, so it is **dynamically imported after first
+paint during idle time** and lands in its own chunk. Initial JS is unaffected.
+If WebGL is missing, the import fails, or tiles never arrive, the gradient
+underneath simply stays — the page is designed to look right without the map
+and better with it. The orbit stops when the tab is hidden and never starts
+under `prefers-reduced-motion`.
+
+**The tint is load-bearing.** `.atmosphere-wash` in `src/index.css` is what
+keeps the coast subordinate to five portfolio screenshots and every line of
+copy. Lighten it and the imagery starts competing; darken it and there was no
+point putting a map there. If you touch those alpha values, re-run
+`scripts/verify.mjs` — it measures real text contrast against the rendered
+background (see below), and the current values sit just above the line.
+
+Esri's terms require visible attribution wherever World Imagery is displayed.
+The map's own control is off, so the credit lives in the footer. Keep it.
+
 ## Design
 
 Near-monochrome on purpose. The client work is the color — Crane Island and
@@ -89,6 +119,15 @@ text and dimensions, unlabeled form controls, undersized tap targets, console
 errors, that the page scrolls to its own bottom, that every reveal fires, and
 that content is still visible with `prefers-reduced-motion: reduce`.
 Screenshots land in `/tmp/storefront-verify`.
+
+It also measures **real text contrast against the live background**. With a
+satellite plate behind the copy the effective background is no longer a known
+token — it is whatever the camera is framing, and a bright sandbar drifting
+under a paragraph is a regression no static color audit would catch. The check
+screenshots the page with every glyph turned transparent, samples the true
+surface behind each text block, and computes the WCAG ratio. (Sampling a fixed
+offset below the text does not work: under a label sits its own value, and you
+end up measuring cream against cream.)
 
 Note it forces `scroll-behavior: auto` first. The site sets smooth scrolling,
 and a stepped `scrollTo` loop retargets the in-flight animation on every

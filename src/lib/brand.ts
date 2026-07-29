@@ -31,12 +31,18 @@ export const BRAND = {
 export const CONTACT = {
   email: "rzs1221a@gmail.com",
   /** E.164 for links, `phoneDisplay` for what humans read. */
-  phone: "+19045550100",
-  phoneDisplay: "(904) 555-0100",
+  phone: "+19045488222",
+  phoneDisplay: "(904) 548-8222",
   /** Set to a Calendly/Cal.com URL to swap the form CTA for a booking CTA. */
   bookingUrl: "",
   location: "Amelia Island, Florida",
 } as const;
 
-/** Flip to false to hide every price on the site and route to "request a quote". */
-export const SHOW_PRICING = true;
+/**
+ * Prices are not public yet. With this false every tier reads "Let's talk"
+ * and routes to the contact form — the packages, inclusions, and timelines
+ * still do their work, but no number is committed to in writing.
+ *
+ * Set the figures in src/lib/offer.ts and flip this to true to publish them.
+ */
+export const SHOW_PRICING = false;

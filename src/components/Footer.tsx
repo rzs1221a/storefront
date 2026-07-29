@@ -73,10 +73,17 @@ export default function Footer() {
         {/* Non-affiliation notice. Worth keeping: this site markets to BHHS
             agents and shows BHHS-branded client work, and an independent
             studio should not imply it speaks for the brokerage. */}
-        <p className="mt-12 border-t border-(--line) pt-8 text-xs text-(--color-ink-faint)">
+        <p className="mt-12 border-t border-(--line) pt-8 text-xs leading-relaxed text-(--color-ink-faint)">
           © {year} {BRAND.name}. An independent studio — not affiliated with,
           endorsed by, or acting on behalf of Berkshire Hathaway HomeServices.
           All trademarks belong to their respective owners.
+          {/* Esri's terms require visible attribution wherever World Imagery
+              is displayed. The background map has its own control switched
+              off, so the credit lives here. */}
+          <span className="mt-2 block">
+            Background imagery © Esri, Maxar, Earthstar Geographics. Building
+            data © OpenStreetMap contributors.
+          </span>
         </p>
       </div>
     </footer>

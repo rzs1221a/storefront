@@ -16,6 +16,7 @@ import { readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { chromium } from "playwright";
+import { routeThroughCurl } from "./lib/egress.mjs";
 
 const ORIGIN = process.argv[2] || "http://127.0.0.1:4319";
 const OUT = process.env.VERIFY_OUT || "/tmp/storefront-verify";
@@ -50,6 +51,9 @@ async function main() {
       hasTouch: vp.name === "mobile",
     });
     const page = await context.newPage();
+    // Route external requests through curl so the audit sees the real
+    // page — satellite background included — rather than a stripped one.
+    await routeThroughCurl(page);
 
     const consoleErrors = [];
     page.on("console", (m) => m.type() === "error" && consoleErrors.push(m.text()));
@@ -166,6 +170,119 @@ async function main() {
       if (!img.sized) note(vp.name, `image missing width/height: ${name}`);
     }
 
+    /*
+     * ── Text contrast over the live background ─────────────────────────
+     *
+     * A satellite plate behind the copy means the effective background is no
+     * longer a known token — it is whatever the camera is framing, and a
+     * bright sandbar drifting under a paragraph is a real regression that no
+     * static color audit would catch. Sample the actual rendered pixels
+     * behind each text block and compute the true WCAG contrast ratio.
+     */
+    const contrast = await page.evaluate(async () => {
+      const srgb = (c) => {
+        const v = c / 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      };
+      const lum = (r, g, b) =>
+        0.2126 * srgb(r) + 0.7152 * srgb(g) + 0.0722 * srgb(b);
+      const ratio = (a, b) =>
+        (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+
+      const parse = (str) => {
+        const m = str.match(/rgba?\(([^)]+)\)/);
+        if (!m) return null;
+        const [r, g, b] = m[1].split(",").map((n) => parseFloat(n));
+        return lum(r, g, b);
+      };
+      void ratio;
+
+      const results = [];
+      const targets = document.querySelectorAll(
+        "p.lede, p.subhead, .mono-label, h1, h2"
+      );
+
+      for (const el of Array.from(targets).slice(0, 24)) {
+        const rect = el.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) continue;
+        if (rect.bottom < 0 || rect.top > window.innerHeight) continue;
+
+        const fg = parse(getComputedStyle(el).color);
+        if (fg === null) continue;
+
+        results.push({
+          text: el.textContent.trim().slice(0, 28),
+          fg,
+          x: Math.round(rect.left + rect.width / 2),
+          y: Math.round(rect.top + rect.height / 2),
+        });
+      }
+      return results;
+    });
+
+    if (contrast.length) {
+      /*
+       * Screenshot with every glyph turned transparent. Sampling a fixed
+       * offset below a line of text is unreliable — under a label sits its
+       * own value, and you end up measuring cream against cream. Removing
+       * only the glyph color leaves panels, borders, and the satellite plate
+       * exactly where they are, so the sample point reports the true
+       * background behind each text block.
+       */
+      const mask = await page.addStyleTag({
+        content: `*, *::before, *::after {
+          color: transparent !important;
+          text-shadow: none !important;
+          -webkit-text-stroke-color: transparent !important;
+        }`,
+      });
+      const shot = await page.screenshot({ type: "png" });
+      await mask.evaluate((node) => node.remove());
+      const { default: sharp } = await import("sharp");
+      const img = sharp(shot);
+      const meta = await img.metadata();
+      const scale = meta.width / vp.width;
+      const raw = await img.raw().toBuffer();
+      const channels = meta.channels;
+
+      const srgb = (c) => {
+        const v = c / 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      };
+
+      for (const sample of contrast) {
+        // Sample at the text's own centre. With glyphs masked out this is
+        // exactly the surface the text renders against.
+        const px = Math.round(sample.x * scale);
+        const py = Math.round(sample.y * scale);
+        let sum = 0;
+        let n = 0;
+        for (let dy = -6; dy <= 6; dy += 2) {
+          for (let dx = -20; dx <= 20; dx += 2) {
+            const X = px + dx;
+            const Y = py + dy;
+            if (X < 0 || Y < 0 || X >= meta.width || Y >= meta.height) continue;
+            const i = (Y * meta.width + X) * channels;
+            sum +=
+              0.2126 * srgb(raw[i]) +
+              0.7152 * srgb(raw[i + 1]) +
+              0.0722 * srgb(raw[i + 2]);
+            n++;
+          }
+        }
+        if (!n) continue;
+        const bg = sum / n;
+        const cr =
+          (Math.max(sample.fg, bg) + 0.05) / (Math.min(sample.fg, bg) + 0.05);
+        if (cr < 4.5) {
+          note(
+            vp.name,
+            `text contrast ${cr.toFixed(2)}:1 (needs 4.5) — "${sample.text}"`
+          );
+        }
+      }
+    }
+
     // ── Form labelling ───────────────────────────────────────────────────
     const unlabeled = await page.evaluate(() =>
       Array.from(document.querySelectorAll("input, select, textarea"))
@@ -224,6 +341,7 @@ async function main() {
     reducedMotion: "reduce",
   });
   const rmPage = await rmContext.newPage();
+  await routeThroughCurl(rmPage);
   await rmPage.goto(ORIGIN, { waitUntil: "networkidle" });
   await rmPage.waitForTimeout(900);
   const hidden = await rmPage.evaluate(
