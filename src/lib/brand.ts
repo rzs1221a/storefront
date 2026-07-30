@@ -20,15 +20,17 @@ export const BRAND = {
   positioning:
     "Bespoke, high-performance websites for BHHS agents — built once, owned outright, no monthly platform fee.",
   /**
-   * The live address. Deliberately the Netlify URL we actually control rather
-   * than an aspirational custom domain: `origin` is stamped into every
-   * canonical, og:url and sitemap entry by scripts/prerender.mjs, so naming a
-   * domain we do not own would tell search engines that someone else's site is
-   * the authoritative copy of ours. Change both lines the day a real domain is
-   * registered and pointed here — and not before.
+   * The live address. Registered at Squarespace, DNS there too (the Mailgun MX
+   * records for zander@ live in that zone, so the nameservers must NOT be
+   * delegated to Netlify), apex pointed at Netlify's load balancer.
+   *
+   * `origin` is stamped into every canonical, og:url and sitemap entry by
+   * scripts/prerender.mjs. Only ever name a domain here that actually serves
+   * this site over HTTPS — an aspirational one tells search engines somebody
+   * else's page is the authoritative copy of ours.
    */
-  domain: "kstorefront.netlify.app",
-  origin: "https://kstorefront.netlify.app",
+  domain: "seamark.studio",
+  origin: "https://seamark.studio",
 } as const;
 
 /**
@@ -37,7 +39,8 @@ export const BRAND = {
  * `email` is the fallback mailto and the Netlify Forms notification target.
  */
 export const CONTACT = {
-  email: "rzs1221a@gmail.com",
+  /** Forwards to the personal inbox via Squarespace/Mailgun. */
+  email: "zander@seamark.studio",
   /** E.164 for links, `phoneDisplay` for what humans read. */
   phone: "+19045488222",
   phoneDisplay: "(904) 548-8222",

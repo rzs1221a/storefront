@@ -82,6 +82,21 @@ function retag(html, { title, description, url }) {
     .replace(
       /<meta name="twitter:description"[\s\S]*?\/>/,
       `<meta name="twitter:description" content="${esc(description)}" />`
+    )
+    /*
+     * The card image, rewritten from ORIGIN rather than trusted from the
+     * template. It is an absolute URL by spec — no scraper resolves a relative
+     * one — which makes it another place a stale domain can hide, and it did
+     * hide one: after a domain move the preview image kept pointing at the old
+     * host. Same treatment as robots.txt.
+     */
+    .replace(
+      /<meta property="og:image"[^>]*\/>/,
+      `<meta property="og:image" content="${ORIGIN}/og.webp" />`
+    )
+    .replace(
+      /<meta name="twitter:image"[^>]*\/>/,
+      `<meta name="twitter:image" content="${ORIGIN}/og.webp" />`
     );
 }
 
