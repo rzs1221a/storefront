@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { COMPARISON, TIERS } from "../lib/offer";
 import { numberWord } from "../lib/format";
-import Sheet from "../components/Sheet";
+import Page from "../components/Page";
 import OfferGrid from "../components/OfferGrid";
 
 /**
@@ -14,8 +14,9 @@ import OfferGrid from "../components/OfferGrid";
  */
 export default function Packages() {
   return (
-    <Sheet
+    <Page
       wide
+      shortWindow
       eyebrow="Packages"
       title={`${numberWord(TIERS.length)} build sizes. Pay once, own it forever`}
     >
@@ -80,6 +81,6 @@ export default function Packages() {
           Common questions →
         </Link>
       </div>
-    </Sheet>
+    </Page>
   );
 }

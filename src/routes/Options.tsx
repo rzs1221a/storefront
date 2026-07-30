@@ -8,7 +8,7 @@ import {
 import { TIERS } from "../lib/offer";
 import { TOTALS, WORK } from "../lib/work";
 import { numberWord } from "../lib/format";
-import Sheet from "../components/Sheet";
+import Page from "../components/Page";
 
 /**
  * The catalog index — the store shelf.
@@ -39,7 +39,7 @@ export default function Options() {
   }, [hash]);
 
   return (
-    <Sheet
+    <Page
       wide
       eyebrow="Everything I build"
       title={`${CATALOG_TOTALS.options} options. ${numberWord(TOTALS.projects)} shipped proofs`}
@@ -132,6 +132,6 @@ export default function Options() {
           See the live demo →
         </Link>
       </div>
-    </Sheet>
+    </Page>
   );
 }

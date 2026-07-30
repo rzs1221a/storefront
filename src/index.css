@@ -67,16 +67,23 @@
 }
 
 /*
- * The document never scrolls. This is the brief, not a side effect: the site
- * is a map you navigate, and every destination is a sheet that scrolls inside
- * itself. `overscroll-behavior: none` stops iOS rubber-banding the whole app
- * frame when a sheet reaches its end.
+ * The document scrolls. This inverted when the site became a storefront that
+ * has a map rather than a map that has a storefront: content flows over a
+ * fixed living chart, and the chart shows through full-height windows between
+ * sections. scripts/verify.mjs asserts the new law — vertical scroll works,
+ * horizontal overflow never exists.
  */
 html,
 body {
-  height: 100%;
-  overflow: hidden;
-  overscroll-behavior: none;
+  min-height: 100%;
+}
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 html {
@@ -133,13 +140,17 @@ body {
  */
 
 .shell-frame {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-#root {
-  height: 100%;
+/* The sky: map, sun grade, and tint, fixed behind the scrolling storefront. */
+.map-fix {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
 }
 
 /* The map fills the frame and sits under everything. */
@@ -180,10 +191,10 @@ body {
   background:
     radial-gradient(72% 52% at 50% 0%, rgba(79, 214, 227, 0.07), transparent 66%),
     linear-gradient(
-      to right,
-      rgba(6, 8, 11, 0.72),
-      rgba(6, 8, 11, 0.24) 42%,
-      rgba(6, 8, 11, 0.34)
+      180deg,
+      rgba(6, 8, 11, 0.55),
+      rgba(6, 8, 11, 0.22) 32%,
+      rgba(6, 8, 11, 0.4)
     );
   transition: opacity 0.9s var(--ease-out-expo);
 }
@@ -893,8 +904,7 @@ body {
        window's — see .offer-grid for the same reasoning. */
     container-type: inline-size;
   }
-  .coast-list,
-  .mark-deck {
+  .coast-list {
     display: none;
   }
 }
@@ -1480,7 +1490,7 @@ body {
 /* ── The opening ──────────────────────────────────────────────────────── */
 
 .opening {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 60;
   display: grid;
@@ -2065,4 +2075,354 @@ select.field option {
   .lift:hover {
     transform: none;
   }
+}
+
+
+/* ── The storefront layer ─────────────────────────────────────────────── */
+
+/*
+ * Content flows over the fixed chart. The column itself is hit-transparent so
+ * clicks in the chart windows reach the beacons beneath; every visible child
+ * re-enables its own pointer events.
+ */
+.storefront {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+  flex: 1;
+}
+.storefront > * > * {
+  pointer-events: auto;
+}
+.storefront .chart-window {
+  pointer-events: none;
+}
+
+/* A window onto the chart: nothing but height. The camera has already flown
+   wherever the neighboring section pointed it. */
+.chart-window {
+  height: 58vh;
+  pointer-events: none;
+}
+.chart-window.is-short {
+  height: 30vh;
+}
+
+/* ── Masthead ── */
+
+.site-head {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  border-radius: 0;
+  border-inline: 0;
+  border-top: 0;
+  padding: 0.65rem var(--gutter) 0;
+}
+.site-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.head-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.site-head-command {
+  flex: 1;
+  max-width: 26rem;
+  display: none;
+}
+@media (min-width: 780px) {
+  .site-head-command {
+    display: block;
+  }
+}
+.site-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+.head-phone {
+  display: none;
+}
+@media (min-width: 1080px) {
+  .head-phone {
+    display: inline;
+  }
+}
+.site-head-actions .btn {
+  white-space: nowrap;
+}
+@media (max-width: 480px) {
+  .site-head-actions .btn {
+    padding-inline: 0.8rem;
+    font-size: 0.75rem;
+  }
+}
+.site-head-nav {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.site-head-nav::-webkit-scrollbar {
+  display: none;
+}
+.head-link {
+  padding: 0.55rem 0.7rem;
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+.head-link.is-active {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-signal);
+}
+@media (hover: hover) and (pointer: fine) {
+  .head-link:hover {
+    color: var(--color-ink);
+  }
+}
+
+/* ── The hero band ── */
+
+.hero-band {
+  min-height: calc(100vh - 7rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: clamp(1.5rem, 4vh, 4rem) var(--gutter) 1.25rem;
+  pointer-events: none;
+}
+.hero-band > * {
+  pointer-events: auto;
+}
+.hero-panel {
+  max-width: 44rem;
+  padding: clamp(1.5rem, 3vw, 2.75rem);
+  border-radius: 1.25rem;
+}
+.hero-conditions {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1.25rem;
+}
+.hero-actions .tour-button {
+  width: auto;
+  padding-inline: 1.1rem;
+}
+
+/* ── Store bands ── */
+
+.store-band {
+  position: relative;
+  background: var(--color-plate);
+  border-block: 1px solid var(--line);
+  padding: clamp(3rem, 7vh, 5.5rem) var(--gutter);
+}
+.store-band-head {
+  max-width: 46rem;
+}
+.store-band-title {
+  margin-top: 0.6rem;
+  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+  font-weight: 500;
+  letter-spacing: -0.028em;
+  line-height: 1.1;
+}
+.store-band-lede {
+  margin-top: 1rem;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+  max-width: 58ch;
+}
+.store-band-actions {
+  margin-top: 1.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.store-close {
+  text-align: center;
+  border-radius: 0;
+}
+.store-close .store-band-title,
+.store-close .store-band-lede {
+  margin-inline: auto;
+}
+.store-close .store-band-actions {
+  justify-content: center;
+}
+
+/* ── Category grid ── */
+
+.category-grid {
+  margin-top: 2.5rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+}
+.category-card {
+  border-radius: 1rem;
+  padding: 1.25rem 1.35rem;
+}
+.category-card.is-cta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.category-name {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.category-blurb {
+  margin-top: 0.35rem;
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+}
+.category-list {
+  margin-top: 0.9rem;
+  display: grid;
+}
+.category-list a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.45rem 0;
+  border-top: 1px solid var(--line);
+  font-size: 0.875rem;
+  color: var(--color-ink-soft);
+  transition: color 0.2s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .category-list a:hover {
+    color: var(--color-ink);
+  }
+}
+
+/* ── Work section ── */
+
+.work-feature {
+  margin-top: 2.5rem;
+  max-width: 56rem;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+.work-rows {
+  margin-top: 1.5rem;
+  border-radius: 1rem;
+  padding: 0.5rem 1.25rem;
+  max-width: 56rem;
+}
+.work-rows > li + li {
+  border-top: 1px solid var(--line);
+}
+
+/* ── Pages (routes other than home) ── */
+
+.page {
+  pointer-events: none;
+}
+.page .page-panel {
+  pointer-events: auto;
+}
+.page-panel {
+  margin: 0 auto;
+  width: min(46rem, calc(100vw - 2 * var(--gutter)));
+  border-radius: 1.25rem 1.25rem 0 0;
+  padding: clamp(1.5rem, 3vw, 2.75rem);
+}
+.page-panel.is-wide {
+  width: min(64rem, calc(100vw - 2 * var(--gutter)));
+}
+.page-back {
+  display: inline-block;
+  margin-bottom: 1rem;
+  /* Sits on the panel's lit rim, where muted ink measured 4.09:1 — the
+     soft tone holds 4.5 there. */
+  color: var(--color-ink-soft);
+}
+@media (hover: hover) and (pointer: fine) {
+  .page-back:hover {
+    color: var(--color-ink);
+  }
+}
+.page-body {
+  margin-top: 1.5rem;
+}
+/* The heading takes programmatic focus on mount so screen readers announce
+   the page. It is not an interactive control — no ring, ever: Chromium marks
+   script focus as :focus-visible on a fresh load, so :not() cannot save it. */
+.page-head h1:focus,
+.page-head h1:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+/* The article continues into the footer's plate rather than floating. */
+.page::after {
+  content: "";
+  display: block;
+}
+
+/* ── Foot ── */
+
+.site-foot {
+  position: relative;
+  z-index: 1;
+  border-radius: 0;
+  border-inline: 0;
+  border-bottom: 0;
+  padding: clamp(2.5rem, 6vh, 4rem) var(--gutter) 2rem;
+}
+.site-foot-grid {
+  display: grid;
+  gap: 2.5rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 900px) {
+  .site-foot-grid {
+    grid-template-columns: minmax(16rem, 22rem) 1fr;
+  }
+}
+.site-foot-nav {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+}
+.site-foot-nav ul {
+  display: grid;
+  gap: 0.4rem;
+}
+.site-foot-nav a {
+  font-size: 0.875rem;
+  color: var(--color-ink-muted);
+  transition: color 0.2s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .site-foot-nav a:hover {
+    color: var(--color-ink);
+  }
+}
+.site-foot-legal {
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1.25rem;
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  color: var(--color-ink-faint);
+  max-width: 72ch;
 }

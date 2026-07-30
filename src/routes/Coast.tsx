@@ -1,35 +1,39 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { WORK, TOTALS } from "../lib/work";
-import { CATALOG_TOTALS } from "../lib/catalog";
+import { CATALOG_TOTALS, CATEGORIES, offeringsByCategory } from "../lib/catalog";
 import { BRAND, CONTACT } from "../lib/brand";
+import { observeFrames, flyOnHover, cancelHoverFly } from "../lib/cameraFrames";
+import { numberWord } from "../lib/format";
 import BrowserFrame from "../components/BrowserFrame";
 import MagneticButton from "../components/MagneticButton";
 import CountUp from "../components/CountUp";
 import MarkDeck from "../components/MarkDeck";
+import TourControl from "../components/TourControl";
+import Conditions from "../components/Conditions";
 
 /**
- * Home — the hero, over the live coast.
+ * The storefront. One grand page that scrolls — and as it scrolls, the coast
+ * flies beneath it: every section declares a camera frame, and chart windows
+ * between sections open the map at full height wherever the argument has
+ * just landed. Read about the catalog and you are over the whole corridor;
+ * reach the shipped work and you are descending on Amelia Island.
  *
- * The map is still the interface and still the reason this site does not look
- * like anything else. But a visitor who lands on a beautiful map and cannot
- * tell what is being sold leaves, so the hero states the offer in words, shows
- * one project running, and gives two ways forward: the packages for someone
- * comparing, and a consultation for someone ready.
- *
- * The visual proof is the top project in a browser frame — and because The
- * Aerial is publicly reachable, the frame's "Run it live" control boots the
- * actual application inside the hero. Nothing else on this page is as
- * persuasive as an agent flying a real 3D map before they have spoken to me.
- * It stays click-to-load: mounting a deck.gl app unasked would wreck the page.
+ * The scroll-synced camera is observeFrames in lib/cameraFrames.ts — built
+ * for exactly this and idle since the site stopped scrolling. It observes
+ * every [data-frame] and flies to whichever owns the most viewport.
  */
 
 const FEATURED = WORK[0];
 
 export default function Coast() {
+  useEffect(() => observeFrames(), []);
+
   return (
-    <div className="coast-layer" id="sheet">
-      <div className="hero panel">
-        <div className="hero-copy">
+    <div className="storefront-home" id="sheet">
+      {/* ── The arrival ─────────────────────────────────────────────── */}
+      <section className="hero-band" data-frame="top">
+        <div className="hero-copy panel hero-panel">
           <p className="eyebrow">
             {BRAND.name} — {CONTACT.location}
           </p>
@@ -41,15 +45,8 @@ export default function Coast() {
 
           <p className="hero-sub">
             Built once, owned outright, no monthly platform fee. Static-fast
-            pages that rank on their own, live map and market data wired in, and
-            every lead routed straight into BoldTrail.{" "}
-            <Link
-              to="/options"
-              className="text-(--color-ink-soft) underline decoration-(--line-strong) underline-offset-4 hover:text-(--color-ink)"
-            >
-              {CATALOG_TOTALS.options} site types, from open-house pages to full
-              3D market maps →
-            </Link>
+            pages that rank on their own, live map and market data wired in,
+            and every lead routed straight into BoldTrail.
           </p>
 
           <div className="hero-actions">
@@ -61,6 +58,7 @@ export default function Coast() {
             <Link to="/contact" className="btn btn-ghost">
               Schedule a consultation
             </Link>
+            <TourControl />
           </div>
 
           <dl className="hero-stats">
@@ -71,9 +69,9 @@ export default function Coast() {
               </dd>
             </div>
             <div>
-              <dt className="mono-label">Lines of source</dt>
+              <dt className="mono-label">Site types offered</dt>
               <dd>
-                <CountUp to={TOTALS.loc} />
+                <CountUp to={CATALOG_TOTALS.options} />
               </dd>
             </div>
             <div>
@@ -81,9 +79,100 @@ export default function Coast() {
               <dd>$0</dd>
             </div>
           </dl>
+
+          <div className="hero-conditions">
+            <Conditions />
+          </div>
         </div>
 
-        <div className="hero-proof">
+        {/* The chart's own helm: sail the twelve marks without leaving the
+            hero. Swiping flies the camera; tapping commits. */}
+        <MarkDeck />
+      </section>
+
+      {/* ── The catalog ─────────────────────────────────────────────── */}
+      <div className="chart-window" data-frame="catalog" aria-hidden="true" />
+
+      <section className="store-band">
+        <header className="store-band-head">
+          <p className="eyebrow">Everything I build</p>
+          <h2 className="store-band-title">
+            {CATALOG_TOTALS.options} options. {numberWord(TOTALS.projects)}{" "}
+            shipped proofs.
+          </h2>
+          <p className="store-band-lede">
+            Every site type a real estate business needs, as a catalog rather
+            than a sales call. {numberWord(CATALOG_TOTALS.shipped)} of these
+            patterns run today in shipped work; the rest are marked{" "}
+            <span className="badge badge-concept">Concept</span> and say so
+            everywhere they appear.
+          </p>
+        </header>
+
+        <div className="category-grid">
+          {CATEGORIES.map((cat) => {
+            const offerings = offeringsByCategory(cat.slug);
+            return (
+              <div key={cat.slug} className="category-card panel">
+                <h3 className="category-name">{cat.name}</h3>
+                <p className="category-blurb">{cat.blurb}</p>
+                <ul className="category-list">
+                  {offerings.map((o) => (
+                    <li key={o.slug}>
+                      <Link to={`/options/${o.slug}`}>
+                        <span>{o.name}</span>
+                        <span
+                          className={`badge ${o.status === "shipped" ? "badge-shipped" : "badge-concept"}`}
+                        >
+                          {o.status === "shipped" ? "Shipped" : "Concept"}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+
+          <div className="category-card panel is-cta">
+            <h3 className="category-name">Not sure which?</h3>
+            <p className="category-blurb">
+              Describe what you sell and I will point at the closest thing I
+              have already built.
+            </p>
+            <div className="mt-4 flex flex-col gap-2">
+              <Link to="/options" className="btn btn-primary btn-sm">
+                Browse all {CATALOG_TOTALS.options} options
+              </Link>
+              <Link to="/contact" className="btn btn-ghost btn-sm">
+                Just ask →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── The proof ───────────────────────────────────────────────── */}
+      <div
+        className="chart-window"
+        data-frame="work-sold-on-amelia-island"
+        aria-hidden="true"
+      />
+
+      <section className="store-band" data-frame="top">
+        <header className="store-band-head">
+          <p className="eyebrow">Selected work</p>
+          <h2 className="store-band-title">
+            {numberWord(TOTALS.projects)} sites. All of them real.
+          </h2>
+          <p className="store-band-lede">
+            Every one is the actual site, captured from the live deployment or
+            a production build — no mockups and no concepts. Hover a row and
+            the chart beneath you flies to its mark.
+          </p>
+        </header>
+
+        <div className="work-feature panel">
           <BrowserFrame
             url={FEATURED.liveUrl?.replace(/^https:\/\//, "")}
             liveUrl={FEATURED.liveUrl}
@@ -100,25 +189,92 @@ export default function Coast() {
               />
             </picture>
           </BrowserFrame>
-
           <p className="hero-proof-caption">
             <Link to={`/work/${FEATURED.slug}`} className="hover:text-(--color-ink)">
               {FEATURED.name} — {FEATURED.kind.toLowerCase()}
             </Link>
             <span className="text-(--color-ink-faint)">
               {" "}
-              · one of {TOTALS.projects} shipped along this coast
+              · flagship, running live
             </span>
           </p>
         </div>
-      </div>
 
-      {/* Phones get the deck: every mark on the chart as a snap carousel, and
-          swiping it sails the camera down the corridor — the map is the
-          interface, not the backdrop. Tapping a card commits to the route.
-          The tab bar still carries Packages/Options/Work for people who want
-          a menu. */}
-      <MarkDeck />
+        <ul className="work-rows panel">
+          {WORK.map((item, i) => (
+            <li key={item.slug}>
+              <Link
+                to={`/work/${item.slug}`}
+                className="case-row"
+                onMouseEnter={() => flyOnHover(`work-${item.slug}`)}
+                onMouseLeave={cancelHoverFly}
+              >
+                <span className="case-index">{String(i + 1).padStart(2, "0")}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="case-head">
+                    <span className="case-name">{item.name}</span>
+                    <span className="case-kind">{item.kind}</span>
+                  </span>
+                  <span className="case-summary">{item.summary}</span>
+                  <span className="case-meta">
+                    <span className="font-mono text-[0.6875rem] text-(--color-ink-faint)">
+                      {item.light.characteristic} ·{" "}
+                      {item.loc.toLocaleString("en-US")} lines
+                    </span>
+                    {item.liveUrl && <span className="case-live">Public</span>}
+                  </span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* ── The build sizes ─────────────────────────────────────────── */}
+      <div className="chart-window is-short" data-frame="pricing" aria-hidden="true" />
+
+      <section className="store-band">
+        <header className="store-band-head">
+          <p className="eyebrow">Packages</p>
+          <h2 className="store-band-title">
+            Pay once. Own it forever.
+          </h2>
+          <p className="store-band-lede">
+            Three build sizes, one fee agreed in writing before anything
+            starts. After launch you owe nothing — hosting is free at the
+            traffic these sites see, and the code is yours.
+          </p>
+        </header>
+        <div className="store-band-actions">
+          <Link to="/packages" className="btn btn-primary">
+            Compare the build sizes
+          </Link>
+          <Link to="/capabilities" className="btn btn-ghost">
+            See the live demo →
+          </Link>
+        </div>
+      </section>
+
+      {/* ── The close ───────────────────────────────────────────────── */}
+      <div className="chart-window is-short" data-frame="contact" aria-hidden="true" />
+
+      <section className="store-band store-close panel">
+        <h2 className="store-band-title">
+          Your website should be the reason they call you.
+        </h2>
+        <p className="store-band-lede">
+          Twenty minutes on the phone and you will know whether this is worth
+          doing.
+        </p>
+        <div className="store-band-actions">
+          <Link to="/contact" className="btn btn-primary">
+            Start the conversation
+          </Link>
+          <a href={`sms:${CONTACT.phone}`} className="btn btn-ghost">
+            Text {CONTACT.phoneDisplay}
+          </a>
+        </div>
+      </section>
     </div>
   );
 }

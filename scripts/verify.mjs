@@ -1,11 +1,11 @@
 /**
  * Verification pass over the built site.
  *
- * The site is a map application with real routes, so this checks what that
- * shape can get wrong: a document that scrolls when it must not, a route that
- * renders nothing, prerendered HTML that lost its content, text that stops
- * being legible when the camera moves under it, and chrome that cannot be
- * reached from a keyboard.
+ * The site is a storefront over a living map, so this checks what that shape
+ * can get wrong: horizontal overflow (the document scrolls vertically by
+ * design, never sideways), a route that renders nothing, prerendered HTML
+ * that lost its content, text that stops being legible when the camera moves
+ * under it, and chrome that cannot be reached from a keyboard.
  *
  * Run: tsx scripts/verify.mjs [origin] [--quick]
  *
@@ -132,33 +132,22 @@ async function main() {
       const state = await page.evaluate((phrase) => {
         const doc = document.documentElement;
         return {
-          scrolls: doc.scrollHeight > doc.clientHeight + 1,
+          // Vertical scroll is the design now; sideways scroll is still a bug.
           hScroll: doc.scrollWidth > doc.clientWidth + 1,
           hasPhrase: document.body.innerText.includes(phrase),
-          // A sheet that renders taller than the viewport must scroll inside
-          // itself; if it does not, its tail is unreachable.
-          sheetOverflows: (() => {
-            const s = document.querySelector(".sheet");
-            if (!s) return null;
-            const style = getComputedStyle(s);
-            return s.scrollHeight > s.clientHeight + 1
-              ? style.overflowY === "auto" || style.overflowY === "scroll"
-              : true;
-          })(),
+          // Every route must actually have content in flow — a page whose
+          // body is shorter than half the viewport almost certainly failed
+          // to mount its article.
+          hasFlow: doc.scrollHeight > doc.clientHeight * 0.5,
         };
       }, route.expect);
 
       const scope = `${vp.name} ${route.path}`;
-      if (state.scrolls) {
-        note(scope, "the document scrolls — it must never scroll on this site");
-      }
       if (state.hScroll) note(scope, "horizontal overflow");
       if (!state.hasPhrase) {
         note(scope, `route did not render its content (looked for "${route.expect}")`);
       }
-      if (state.sheetOverflows === false) {
-        note(scope, "sheet content overflows but the sheet does not scroll");
-      }
+      if (!state.hasFlow) note(scope, "page rendered almost no content in flow");
     }
 
     /* Screenshot two representative routes per breakpoint. */
@@ -221,7 +210,7 @@ async function main() {
 
         const out = [];
         for (const el of document.querySelectorAll(
-          "p.lede, .mono-label, .rail-link, .rail-claim, h1, h2, .coast-chip"
+          "p.lede, .mono-label, .head-link, .store-band-lede, h1, h2, .category-name"
         )) {
           const r = el.getBoundingClientRect();
           if (r.width < 8 || r.height < 8) continue;
@@ -337,7 +326,7 @@ async function main() {
     await page.goto(`${ORIGIN}/packages`, { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(1200);
 
-    // Tab through and confirm the close control and rail are reachable.
+    // Tab through and confirm the masthead navigation is reachable.
     const reached = new Set();
     for (let i = 0; i < 40; i++) {
       await page.keyboard.press("Tab");
@@ -348,18 +337,12 @@ async function main() {
       });
       if (info) reached.add(info);
     }
-    if (![...reached].some((r) => r?.includes("Close"))) {
-      note("keyboard", "the sheet close control is not reachable by Tab");
+    if (![...reached].some((r) => r === "Packages" || r === "Work & case studies")) {
+      note("keyboard", "masthead destinations are not reachable by Tab");
     }
-    if (![...reached].some((r) => r === "Packages" || r === "Capabilities demo")) {
-      note("keyboard", "rail destinations are not reachable by Tab");
+    if (![...reached].some((r) => r?.includes("consultation"))) {
+      note("keyboard", "the consultation CTA is not reachable by Tab");
     }
-
-    // Escape closes a sheet.
-    await page.keyboard.press("Escape");
-    await page.waitForTimeout(600);
-    const url = page.url();
-    if (!url.endsWith("/")) note("keyboard", `Escape did not close the sheet (at ${url})`);
     await context.close();
   }
 
@@ -374,11 +357,11 @@ async function main() {
     await page.goto(`${ORIGIN}/capabilities`, { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(1500);
     const visible = await page.evaluate(() => {
-      const s = document.querySelector(".sheet");
+      const s = document.querySelector(".page-panel, .storefront-home");
       return s ? Number(getComputedStyle(s).opacity) : 0;
     });
     if (visible < 0.9) {
-      note("reduced-motion", "sheet is not fully visible with animation disabled");
+      note("reduced-motion", "page content is not fully visible with animation disabled");
     }
     await page.screenshot({ path: path.join(OUT, "reduced-motion.png") });
     await context.close();

@@ -2,7 +2,7 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { CATALOG, CATEGORIES, priceLabelFor } from "../lib/catalog";
 import { WORK } from "../lib/work";
 import { TIERS } from "../lib/offer";
-import Sheet from "../components/Sheet";
+import Page from "../components/Page";
 import BrowserFrame from "../components/BrowserFrame";
 import ConceptFigure from "../components/ConceptFigure";
 
@@ -41,7 +41,12 @@ export default function OptionDetail() {
   const concept = item.status === "concept";
 
   return (
-    <Sheet eyebrow={category.name} title={item.name} escapeTo="/options">
+    <Page
+      eyebrow={category.name}
+      title={item.name}
+      backTo="/options"
+      backLabel="All options"
+    >
       <p className="mt-1">
         <span className={`badge ${concept ? "badge-concept" : "badge-shipped"}`}>
           {concept ? "Build-ready concept" : "Shipped pattern"}
@@ -161,6 +166,6 @@ export default function OptionDetail() {
           {next ? `${next.name} →` : "Every option →"}
         </span>
       </Link>
-    </Sheet>
+    </Page>
   );
 }

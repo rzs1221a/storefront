@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { PROCESS, FAQ } from "../lib/offer";
-import Sheet from "../components/Sheet";
+import Page from "../components/Page";
 
 /**
  * The two supporting destinations — how a project runs, and what people ask
@@ -16,7 +16,7 @@ import Sheet from "../components/Sheet";
 
 export function Process() {
   return (
-    <Sheet eyebrow="How it goes" title="No surprises">
+    <Page shortWindow eyebrow="How it goes" title="No surprises">
       <p className="lede">
         You will know the price, the timeline, and what the site looks like
         before any real money changes hands.
@@ -51,13 +51,13 @@ export function Process() {
           View packages →
         </Link>
       </div>
-    </Sheet>
+    </Page>
   );
 }
 
 export function Questions() {
   return (
-    <Sheet eyebrow="Questions" title="The things people ask">
+    <Page shortWindow eyebrow="Questions" title="The things people ask">
       <p className="lede">
         If yours is not here, ask it directly — I would rather answer than have
         you guess.
@@ -102,6 +102,6 @@ export function Questions() {
           View packages →
         </Link>
       </div>
-    </Sheet>
+    </Page>
   );
 }

@@ -3,7 +3,7 @@ import { WORK } from "../lib/work";
 import { WORK_DESTINATIONS } from "../lib/destinations";
 import { TIERS } from "../lib/offer";
 import { formatLatLon } from "../lib/format";
-import Sheet from "../components/Sheet";
+import Page from "../components/Page";
 import BrowserFrame from "../components/BrowserFrame";
 import QuickText from "../components/QuickText";
 
@@ -37,17 +37,23 @@ export default function WorkDetail() {
   )?.beacon;
 
   return (
-    <Sheet eyebrow={item.kind} title={item.name} escapeTo="/work">
-      {/* The datum line: this mark's light characteristic and true position,
-          exactly as a chart would record it. The storefront's own reads F —
-          fixed — because it is the mark you are standing on. */}
-      {beacon && (
-        <p className="sheet-datum">
-          {item.light.characteristic} · {formatLatLon(beacon.center)}
-          {item.slug === "seamark-storefront" && " — the mark you are standing on"}
-        </p>
-      )}
-
+    <Page
+      eyebrow={item.kind}
+      title={item.name}
+      backTo="/work"
+      backLabel="All case studies"
+      datum={
+        /* The datum line: this mark's light characteristic and true position,
+           exactly as a chart would record it. The storefront's own reads F —
+           fixed — because it is the mark you are standing on. */
+        beacon && (
+          <p className="sheet-datum">
+            {item.light.characteristic} · {formatLatLon(beacon.center)}
+            {item.slug === "seamark-storefront" && " — the mark you are standing on"}
+          </p>
+        )
+      }
+    >
       {/* ── Client & outcome ─────────────────────────────────────────── */}
       <dl className="case-facts">
         <div>
@@ -169,6 +175,6 @@ export default function WorkDetail() {
         <span className="mono-label">Next case study</span>
         <span className="text-(--color-ink-soft)">{next.label} →</span>
       </Link>
-    </Sheet>
+    </Page>
   );
 }

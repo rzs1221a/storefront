@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Sheet from "../components/Sheet";
+import Page from "../components/Page";
 import Conditions from "../components/Conditions";
 import { CAPABILITIES } from "../lib/capabilities";
 
@@ -21,7 +21,7 @@ import { CAPABILITIES } from "../lib/capabilities";
 
 export default function Capabilities() {
   return (
-    <Sheet wide eyebrow="Capabilities demo" title="Things a template cannot do for you">
+    <Page wide shortWindow eyebrow="Capabilities demo" title="Things a template cannot do for you">
       <p className="lede">
         Not a longer feature list — a different category of thing. Every item
         below is running in a site you can open, and two of them are running
@@ -108,6 +108,6 @@ export default function Capabilities() {
           Schedule a consultation
         </Link>
       </div>
-    </Sheet>
+    </Page>
   );
 }

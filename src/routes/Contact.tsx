@@ -2,7 +2,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { BRAND, CONTACT, SHOW_PRICING } from "../lib/brand";
 import { tierBySlug, TIERS } from "../lib/offer";
 import { offeringBySlug, priceLabelFor } from "../lib/catalog";
-import Sheet from "../components/Sheet";
+import Page from "../components/Page";
 import LeadForm from "../components/LeadForm";
 
 /**
@@ -28,7 +28,8 @@ export default function Contact() {
   const subject = offering?.name ?? tier?.name;
 
   return (
-    <Sheet
+    <Page
+      shortWindow
       eyebrow={
         offering
           ? `Everything I build — ${offering.name}`
@@ -143,6 +144,6 @@ export default function Contact() {
         belong to their respective owners. Background imagery © Esri, Maxar,
         Earthstar Geographics. Building data © OpenStreetMap contributors.
       </p>
-    </Sheet>
+    </Page>
   );
 }
