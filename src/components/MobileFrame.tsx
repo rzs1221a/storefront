@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { BRAND } from "../lib/brand";
+import { PRIMARY_NAV } from "../lib/destinations";
 import BrandMark from "./BrandMark";
 import Conditions from "./Conditions";
 
@@ -12,17 +13,18 @@ import Conditions from "./Conditions";
  */
 
 /**
- * The five commercial destinations, with labels short enough to sit in a tab.
- * `match` is the path prefix that keeps a tab lit — a project route keeps Work
- * lit, so a visitor two levels deep still knows where they are.
+ * The commercial destinations that fit a thumb bar, derived from the route
+ * table: any primary-nav destination carrying a `mobileTab` label earns a tab.
+ * Capabilities deliberately does not — six tabs do not fit a thumb, and the
+ * demo stays reachable through the command bar and in-sheet links. The tab's
+ * path doubles as the prefix that keeps it lit, so a visitor two levels deep
+ * still knows where they are.
  */
-const TABS = [
-  { path: "/", label: "Home", match: "/" },
-  { path: "/packages", label: "Packages", match: "/packages" },
-  { path: "/work", label: "Work", match: "/work" },
-  { path: "/capabilities", label: "Demo", match: "/capabilities" },
-  { path: "/contact", label: "Contact", match: "/contact" },
-];
+const TABS = PRIMARY_NAV.filter((d) => d.mobileTab).map((d) => ({
+  path: d.path,
+  label: d.mobileTab!,
+  match: d.path,
+}));
 
 export function MobileTopBar() {
   return (

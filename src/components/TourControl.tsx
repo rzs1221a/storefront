@@ -60,7 +60,10 @@ export default function TourControl() {
         onClick={start}
         className={`tour-button${active ? " is-active" : ""}`}
       >
-        {active ? "Stop the tour" : "Take the tour"}
+        {/* "Shipped work", said explicitly: the tour flies only the five real
+            sites, never the concept markers — a guided flight over concepts
+            presented like case studies is exactly the confusion to avoid. */}
+        {active ? "Stop the tour" : "Tour the shipped work"}
       </button>
 
       {active && stop && (

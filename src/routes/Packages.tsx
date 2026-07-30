@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { COMPARISON } from "../lib/offer";
+import { COMPARISON, TIERS } from "../lib/offer";
+import { numberWord } from "../lib/format";
 import Sheet from "../components/Sheet";
 import OfferGrid from "../components/OfferGrid";
 
@@ -13,7 +14,11 @@ import OfferGrid from "../components/OfferGrid";
  */
 export default function Packages() {
   return (
-    <Sheet wide eyebrow="Packages" title="Three packages. Pay once, own it forever">
+    <Sheet
+      wide
+      eyebrow="Packages"
+      title={`${numberWord(TIERS.length)} build sizes. Pay once, own it forever`}
+    >
       <p className="lede">
         One fee, agreed in writing before anything starts. After launch you owe
         me nothing — hosting is free at the traffic these sites see, the code

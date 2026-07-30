@@ -7,7 +7,11 @@
  * being legible when the camera moves under it, and chrome that cannot be
  * reached from a keyboard.
  *
- * Run: node scripts/verify.mjs [origin]
+ * Run: tsx scripts/verify.mjs [origin] [--quick]
+ *
+ * --quick runs every route at mobile + desktop only, with the full viewport
+ * matrix on a representative sample. The default remains exhaustive — use
+ * quick for iteration, exhaustive before shipping.
  */
 
 import { mkdir, writeFile, readdir } from "node:fs/promises";
@@ -15,8 +19,11 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { chromium } from "playwright";
 import { routeThroughCurl } from "./lib/egress.mjs";
+import { DESTINATIONS } from "../src/lib/destinations.ts";
 
-const ORIGIN = process.argv[2] || "http://127.0.0.1:4319";
+const args = process.argv.slice(2).filter((a) => a !== "--quick");
+const QUICK = process.argv.includes("--quick");
+const ORIGIN = args[0] || "http://127.0.0.1:4319";
 const OUT = process.env.VERIFY_OUT || "/tmp/storefront-verify";
 
 const VIEWPORTS = [
@@ -26,21 +33,26 @@ const VIEWPORTS = [
   { name: "wide", width: 1920, height: 1080 },
 ];
 
-/** Every route, with a phrase that must appear once it has rendered. */
-const ROUTES = [
-  { path: "/", expect: "interactive real estate platforms" },
-  { path: "/work", expect: "Five sites. All of them real" },
-  { path: "/work/the-aerial", expect: "living 3D map" },
-  { path: "/work/heymann-williams-coastal", expect: "seventeen-route" },
-  { path: "/work/sold-on-amelia-island", expect: "guided buyer and seller" },
-  { path: "/work/crane-island-bhhs", expect: "single-community authority" },
-  { path: "/work/ron-heymann-agent-page", expect: "property-alert" },
-  { path: "/capabilities", expect: "Maps that are the product" },
-  { path: "/packages", expect: "Own it forever" },
-  { path: "/process", expect: "No surprises" },
-  { path: "/questions", expect: "Do I really own it" },
-  { path: "/contact", expect: "Tell me what you need" },
-];
+/**
+ * Every route, with a phrase that must appear once it has rendered — derived
+ * from the route table itself, so a destination added there is verified here
+ * without anyone remembering to update a second list. The phrase lives on the
+ * destination (`verifyPhrase`), falling back to its title.
+ */
+const ROUTES = DESTINATIONS.map((d) => ({
+  path: d.path,
+  expect: d.verifyPhrase ?? d.title,
+}));
+
+/** The quick sample: home, one shipped case study, and one of each group. */
+const QUICK_SAMPLE = new Set(
+  [
+    "/",
+    DESTINATIONS.find((d) => d.group === "work")?.path,
+    DESTINATIONS.find((d) => d.group === "catalog")?.path,
+    "/packages",
+  ].filter(Boolean)
+);
 
 const problems = [];
 const note = (scope, msg) => problems.push(`[${scope}] ${msg}`);
@@ -102,7 +114,14 @@ async function main() {
     await page.goto(ORIGIN, { waitUntil: "domcontentloaded", timeout: 45000 });
     await skipOpening(page);
 
-    for (const route of ROUTES) {
+    // Quick mode keeps the full route list on the two viewports that matter
+    // most and samples the rest of the matrix.
+    const routes =
+      QUICK && vp.name !== "mobile" && vp.name !== "desktop"
+        ? ROUTES.filter((r) => QUICK_SAMPLE.has(r.path))
+        : ROUTES;
+
+    for (const route of routes) {
       await page.goto(`${ORIGIN}${route.path}`, {
         waitUntil: "domcontentloaded",
         timeout: 45000,
@@ -185,6 +204,20 @@ async function main() {
           return lum(r, g, b);
         };
 
+        // Text scrolled out of its own container (the rail and the sheets
+        // scroll internally) is not visible — sampling the map behind it
+        // measures nothing a visitor can see.
+        const clippedByScroller = (el, r) => {
+          for (let a = el.parentElement; a; a = a.parentElement) {
+            const s = getComputedStyle(a);
+            if (s.overflowY !== "auto" && s.overflowY !== "scroll") continue;
+            const box = a.getBoundingClientRect();
+            const cy = r.top + r.height / 2;
+            if (cy < box.top || cy > box.bottom) return true;
+          }
+          return false;
+        };
+
         const out = [];
         for (const el of document.querySelectorAll(
           "p.lede, .mono-label, .rail-link, .rail-claim, h1, h2, .coast-chip"
@@ -192,6 +225,7 @@ async function main() {
           const r = el.getBoundingClientRect();
           if (r.width < 8 || r.height < 8) continue;
           if (r.bottom < 0 || r.top > window.innerHeight) continue;
+          if (clippedByScroller(el, r)) continue;
           const fg = parse(getComputedStyle(el).color);
           if (fg === null) continue;
           out.push({

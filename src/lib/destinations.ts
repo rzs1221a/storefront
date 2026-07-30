@@ -1,5 +1,8 @@
-import { WORK } from "./work";
+import { WORK, TOTALS } from "./work";
+import { TIERS } from "./offer";
+import { CATALOG, CATALOG_TOTALS } from "./catalog";
 import { FRAMES, type CameraFrame } from "./cameraFrames";
+import { numberWord } from "./format";
 
 /**
  * The route table, and the single source of truth for everything that has a
@@ -26,18 +29,35 @@ export interface Destination {
   /** Meta description and the opening line of the prerendered body. */
   blurb: string;
   /** Grouping for the rail and the mobile tab bar. */
-  group: "coast" | "work" | "studio";
+  group: "coast" | "work" | "studio" | "catalog";
   /**
    * Position in the primary commercial navigation, if it belongs there.
    *
-   * Only five destinations carry one — Home, Packages, Work, Capabilities,
-   * Contact. Everything else is real, linkable, and prerendered, but reached
-   * from within a sheet rather than from the top level. A nav that lists
-   * everything ranks nothing.
+   * Only six destinations carry one — Home, Options, Packages, Work,
+   * Capabilities, Contact. Everything else is real, linkable, and prerendered,
+   * but reached from within a sheet rather than from the top level. A nav that
+   * lists everything ranks nothing.
    */
   navOrder?: number;
-  /** Projects carry a marker on the plane; studio destinations do not. */
-  beacon?: { center: [number, number]; name: string };
+  /**
+   * Marker on the plane. `kind` is the honesty line drawn on the map itself:
+   * "work" markers are shipped sites at their real coordinates; "concept"
+   * markers are build-ready offerings pinned to the kind of place they belong,
+   * drawn hollow and labeled Concept so the two can never be confused.
+   */
+  beacon?: { center: [number, number]; name: string; kind: "work" | "concept" };
+  /**
+   * Short label for the phone tab bar, on the handful of destinations that
+   * belong there. The tab bar derives from this rather than keeping its own
+   * hardcoded list.
+   */
+  mobileTab?: string;
+  /**
+   * A phrase that must appear in the rendered page — scripts/verify.mjs reads
+   * it, so the expectation lives beside the content it checks and cannot
+   * drift. Falls back to `title` when omitted.
+   */
+  verifyPhrase?: string;
 }
 
 /*
@@ -73,7 +93,32 @@ const workDestinations: Destination[] = WORK.map((item) => ({
   title: `${item.name} — ${item.kind}`,
   blurb: item.summary,
   group: "work" as const,
-  beacon: { center: BEACON_AT[item.slug], name: item.name },
+  beacon: { center: BEACON_AT[item.slug], name: item.name, kind: "work" as const },
+  // The summary renders as the case study's lede, so it proves the route
+  // actually mounted its content rather than just the shell.
+  verifyPhrase: item.summary,
+}));
+
+/*
+ * The catalog as destinations: an index sheet plus a detail route per
+ * offering. Six flagship concepts carry hollow markers spread down the wider
+ * corridor — far outside the ten Amelia miles the shipped beacons share — and
+ * their own descent frames (registered in cameraFrames.ts). Everything else
+ * flies to the catalog overview.
+ *
+ * Concept titles say "build-ready concept" so even a search snippet can never
+ * read as shipped work.
+ */
+const catalogDestinations: Destination[] = CATALOG.map((o) => ({
+  path: `/options/${o.slug}`,
+  frame: o.frame ? `option-${o.slug}` : "catalog",
+  label: o.name,
+  title: `${o.name} — ${o.status === "concept" ? "build-ready concept" : "productized build"}`,
+  blurb: o.summary,
+  group: "catalog" as const,
+  beacon: o.beacon ? { ...o.beacon, kind: "concept" as const } : undefined,
+  // The pitch renders as the offering's lede.
+  verifyPhrase: o.pitch,
 }));
 
 export const DESTINATIONS: Destination[] = [
@@ -82,31 +127,46 @@ export const DESTINATIONS: Destination[] = [
     frame: "top",
     label: "Home",
     title: "Custom websites for real estate professionals",
-    blurb:
-      "Bespoke, high-performance websites for BHHS agents — built once, owned outright, no monthly platform fee. Five sites shipped along this coast.",
+    blurb: `Bespoke, high-performance websites for BHHS agents — built once, owned outright, no monthly platform fee. ${CATALOG_TOTALS.options} site types on the menu, ${numberWord(TOTALS.projects).toLowerCase()} sites shipped along this coast as proof.`,
     group: "coast",
     navOrder: 1,
+    mobileTab: "Home",
+    verifyPhrase: "interactive real estate platforms",
   },
   ...workDestinations,
+  {
+    path: "/options",
+    frame: "catalog",
+    label: "Everything I build",
+    title: `${CATALOG_TOTALS.options} options. ${numberWord(TOTALS.projects)} shipped proofs`,
+    blurb: `${CATALOG_TOTALS.options} site types for real estate professionals — from a one-week agent page to a full 3D market platform — ${CATALOG_TOTALS.shipped} of them running today in shipped work, the rest build-ready concepts. Every one owned outright, no monthly fee.`,
+    group: "catalog",
+    navOrder: 2,
+    mobileTab: "Options",
+    verifyPhrase: "shipped proofs",
+  },
+  ...catalogDestinations,
   {
     path: "/packages",
     frame: "pricing",
     label: "Packages",
-    title: "Three packages. Pay once, own it forever",
+    title: `${numberWord(TIERS.length)} build sizes. Pay once, own it forever`,
     blurb:
       "An agent page, a community site, or a full flagship build. One fee agreed in writing before anything starts, and after launch you owe nothing — hosting is free at the traffic these sites see, and the code is yours.",
     group: "studio",
-    navOrder: 2,
+    navOrder: 3,
+    mobileTab: "Packages",
+    verifyPhrase: "own it forever",
   },
   {
     path: "/work",
     frame: "top",
     label: "Work & case studies",
-    title: "Five sites. All of them real",
-    blurb:
-      "Five shipped real estate sites along the Amelia Island coast — a flagship 3D map, a full brokerage site, a two-agent team site, a community microsite, and a single-agent page.",
+    title: `${numberWord(TOTALS.projects)} sites. All of them real`,
+    blurb: `${numberWord(TOTALS.projects)} shipped real estate sites along the Amelia Island coast — a flagship 3D map, a full brokerage site, a two-agent team site, a community microsite, and a single-agent page.`,
     group: "studio",
-    navOrder: 3,
+    navOrder: 4,
+    mobileTab: "Work",
   },
   {
     path: "/capabilities",
@@ -116,7 +176,8 @@ export const DESTINATIONS: Destination[] = [
     blurb:
       "Live 3D mapping, real-time NOAA tide and weather feeds, plain-English property search, prerendered pages that actually rank, and lead routing into BoldTrail. Each one is running right now, on this page or a site you can visit.",
     group: "studio",
-    navOrder: 4,
+    navOrder: 5,
+    verifyPhrase: "Maps that are the product",
   },
   {
     path: "/contact",
@@ -126,7 +187,8 @@ export const DESTINATIONS: Destination[] = [
     blurb:
       "Twenty minutes on the phone and you will know whether this is worth doing. Call (904) 548-8222 or send a note.",
     group: "studio",
-    navOrder: 5,
+    navOrder: 6,
+    mobileTab: "Contact",
   },
   {
     path: "/process",
@@ -145,6 +207,7 @@ export const DESTINATIONS: Destination[] = [
     blurb:
       "Who owns the site, what it costs to run, whether your leads still reach BoldTrail, and what happens if you change brokerages.",
     group: "studio",
+    verifyPhrase: "Do I really own it",
   },
 ];
 
@@ -152,9 +215,9 @@ export const WORK_DESTINATIONS = DESTINATIONS.filter((d) => d.group === "work");
 export const STUDIO_DESTINATIONS = DESTINATIONS.filter((d) => d.group === "studio");
 
 /**
- * The commercial navigation, in order: Home, Packages, Work, Capabilities,
- * Contact. This is what the rail and the tab bar lead with — the five things a
- * buyer looks for by name on any site that sells something.
+ * The commercial navigation, in order: Home, Options, Packages, Work,
+ * Capabilities, Contact. This is what the rail and the tab bar lead with — the
+ * things a buyer looks for by name on any site that sells something.
  */
 export const PRIMARY_NAV = DESTINATIONS.filter(
   (d): d is Destination & { navOrder: number } => d.navOrder !== undefined

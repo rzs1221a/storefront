@@ -6,29 +6,43 @@
  * `#root` and a canvas, and this site exists to generate leads. So after
  * `vite build`, this stamps out a real HTML file per route from
  * dist/index.html: per-page title, meta description, canonical, OG and Twitter
- * tags, schema.org JSON-LD, and the full written content injected into #root
- * as semantic HTML. React renders over it on load and the app behaves normally.
+ * tags, and the full written content injected into #root as semantic HTML.
+ * React renders over it on load and the app behaves normally.
  *
- * Ported from heymann-williams-coastal/scripts/prerender.mjs, which does the
- * same for 26 neighborhood routes. No headless browser, so it runs unchanged
- * on Netlify's build image.
+ * All content is imported from src/lib — the same modules the React app
+ * renders from — so the prerendered pages and the live ones cannot drift.
+ * That requires running through tsx rather than bare node:
  *
- * It also regenerates dist/sitemap.xml from the same route list, so the two
- * can never drift.
+ * Run: tsx scripts/prerender.mjs  (wired into `npm run build`)
  *
- * Run: node scripts/prerender.mjs  (wired into `npm run build`)
+ * It also regenerates dist/sitemap.xml from the same route list, and ends with
+ * assertions over the real invariants: one page per destination, unique paths,
+ * every camera frame resolvable, every beacon coordinate finite.
  */
 
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { BRAND, CONTACT } from "../src/lib/brand.ts";
+import { DESTINATIONS } from "../src/lib/destinations.ts";
+import { FRAMES } from "../src/lib/cameraFrames.ts";
+import { WORK, TOTALS } from "../src/lib/work.ts";
+import { TIERS, COMPARISON, PROCESS, FAQ } from "../src/lib/offer.ts";
+import { CAPABILITIES } from "../src/lib/capabilities.ts";
+import {
+  CATALOG,
+  CATEGORIES,
+  CATALOG_TOTALS,
+  priceLabelFor,
+} from "../src/lib/catalog.ts";
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dist = path.join(root, "dist");
 
 // Netlify exposes the site's primary URL as URL; local builds fall back to the
 // production domain so canonicals are never relative.
-const ORIGIN = (process.env.URL || "https://kedge.studio").replace(/\/$/, "");
+const ORIGIN = (process.env.URL || BRAND.origin).replace(/\/$/, "");
 
 const esc = (s) =>
   String(s)
@@ -36,146 +50,6 @@ const esc = (s) =>
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
-
-/*
- * The content below is duplicated from src/lib rather than imported: these are
- * .ts modules with JSX-adjacent imports that Node cannot load directly, and a
- * build step that needs a bundler to describe itself is a build step that
- * breaks. The trade is that this list must be kept in step with
- * src/lib/destinations.ts — the route count assertion at the end of this file
- * is what catches it when it is not.
- */
-
-const BRAND = "Kedge";
-const TAGLINE = "Custom websites for real estate professionals";
-
-const WORK = [
-  {
-    slug: "the-aerial",
-    name: "The Aerial",
-    kind: "Flagship product",
-    summary:
-      "The entire coast from Camden County, Georgia to St. Augustine as a living 3D map — no homepage, no nav, no scroll feed. You open it and you are above the real county.",
-    stack: "Next 15, React 19, deck.gl, MapLibre GL, TypeScript",
-    loc: 6842,
-    live: "https://theaerial.netlify.app",
-  },
-  {
-    slug: "heymann-williams-coastal",
-    name: "Heymann Williams",
-    kind: "Full brokerage site",
-    summary:
-      "A seventeen-route brokerage site with a cinematic map-synced community story, twenty-six prerendered neighborhood pages, and a full agent roster.",
-    stack: "Vite, React 19, TypeScript, Tailwind v4, MapLibre GL",
-    loc: 19866,
-  },
-  {
-    slug: "sold-on-amelia-island",
-    name: "Sold on Amelia Island",
-    kind: "Two-agent team site",
-    summary:
-      "A team site with guided buyer and seller flows, live lead delivery into BoldTrail, and a built-in editor so the agents change their own content without calling anyone.",
-    stack: "Static HTML, Netlify Functions, Decap CMS, Zod",
-    loc: 2710,
-  },
-  {
-    slug: "crane-island-bhhs",
-    name: "Crane Island",
-    kind: "Community microsite",
-    summary:
-      "A single-community authority page built to own the search results for one high-value niche — deep-water waterfront on Amelia Island.",
-    stack: "Static HTML, Tailwind, Schema.org",
-    loc: 1440,
-    live: "https://craneisland.heymannwilliams.com",
-  },
-  {
-    slug: "ron-heymann-agent-page",
-    name: "Ron Heymann",
-    kind: "Individual agent page",
-    summary:
-      "A single-agent page that catches BoldTrail's property-alert email traffic instead of letting it 404 on the wrong domain.",
-    stack: "Static HTML, Tailwind, Netlify redirects",
-    loc: 1539,
-  },
-];
-
-const STUDIO = [
-  {
-    path: "/capabilities",
-    title: "Things a template cannot do for you",
-    blurb:
-      "Live 3D mapping, real-time NOAA tide and weather feeds, plain-English property search, prerendered pages that actually rank, and lead routing into BoldTrail. Each one is running right now, on this page or a site you can visit.",
-    body: [
-      "Real-time API integration engine — live maps, marine tides, and dynamic data feeds, built into client sites through direct NOAA and National Weather Service integrations.",
-      "Maps that are the product — real terrain, satellite imagery, and 3D buildings you descend into, not an embedded Google Map with a pin on it.",
-      "Search that speaks English — the search field parses plain phrasing into structured criteria against the same fields an MLS feed carries.",
-      "Pages that actually rank — neighborhood pages stamped out as real static HTML at build time, so crawlers and AI assistants see complete written content.",
-      "Leads into BoldTrail, properly — validated submissions ingested through the Lead Dropbox parser, so your follow-up and reporting keep working exactly as they do today.",
-      "You edit it yourself — log in, change your photos, bio, listings and text, hit publish. Live in about a minute.",
-    ],
-  },
-  {
-    path: "/work",
-    title: "Five sites. All of them real",
-    blurb:
-      "Five shipped real estate sites along the Amelia Island coast — a flagship 3D map, a full brokerage site, a two-agent team site, a community microsite, and a single-agent page.",
-    body: WORK.map(
-      (w) => `${w.name} — ${w.kind}. ${w.summary}`
-    ),
-  },
-  {
-    path: "/packages",
-    title: "Three packages. Pay once, own it forever",
-    blurb:
-      "An agent page, a community site, or a full flagship build. One fee agreed in writing before anything starts, and after launch you owe nothing — hosting is free at the traffic these sites see, and the code is yours.",
-    body: [
-      "Agent Page — one authoritative page that loads instantly, ranks for your name, and routes every enquiry into your CRM. About one week.",
-      "Community Site — take a single community and become the definitive source for it. Two to three weeks.",
-      "Flagship — multi-route, map-driven, prerendered for search, with whatever the business actually needs. Four to eight weeks.",
-      "You own the site: the code lives in a repository in your name, it deploys from your own Netlify account, and the domain is registered to you. If we never speak again, nothing turns off.",
-      "A platform site charges a monthly fee for as long as you want the site up, and usually has to be rebuilt if you change brokerages. This does not.",
-    ],
-  },
-  {
-    path: "/process",
-    title: "No surprises",
-    blurb:
-      "A conversation, a fixed quote, the design before any production code, a live preview you can check any time, and launch in your own accounts.",
-    body: [
-      "A conversation — twenty minutes. What you sell, who you sell to, and what is not working about your current site. No pitch deck.",
-      "A fixed quote — scope and price in writing before anything starts. The number does not move unless you ask for something new.",
-      "Design first — you see the real design before a line of production code is written. Revisions here are free and expected.",
-      "Build and review — I build it on a live preview link you can check any time.",
-      "Launch, in your name — your Netlify account, your domain, your repository.",
-    ],
-  },
-  {
-    path: "/questions",
-    title: "The things people ask",
-    blurb:
-      "Who owns the site, what it costs to run, whether your leads still reach BoldTrail, and what happens if you change brokerages.",
-    body: [
-      "Do I really own it? Yes, completely. The code lives in a repository in your name and the site deploys from your own Netlify account.",
-      "What does it cost to keep running? Netlify's free tier covers hosting at the traffic an agent site sees. You pay for your domain, usually around fifteen dollars a year.",
-      "Will my leads still reach BoldTrail? Yes. I have already built this — validated submissions ingest through the Lead Dropbox parser.",
-      "What if I switch brokerages? We swap the branding and the site keeps working. That is the advantage of owning it.",
-      "Can I update it myself? Yes — an editor where you log in, change photos, bios, listings and text, and hit publish.",
-      "How long does it take? An agent page is about a week. A community site is two to three. A flagship build runs four to eight weeks.",
-    ],
-  },
-  {
-    path: "/contact",
-    title: "Tell me what you need",
-    blurb:
-      "Twenty minutes on the phone and you will know whether this is worth doing. Call (904) 548-8222 or send a note.",
-    body: [
-      "Call or text (904) 548-8222.",
-      "Email rzs1221a@gmail.com.",
-      "Based on Amelia Island, Florida. I reply within one business day.",
-      "Kedge is an independent studio — not affiliated with, endorsed by, or acting on behalf of Berkshire Hathaway HomeServices.",
-    ],
-  },
-];
 
 /** Swap the template's head tags for page-specific ones. */
 function retag(html, { title, description, url }) {
@@ -219,75 +93,151 @@ function inject(html, bodyHtml) {
   );
 }
 
-/** Every page carries the same navigation, so no prerendered page is a dead end. */
+/**
+ * Every page carries the same navigation, so no prerendered page is a dead
+ * end — and every destination is an internal link on every other page, which
+ * is exactly what a crawler should find. Generated from the route table.
+ */
 function navHtml(currentPath) {
-  const links = [
-    ["/", "Home"],
-    ["/packages", "Packages"],
-    ["/work", "Work & case studies"],
-    ...WORK.map((w) => [`/work/${w.slug}`, w.name]),
-    ["/capabilities", "Capabilities demo"],
-    ["/contact", "Contact"],
-    ["/process", "How it goes"],
-    ["/questions", "Questions"],
-  ]
-    .filter(([href]) => href !== currentPath)
-    .map(([href, label]) => `<li><a href="${href}">${esc(label)}</a></li>`)
+  const links = DESTINATIONS.filter((d) => d.path !== currentPath)
+    .map((d) => `<li><a href="${d.path}">${esc(d.label)}</a></li>`)
     .join("");
   return `<nav aria-label="Pages"><ul>${links}</ul></nav>`;
 }
 
-const pages = [];
+const list = (lines) =>
+  `<ul>${lines.map((line) => `<li>${esc(line)}</li>`).join("")}</ul>`;
 
-// Home.
-pages.push({
-  route: "/",
-  title: `${BRAND} — High-Converting Custom Web Systems & Interactive Real Estate Platforms`,
-  description:
-    "Bespoke, high-performance websites for BHHS agents — built once, owned outright, no monthly platform fee. Five sites shipped along the Amelia Island coast.",
-  body: `
-    <header><h1>High-converting custom web systems and interactive real estate platforms.</h1></header>
-    <p>Built once, owned outright, no monthly platform fee. Static-fast pages that rank on their own, live map and market data wired in, and every lead routed straight into BoldTrail. Five sites shipped along the Amelia Island coast, totalling ${WORK.reduce((n, w) => n + w.loc, 0).toLocaleString("en-US")} lines of production source.</p>
-    <h2>Selected work</h2>
-    <ul>${WORK.map((w) => `<li><a href="/work/${w.slug}"><strong>${esc(w.name)}</strong></a> — ${esc(w.kind)}. ${esc(w.summary)}</li>`).join("")}</ul>
-    ${navHtml("/")}
-  `,
-});
+/** The written body for one destination, as semantic HTML. */
+function bodyFor(dest) {
+  if (dest.path === "/") {
+    return `
+      <header><h1>High-converting custom web systems and interactive real estate platforms.</h1></header>
+      <p>Built once, owned outright, no monthly platform fee. Static-fast pages that rank on their own, live map and market data wired in, and every lead routed straight into BoldTrail. ${esc(String(TOTALS.projects))} sites shipped along the Amelia Island coast, totalling ${TOTALS.loc.toLocaleString("en-US")} lines of production source.</p>
+      <h2>Selected work</h2>
+      <ul>${WORK.map((w) => `<li><a href="/work/${w.slug}"><strong>${esc(w.name)}</strong></a> — ${esc(w.kind)}. ${esc(w.summary)}</li>`).join("")}</ul>
+      <h2>Everything I build</h2>
+      <p>${CATALOG_TOTALS.options} site types across ${CATEGORIES.length} categories — from a one-week agent page to a full 3D market platform. ${CATALOG_TOTALS.shipped} are patterns running today in the shipped work above; the rest are build-ready concepts and say so. <a href="/options">See the full catalog</a>.</p>
+    `;
+  }
 
-// One page per project.
-for (const w of WORK) {
-  pages.push({
-    route: `/work/${w.slug}`,
-    title: `${w.name} — ${w.kind} | ${BRAND}`,
-    description: w.summary,
-    body: `
+  if (dest.group === "work") {
+    const w = WORK.find((item) => `/work/${item.slug}` === dest.path);
+    return `
       <article>
         <header><h1>${esc(w.name)}</h1><p>${esc(w.kind)}</p></header>
         <p>${esc(w.summary)}</p>
-        <p>Built with ${esc(w.stack)}. ${w.loc.toLocaleString("en-US")} lines of source.</p>
-        ${w.live ? `<p><a href="${esc(w.live)}">Visit the live site</a></p>` : ""}
+        <p>${esc(w.detail)}</p>
+        <p>Built with ${esc(w.stack.join(", "))}. ${w.loc.toLocaleString("en-US")} lines of source.</p>
+        ${list(w.highlights)}
+        ${w.liveUrl ? `<p><a href="${esc(w.liveUrl)}">Visit the live site</a></p>` : ""}
       </article>
-      ${navHtml(`/work/${w.slug}`)}
-    `,
-  });
+    `;
+  }
+
+  // The catalog index: every option under its category, each a real link.
+  if (dest.path === "/options") {
+    return `
+      <article>
+        <header><h1>${esc(dest.title)}</h1></header>
+        <p>${esc(dest.blurb)}</p>
+        ${CATEGORIES.map(
+          (cat) => `
+          <h2>${esc(cat.name)}</h2>
+          <p>${esc(cat.blurb)}</p>
+          <ul>${CATALOG.filter((o) => o.category === cat.slug)
+            .map(
+              (o) =>
+                `<li><a href="/options/${o.slug}"><strong>${esc(o.name)}</strong></a> — ${esc(o.pitch)} (${o.status === "concept" ? "build-ready concept" : "shipped pattern"})</li>`
+            )
+            .join("")}</ul>`
+        ).join("")}
+      </article>
+    `;
+  }
+
+  // One offering. A concept's status is stated in the crawlable HTML itself,
+  // so no snippet anywhere can read a concept as shipped work.
+  if (dest.group === "catalog") {
+    const o = CATALOG.find((item) => `/options/${item.slug}` === dest.path);
+    const proof = o.proofSlug ? WORK.find((w) => w.slug === o.proofSlug) : null;
+    const tier = TIERS.find((t) => t.slug === o.tierSlug);
+    return `
+      <article>
+        <header><h1>${esc(o.name)}</h1><p>${esc(
+          o.status === "concept" ? "Build-ready concept" : "Shipped pattern"
+        )}</p></header>
+        ${
+          o.status === "concept"
+            ? `<p><strong>Status: build-ready concept — not a shipped client site.</strong> This is what I will build for the first buyer.</p>`
+            : ""
+        }
+        <p>${esc(o.pitch)}</p>
+        <p>${esc(o.detail)}</p>
+        <h2>What's included</h2>
+        ${list(o.includes)}
+        <p>This is a ${esc(tier.name)} build — ${esc(o.timeline.toLowerCase())}, ${esc(priceLabelFor(o))}, and you own it outright.</p>
+        ${
+          proof
+            ? `<p>${o.status === "concept" ? "The parts are proven in" : "The pattern is running today in"} <a href="/work/${proof.slug}">${esc(proof.name)}</a>.</p>`
+            : ""
+        }
+      </article>
+    `;
+  }
+
+  // Studio pages, each from the module the React route renders from.
+  const bodies = {
+    "/packages": () =>
+      list([
+        ...TIERS.map(
+          (t) => `${t.name} — ${t.summary} ${t.turnaroundTime}.`
+        ),
+        ...COMPARISON.rows.map((r) => `${r.question} ${r.us}`),
+      ]),
+    "/work": () =>
+      list(WORK.map((w) => `${w.name} — ${w.kind}. ${w.summary}`)),
+    "/capabilities": () =>
+      list(
+        CAPABILITIES.map((c) => `${c.title} — ${c.body}`)
+      ),
+    "/process": () => list(PROCESS.map((p) => `${p.name} — ${p.detail}`)),
+    "/questions": () => list(FAQ.map((f) => `${f.q} ${f.a}`)),
+    "/contact": () =>
+      list([
+        `Call or text ${CONTACT.phoneDisplay}.`,
+        `Email ${CONTACT.email}.`,
+        `Based on ${CONTACT.location}. I reply within one business day.`,
+        `${BRAND.name} is an independent studio — not affiliated with, endorsed by, or acting on behalf of Berkshire Hathaway HomeServices.`,
+      ]),
+  };
+
+  const body = bodies[dest.path];
+  if (!body) {
+    throw new Error(`prerender: no body builder for ${dest.path}`);
+  }
+  return `
+    <article>
+      <header><h1>${esc(dest.title)}</h1></header>
+      <p>${esc(dest.blurb)}</p>
+      ${body()}
+    </article>
+  `;
 }
 
-// The studio pages.
-for (const s of STUDIO) {
-  pages.push({
-    route: s.path,
-    title: `${s.title} | ${BRAND}`,
-    description: s.blurb,
-    body: `
-      <article>
-        <header><h1>${esc(s.title)}</h1></header>
-        <p>${esc(s.blurb)}</p>
-        <ul>${s.body.map((line) => `<li>${esc(line)}</li>`).join("")}</ul>
-      </article>
-      ${navHtml(s.path)}
-    `,
-  });
+function titleFor(dest) {
+  if (dest.path === "/") {
+    return `${BRAND.name} — High-Converting Custom Web Systems & Interactive Real Estate Platforms`;
+  }
+  return `${dest.title} | ${BRAND.name}`;
 }
+
+const pages = DESTINATIONS.map((dest) => ({
+  route: dest.path,
+  title: titleFor(dest),
+  description: dest.blurb,
+  body: `${bodyFor(dest)}${navHtml(dest.path)}`,
+}));
 
 const template = await readFile(path.join(dist, "index.html"), "utf8");
 
@@ -328,16 +278,60 @@ ${pages
 await writeFile(path.join(dist, "sitemap.xml"), sitemap, "utf8");
 
 /*
- * The route list above is duplicated from src/lib/destinations.ts by
- * necessity. This is the tripwire: if a destination is added there and not
- * here, the counts diverge and the build fails loudly rather than silently
- * shipping a page with no crawlable content.
+ * The tripwire, rebuilt as assertions over the actual invariants rather than a
+ * hand-counted route total. Adding a destination now means editing exactly one
+ * file — src/lib/destinations.ts (or the data it derives from) — and the build
+ * fails loudly if any page would ship broken instead of silently shipping a
+ * page with no crawlable content.
  */
-const EXPECTED_ROUTES = 12;
-if (pages.length !== EXPECTED_ROUTES) {
+const failures = [];
+
+if (pages.length !== DESTINATIONS.length) {
+  failures.push(
+    `built ${pages.length} pages for ${DESTINATIONS.length} destinations`
+  );
+}
+
+const seen = new Set();
+for (const dest of DESTINATIONS) {
+  if (seen.has(dest.path)) failures.push(`duplicate path ${dest.path}`);
+  seen.add(dest.path);
+
+  if (!FRAMES[dest.frame]) {
+    failures.push(`${dest.path} names camera frame "${dest.frame}", which does not exist`);
+  }
+  if (dest.beacon) {
+    const [lng, lat] = dest.beacon.center ?? [];
+    if (!Number.isFinite(lng) || !Number.isFinite(lat)) {
+      failures.push(`${dest.path} has a beacon with a non-finite coordinate`);
+    }
+  }
+  if (!dest.blurb || dest.blurb.length < 40) {
+    failures.push(`${dest.path} blurb is too short to serve as a meta description`);
+  }
+}
+
+/*
+ * The honesty contract, enforced: an offering may only claim "shipped" when a
+ * real project in WORK proves it. work.ts holds itself to "nothing
+ * aspirational"; this keeps the catalog from borrowing credibility it has not
+ * earned.
+ */
+for (const o of CATALOG) {
+  if (o.status === "shipped" && !WORK.some((w) => w.slug === o.proofSlug)) {
+    failures.push(
+      `catalog offering "${o.slug}" claims shipped without a real proof project`
+    );
+  }
+}
+
+if (CATALOG_TOTALS.options !== CATALOG.length) {
+  failures.push("CATALOG_TOTALS drifted from the catalog itself");
+}
+
+if (failures.length) {
   console.error(
-    `\nPrerender: expected ${EXPECTED_ROUTES} routes, built ${pages.length}.\n` +
-      `src/lib/destinations.ts and scripts/prerender.mjs have drifted — update both.\n`
+    `\nPrerender failed its invariants:\n${failures.map((f) => `  ✗ ${f}`).join("\n")}\n`
   );
   process.exit(1);
 }

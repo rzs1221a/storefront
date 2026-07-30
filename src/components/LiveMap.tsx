@@ -117,13 +117,28 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
             });
           }
 
-          /* Beacons. Built once, kept for the life of the map. */
+          /*
+           * Beacons. Built once, kept for the life of the map.
+           *
+           * Two kinds, and the map itself keeps them honest: shipped projects
+           * are solid dots at their real coordinates; build-ready concepts are
+           * hollow dashed rings, tagged "Concept" in both the label and the
+           * accessible name, pinned to the kind of place that build belongs.
+           */
           for (const dest of BEACONS) {
+            const concept = dest.beacon.kind === "concept";
             const el = document.createElement("button");
             el.type = "button";
-            el.className = "beacon";
-            el.setAttribute("aria-label", `${dest.beacon.name} — open this project`);
-            el.innerHTML = `<span class="beacon-dot"></span><span class="beacon-name">${dest.beacon.name}</span>`;
+            el.className = concept ? "beacon beacon--concept" : "beacon";
+            el.setAttribute(
+              "aria-label",
+              concept
+                ? `${dest.beacon.name} — build-ready concept, open the details`
+                : `${dest.beacon.name} — open this project`
+            );
+            el.innerHTML = concept
+              ? `<span class="beacon-dot"></span><span class="beacon-name">${dest.beacon.name}<span class="beacon-tag">Concept</span></span>`
+              : `<span class="beacon-dot"></span><span class="beacon-name">${dest.beacon.name}</span>`;
             el.addEventListener("click", (event) => {
               event.stopPropagation();
               navRef.current(dest.path);
@@ -134,15 +149,24 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
           }
 
           /*
-           * Below this altitude the five beacons are close enough together
-           * that their labels overlap into an illegible stack, so they drop to
-           * dots and the rail carries the names. The dots stay clickable.
+           * Label thresholds, one per beacon kind.
+           *
+           * The five shipped beacons share about ten miles of coast; below
+           * 10.6 their labels overlap into an illegible stack, so they drop to
+           * dots and the rail carries the names. The concept beacons are
+           * strung down eighty miles of corridor and are far enough apart to
+           * stay named from much higher — which matters, because the catalog
+           * frame sits at zoom ~8.9 and that is exactly where they need names.
            */
-          const LABEL_MIN_ZOOM = 10.6;
+          const WORK_LABEL_MIN_ZOOM = 10.6;
+          const CONCEPT_LABEL_MIN_ZOOM = 8.6;
           const syncLabels = () => {
             if (!map) return;
+            const zoom = map.getZoom();
             container.dataset.labels =
-              map.getZoom() >= LABEL_MIN_ZOOM ? "on" : "off";
+              zoom >= WORK_LABEL_MIN_ZOOM ? "on" : "off";
+            container.dataset.conceptLabels =
+              zoom >= CONCEPT_LABEL_MIN_ZOOM ? "on" : "off";
           };
           syncLabels();
           map.on("zoom", syncLabels);

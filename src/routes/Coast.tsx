@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { WORK, TOTALS } from "../lib/work";
 import { TIERS } from "../lib/offer";
+import { CATALOG_TOTALS } from "../lib/catalog";
 import BrowserFrame from "../components/BrowserFrame";
 import MagneticButton from "../components/MagneticButton";
 import CountUp from "../components/CountUp";
@@ -38,13 +39,20 @@ export default function Coast() {
           <p className="hero-sub">
             Built once, owned outright, no monthly platform fee. Static-fast
             pages that rank on their own, live map and market data wired in, and
-            every lead routed straight into BoldTrail.
+            every lead routed straight into BoldTrail.{" "}
+            <Link
+              to="/options"
+              className="text-(--color-ink-soft) underline decoration-(--line-strong) underline-offset-4 hover:text-(--color-ink)"
+            >
+              {CATALOG_TOTALS.options} site types, from open-house pages to full
+              3D market maps →
+            </Link>
           </p>
 
           <div className="hero-actions">
             <MagneticButton>
-              <Link to="/packages" className="btn btn-primary">
-                View packages
+              <Link to="/options" className="btn btn-primary">
+                See everything I build
               </Link>
             </MagneticButton>
             <Link to="/contact" className="btn btn-ghost">
@@ -107,7 +115,12 @@ export default function Coast() {
           atmosphere and the reward, never the only way through. */}
       <ul className="coast-list">
         <li>
-          <Link to="/packages" className="coast-chip is-primary">
+          <Link to="/options" className="coast-chip is-primary">
+            Everything I build
+          </Link>
+        </li>
+        <li>
+          <Link to="/packages" className="coast-chip">
             Packages
           </Link>
         </li>

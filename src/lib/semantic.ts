@@ -25,7 +25,12 @@ const SYNONYMS: Record<string, string[]> = {
     "price", "pricing", "cost", "costs", "how much", "budget", "fee", "fees",
     "quote", "rate", "rates", "expensive", "cheap", "afford", "package",
     "packages", "tier", "tiers", "money", "pay", "payment", "dollars",
-    "store", "shop", "buy", "plans", "options",
+    "plans", "build size", "build sizes",
+  ],
+  "/options": [
+    "options", "option", "catalog", "catalogue", "everything", "menu",
+    "site types", "what can i buy", "store", "shop", "buy", "offerings",
+    "what do you sell", "all of it",
   ],
   "/work": [
     "work", "portfolio", "case study", "case studies", "examples", "example",
@@ -66,6 +71,55 @@ const SYNONYMS: Record<string, string[]> = {
     "ron", "heymann agent", "agent page", "single agent", "one page",
     "simple site", "cheapest", "smallest",
   ],
+
+  /*
+   * High-intent phrases straight into the catalog. Each of these is a job the
+   * visitor already has words for; the command bar's whole promise is that
+   * typing those words works.
+   */
+  "/options/open-house-page": [
+    "open house", "open houses", "sign in sheet", "sign-in", "walk in",
+    "walk-ins", "qr code",
+  ],
+  "/options/plain-english-idx": [
+    "idx", "mls search", "property search", "listing search", "search bar",
+    "natural language",
+  ],
+  "/options/market-report-engine": [
+    "market report", "market reports", "market update", "market stats",
+    "monthly report",
+  ],
+  "/options/home-valuation-funnel": [
+    "home worth", "what's my home worth", "valuation", "home value", "cma",
+    "seller leads", "seller magnet",
+  ],
+  "/options/relocation-guide": [
+    "relocation", "relocating", "moving to", "out of state", "newcomer",
+  ],
+  "/options/recruiting-funnel": [
+    "recruit", "recruiting", "recruitment", "hire agents", "grow the office",
+  ],
+  "/options/development-launch-site": [
+    "new construction", "development", "pre construction", "preconstruction",
+    "new community", "builder",
+  ],
+  "/options/single-listing-site": [
+    "single listing", "listing site", "property website", "one property",
+    "listing website",
+  ],
+  "/options/transaction-client-portal": [
+    "transaction", "closing", "under contract", "escrow", "client portal",
+    "any update",
+  ],
+  "/options/sold-portfolio": [
+    "sold portfolio", "past sales", "my sales", "track record", "closings map",
+  ],
+  "/options/tour-media-page": [
+    "matterport", "virtual tour", "video tour", "drone", "photography page",
+  ],
+  "/options/self-serve-editor": [
+    "editor", "edit myself", "update myself", "change my photos", "cms",
+  ],
 };
 
 /** Phrases describing what the visitor sells, mapped to the best example. */
@@ -94,6 +148,21 @@ const INTENT: { match: string[]; path: string; because: string }[] = [
     match: ["neighborhood", "neighbourhood", "community", "subdivision"],
     path: "/work/crane-island-bhhs",
     because: "you want to own one community",
+  },
+  {
+    match: ["i have a listing", "listing to launch", "new listing", "just listed"],
+    path: "/options/single-listing-site",
+    because: "you have a listing to launch",
+  },
+  {
+    match: ["open house this weekend", "running an open house"],
+    path: "/options/open-house-page",
+    because: "you are running an open house",
+  },
+  {
+    match: ["i run a brokerage", "my brokerage", "my office", "broker owner"],
+    path: "/options/recruiting-funnel",
+    because: "you run a brokerage",
   },
 ];
 
