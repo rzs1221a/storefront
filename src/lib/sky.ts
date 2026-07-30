@@ -43,7 +43,31 @@ export interface SkyState {
   moon: { altitude: number; azimuth: number; phase: number; label: string };
   /** Minutes until golden hour begins, or null if it is past for today. */
   minutesToGolden: number | null;
+  /**
+   * The grade for the map plate — composited over the imagery with
+   * `mix-blend-mode: soft-light`, so the satellite ground is lit by the real
+   * sun at zero GPU cost. Deliberately quieter than the-aerial's version:
+   * this site already carries `.map-tint`, and the grade must read as light,
+   * not paint.
+   */
+  gradient: string;
 }
+
+/** One radial wash per light state. Keyed to `Light`, resolved in getSky(). */
+const GRADE: Record<Light, string> = {
+  night:
+    "radial-gradient(120% 90% at 50% 10%, rgba(45, 62, 105, 0.38), rgba(12, 20, 42, 0.5))",
+  dawn:
+    "radial-gradient(120% 90% at 72% 20%, rgba(122, 140, 190, 0.36), rgba(30, 38, 70, 0.34))",
+  morning:
+    "radial-gradient(120% 90% at 65% 15%, rgba(214, 224, 235, 0.3), rgba(150, 165, 185, 0.16))",
+  midday:
+    "radial-gradient(120% 90% at 50% 8%, rgba(255, 252, 240, 0.3), rgba(226, 222, 204, 0.14))",
+  golden:
+    "radial-gradient(120% 90% at 30% 25%, rgba(255, 205, 130, 0.4), rgba(190, 120, 60, 0.3))",
+  dusk:
+    "radial-gradient(120% 90% at 28% 22%, rgba(190, 120, 140, 0.34), rgba(58, 40, 74, 0.36))",
+};
 
 function moonPhaseName(phase: number): string {
   if (phase < 0.03 || phase > 0.97) return "new moon";
@@ -118,6 +142,7 @@ export function getSky(now: Date = new Date()): SkyState {
       label: moonPhaseName(moonIllum.phase),
     },
     minutesToGolden,
+    gradient: GRADE[light],
   };
 }
 

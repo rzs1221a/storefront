@@ -1,12 +1,48 @@
-import { NavLink, Link } from "react-router-dom";
+import { useSyncExternalStore } from "react";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import { BRAND, CONTACT } from "../lib/brand";
-import { PRIMARY_NAV, WORK_DESTINATIONS } from "../lib/destinations";
+import { PRIMARY_NAV, WORK_DESTINATIONS, destinationFor } from "../lib/destinations";
 import { CATEGORIES } from "../lib/catalog";
+import { subscribe, getSnapshot, previousMark, TOTAL_MARKS } from "../lib/wake";
+import { legBetween } from "../lib/chart";
 import BrandMark from "./BrandMark";
 import Conditions from "./Conditions";
 import MagneticButton from "./MagneticButton";
 import CommandBar from "./CommandBar";
 import TourControl from "./TourControl";
+
+/**
+ * The chart block: how much of the offer this visitor has actually seen, and
+ * the leg they just sailed — distance and course between the last two marks,
+ * in nautical miles, because this is a chart. Straight lines over water, not
+ * routes. Quiet by design: two mono lines, no bars, no badges.
+ */
+function ChartLine() {
+  const { pathname } = useLocation();
+  const wake = useSyncExternalStore(subscribe, getSnapshot);
+
+  const here = destinationFor(pathname);
+  const prev = previousMark();
+  const leg =
+    here.beacon && prev && prev.path !== here.path
+      ? legBetween(prev.beacon.center, here.beacon.center)
+      : null;
+
+  if (wake.charted === 0) return null;
+
+  return (
+    <div className="rail-chart">
+      <p className="mono-label">
+        {wake.charted} of {TOTAL_MARKS} marks charted
+      </p>
+      {leg && leg.nm > 0 && (
+        <p className="mono-label">
+          {leg.nm} nm {leg.compass} from {prev!.beacon.name}
+        </p>
+      )}
+    </div>
+  );
+}
 
 /**
  * The desktop rail. On a pointer device this is a real app frame: a floating
@@ -87,6 +123,8 @@ export default function Rail() {
 
       <div className="rail-foot">
         <TourControl />
+
+        <ChartLine />
 
         {/* The instrument, not a flourish: the same role The Aerial's dateline
             plays. Renders nothing when the endpoints are unreachable. */}

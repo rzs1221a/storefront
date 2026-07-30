@@ -99,8 +99,9 @@ const html = `<!doctype html><meta charset="utf-8"><style>
 
 <div class="brand">
   <svg width="30" height="30" viewBox="0 0 16 16" fill="none">
-    <path d="M8 1.4 14.6 8 8 14.6 1.4 8Z" fill="#4fd6e3" stroke="#4fd6e3"
-          stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M8 1.2 14.8 8 8 14.8 1.2 8Z" stroke="#4fd6e3"
+          stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M8 5.4 10.6 8 8 10.6 5.4 8Z" fill="#4fd6e3"/>
   </svg>
   <span>${BRAND.name}</span>
 </div>

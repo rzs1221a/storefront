@@ -2,8 +2,10 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { WORK } from "../lib/work";
 import { WORK_DESTINATIONS } from "../lib/destinations";
 import { TIERS } from "../lib/offer";
+import { formatLatLon } from "../lib/format";
 import Sheet from "../components/Sheet";
 import BrowserFrame from "../components/BrowserFrame";
+import QuickText from "../components/QuickText";
 
 /**
  * One project, as a case study and as a destination.
@@ -30,9 +32,22 @@ export default function WorkDetail() {
 
   const next = WORK_DESTINATIONS[(index + 1) % WORK_DESTINATIONS.length];
   const tier = TIER_FOR.get(item.slug);
+  const beacon = WORK_DESTINATIONS.find(
+    (d) => d.path === `/work/${item.slug}`
+  )?.beacon;
 
   return (
-    <Sheet eyebrow={item.kind} title={item.name}>
+    <Sheet eyebrow={item.kind} title={item.name} escapeTo="/work">
+      {/* The datum line: this mark's light characteristic and true position,
+          exactly as a chart would record it. The storefront's own reads F —
+          fixed — because it is the mark you are standing on. */}
+      {beacon && (
+        <p className="sheet-datum">
+          {item.light.characteristic} · {formatLatLon(beacon.center)}
+          {item.slug === "seamark-storefront" && " — the mark you are standing on"}
+        </p>
+      )}
+
       {/* ── Client & outcome ─────────────────────────────────────────── */}
       <dl className="case-facts">
         <div>
@@ -142,6 +157,7 @@ export default function WorkDetail() {
           <Link to="/packages" className="btn btn-ghost btn-sm">
             Compare packages →
           </Link>
+          <QuickText className="btn btn-ghost btn-sm" />
         </div>
       </div>
 

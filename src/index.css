@@ -354,6 +354,122 @@ body {
   border: 0;
 }
 
+/* ── The sky grade ────────────────────────────────────────────────────── */
+
+/*
+ * The plate lit by the real sun. Shell samples solar elevation every thirty
+ * seconds and hands this layer a gradient for the current light; soft-light
+ * blending tints the satellite imagery underneath at zero GPU cost — one
+ * composited div, no shader, no style repaint. Golden hour on the site is
+ * golden hour on the coast.
+ */
+.sky-grade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  /* Engines that cannot interpolate gradients snap instead — acceptable;
+     the state changes about six times a day. */
+  transition: background 3s ease;
+}
+
+/* ── Light signatures ─────────────────────────────────────────────────── */
+
+/*
+ * Every lighted seamark identifies itself by rhythm, and so does every
+ * shipped project here: Fl(2) 10s, Fl 6s, Iso 4s, Oc 8s, LFl 8s — real
+ * aids-to-navigation characteristics, animated as luminance (0.65–1.0),
+ * never a strobe. The ramps are 2–3% of the period so the dots read as
+ * incandescence rather than switching. The fixed light (F, this storefront)
+ * has no keyframes at all — it simply burns.
+ *
+ * Every pattern starts and ends lit, and the reduced-motion rule below
+ * freezes them at that end state: a steady lit dot, the honest fallback.
+ */
+
+/* Fl(2) 10s — two brief flashes, then darkness holds the rest of the period. */
+@keyframes sig-fl2-10s {
+  0%, 5% { opacity: 1 }
+  8%, 13% { opacity: 0.65 }
+  16%, 21% { opacity: 1 }
+  24%, 96% { opacity: 0.65 }
+  100% { opacity: 1 }
+}
+.beacon-dot.sig-fl2-10s { animation: sig-fl2-10s 10s linear infinite; }
+
+/* Fl 6s — one flash each six seconds. */
+@keyframes sig-fl-6s {
+  0%, 8% { opacity: 1 }
+  12%, 95% { opacity: 0.65 }
+  100% { opacity: 1 }
+}
+.beacon-dot.sig-fl-6s { animation: sig-fl-6s 6s linear infinite; }
+
+/* Iso 4s — isophase: equal light and dark. */
+@keyframes sig-iso-4s {
+  0%, 47% { opacity: 1 }
+  53%, 95% { opacity: 0.65 }
+  100% { opacity: 1 }
+}
+.beacon-dot.sig-iso-4s { animation: sig-iso-4s 4s linear infinite; }
+
+/* Oc 8s — occulting: lit, with one brief eclipse. */
+@keyframes sig-oc-8s {
+  0%, 78% { opacity: 1 }
+  82%, 93% { opacity: 0.65 }
+  97%, 100% { opacity: 1 }
+}
+.beacon-dot.sig-oc-8s { animation: sig-oc-8s 8s linear infinite; }
+
+/* LFl 8s — one long flash. */
+@keyframes sig-lfl-8s {
+  0%, 28% { opacity: 1 }
+  33%, 95% { opacity: 0.65 }
+  100% { opacity: 1 }
+}
+.beacon-dot.sig-lfl-8s { animation: sig-lfl-8s 8s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .beacon-dot[class*="sig-"] {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ── Chart instruments ────────────────────────────────────────────────── */
+
+/* The datum line under a case study's title: light characteristic and true
+   coordinates, in the same register as every other instrument. */
+.sheet-datum {
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+/* The wake counter and current leg, in the rail's foot. */
+.rail-chart {
+  display: grid;
+  gap: 0.3rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 0.75rem;
+}
+/* Instrument text stays at the measured-safe muted ink — the faint tone
+   reads at ~2.5:1 over a bright shoreline, and the verifier rightly fails
+   it. Quiet must not mean illegible. */
+
+/* The golden-hour countdown microline under the conditions sentence. */
+.rail-golden {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
 /* ── Beacons ──────────────────────────────────────────────────────────── */
 
 .beacon {
@@ -777,7 +893,8 @@ body {
        window's — see .offer-grid for the same reasoning. */
     container-type: inline-size;
   }
-  .coast-list {
+  .coast-list,
+  .mark-deck {
     display: none;
   }
 }
@@ -894,6 +1011,86 @@ body {
 }
 .coast-list::-webkit-scrollbar {
   display: none;
+}
+
+/* ── The deck ─────────────────────────────────────────────────────────── */
+
+/*
+ * The phone's helm: every mark on the chart as a snap carousel. Horizontal
+ * scroll happens inside this fixed layer — the document itself still never
+ * scrolls. Cards are glass in the existing recipe; the map behind them is
+ * the imagery, so they carry none of their own.
+ */
+.mark-deck {
+  margin-top: 0.75rem;
+}
+.mark-deck-context {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+  padding-inline: 0.25rem;
+}
+/* This label sits on bare imagery, not on glass — a double text-halo keeps
+   it legible over surf and marsh alike without paying for a chip. */
+.mark-deck-context .mono-label {
+  color: var(--color-ink-soft);
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.85),
+    0 0 10px rgba(0, 0, 0, 0.6);
+}
+.mark-deck-row {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  touch-action: pan-x;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  padding-bottom: 0.25rem;
+  /* Let first and last cards reach the center line. */
+  padding-inline: 10vw;
+}
+.mark-deck-row::-webkit-scrollbar {
+  display: none;
+}
+.mark-card {
+  scroll-snap-align: center;
+  flex: none;
+  width: 68vw;
+  max-width: 20rem;
+  display: grid;
+  gap: 0.35rem;
+  text-align: left;
+  padding: 0.8rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid var(--line-strong);
+  background: rgba(10, 14, 19, 0.72);
+  backdrop-filter: blur(10px) saturate(150%);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+.mark-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.mark-card-name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mark-card-sub {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
 }
 .coast-chip {
   display: inline-flex;

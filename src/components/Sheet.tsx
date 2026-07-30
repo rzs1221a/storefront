@@ -29,17 +29,25 @@ export default function Sheet({
    * reading the next. The map still shows through beside it.
    */
   wide = false,
+  /**
+   * Where Escape and the close control go. Detail sheets pass their index —
+   * a case study closes to /work, an option to /options — so Escape rises
+   * exactly one level instead of dropping the visitor back on the coast from
+   * three levels deep. Index sheets keep the default and close to the coast.
+   */
+  escapeTo = "/",
 }: {
   title: string;
   eyebrow?: string;
   children: ReactNode;
   wide?: boolean;
+  escapeTo?: string;
 }) {
   const navigate = useNavigate();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const openerRef = useRef<Element | null>(null);
 
-  const close = () => navigate("/");
+  const close = () => navigate(escapeTo);
 
   /*
    * The hook reads `scrollTop` from the element it is attached to and
@@ -95,7 +103,11 @@ export default function Sheet({
           type="button"
           onClick={close}
           className="sheet-close"
-          aria-label="Close and return to the coast"
+          aria-label={
+            escapeTo === "/"
+              ? "Close and return to the coast"
+              : `Close and return to ${escapeTo === "/work" ? "the case studies" : "the catalog"}`
+          }
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path

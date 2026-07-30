@@ -68,8 +68,12 @@ const SYNONYMS: Record<string, string[]> = {
     "deep water", "single community", "one community",
   ],
   "/work/ron-heymann-agent-page": [
-    "ron", "heymann agent", "agent page", "single agent", "one page",
+    "ron", "heymann agent", "single agent", "one page",
     "simple site", "cheapest", "smallest",
+  ],
+  "/work/seamark-storefront": [
+    "this site", "the site", "this storefront", "how was this made",
+    "who made this", "meta", "seamark storefront", "your site", "this page",
   ],
 
   /*

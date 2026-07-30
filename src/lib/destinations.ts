@@ -44,8 +44,16 @@ export interface Destination {
    * "work" markers are shipped sites at their real coordinates; "concept"
    * markers are build-ready offerings pinned to the kind of place they belong,
    * drawn hollow and labeled Concept so the two can never be confused.
+   *
+   * `light` is the mark's real light characteristic — only shipped work
+   * carries one. An unbuilt mark is unlit; concepts never set this field.
    */
-  beacon?: { center: [number, number]; name: string; kind: "work" | "concept" };
+  beacon?: {
+    center: [number, number];
+    name: string;
+    kind: "work" | "concept";
+    light?: { characteristic: string; anim: string | null };
+  };
   /**
    * Short label for the phone tab bar, on the handful of destinations that
    * belong there. The tab bar derives from this rather than keeping its own
@@ -84,6 +92,10 @@ const BEACON_AT: Record<string, [number, number]> = {
   "crane-island-bhhs": [-81.4773, 30.6125],
   // The island's north end, by Fort Clinch.
   "ron-heymann-agent-page": [-81.4545, 30.7047],
+  // The storefront itself — pinned at Amelia Island State Park, the island's
+  // southern tip (30.530, -81.438 per the park's published coordinates), far
+  // enough from the Plantation beacon to stay separately clickable.
+  "seamark-storefront": [-81.438, 30.53],
 };
 
 const workDestinations: Destination[] = WORK.map((item) => ({
@@ -93,7 +105,12 @@ const workDestinations: Destination[] = WORK.map((item) => ({
   title: `${item.name} — ${item.kind}`,
   blurb: item.summary,
   group: "work" as const,
-  beacon: { center: BEACON_AT[item.slug], name: item.name, kind: "work" as const },
+  beacon: {
+    center: BEACON_AT[item.slug],
+    name: item.name,
+    kind: "work" as const,
+    light: item.light,
+  },
   // The summary renders as the case study's lede, so it proves the route
   // actually mounted its content rather than just the shell.
   verifyPhrase: item.summary,

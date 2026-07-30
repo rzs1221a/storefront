@@ -31,3 +31,13 @@ export function numberWord(n: number): string {
 export function numberWordLower(n: number): string {
   return WORDS[n] ? WORDS[n].toLowerCase() : String(n);
 }
+
+/**
+ * "30.572° N 81.447° W" — chart-datum formatting for a [lng, lat] pair.
+ * Three decimals ≈ a hundred meters, which is honest for a beacon position.
+ */
+export function formatLatLon([lng, lat]: [number, number]): string {
+  const ns = lat >= 0 ? "N" : "S";
+  const ew = lng >= 0 ? "E" : "W";
+  return `${Math.abs(lat).toFixed(3)}° ${ns} ${Math.abs(lng).toFixed(3)}° ${ew}`;
+}

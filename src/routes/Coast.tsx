@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import { WORK, TOTALS } from "../lib/work";
-import { TIERS } from "../lib/offer";
 import { CATALOG_TOTALS } from "../lib/catalog";
 import { BRAND, CONTACT } from "../lib/brand";
 import BrowserFrame from "../components/BrowserFrame";
 import MagneticButton from "../components/MagneticButton";
 import CountUp from "../components/CountUp";
+import MarkDeck from "../components/MarkDeck";
 
 /**
  * Home — the hero, over the live coast.
@@ -113,33 +113,12 @@ export default function Coast() {
         </div>
       </div>
 
-      {/* Phones get the packages as chips: the fastest route to the offer on a
-          screen where the hero already fills the panel. The map stays the
-          atmosphere and the reward, never the only way through. */}
-      <ul className="coast-list">
-        <li>
-          <Link to="/options" className="coast-chip is-primary">
-            Everything I build
-          </Link>
-        </li>
-        <li>
-          <Link to="/packages" className="coast-chip">
-            Packages
-          </Link>
-        </li>
-        {TIERS.map((tier) => (
-          <li key={tier.slug}>
-            <Link to={`/contact?package=${tier.slug}`} className="coast-chip">
-              {tier.name}
-            </Link>
-          </li>
-        ))}
-        <li>
-          <Link to="/work" className="coast-chip">
-            Case studies
-          </Link>
-        </li>
-      </ul>
+      {/* Phones get the deck: every mark on the chart as a snap carousel, and
+          swiping it sails the camera down the corridor — the map is the
+          interface, not the backdrop. Tapping a card commits to the route.
+          The tab bar still carries Packages/Options/Work for people who want
+          a menu. */}
+      <MarkDeck />
     </div>
   );
 }

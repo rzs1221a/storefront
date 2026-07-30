@@ -41,7 +41,7 @@ export default function OptionDetail() {
   const concept = item.status === "concept";
 
   return (
-    <Sheet eyebrow={category.name} title={item.name}>
+    <Sheet eyebrow={category.name} title={item.name} escapeTo="/options">
       <p className="mt-1">
         <span className={`badge ${concept ? "badge-concept" : "badge-shipped"}`}>
           {concept ? "Build-ready concept" : "Shipped pattern"}

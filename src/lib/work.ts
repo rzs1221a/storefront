@@ -38,6 +38,15 @@ export interface WorkItem {
   mobile: string;
   /** Accent hue (deg) sampled from the project's own palette, for the card rule. */
   hue: number;
+  /**
+   * The mark's light characteristic, in real aids-to-navigation notation —
+   * every lighted seamark identifies itself by a distinct rhythm, and so does
+   * every shipped project here. `anim` names the CSS keyframe class in
+   * index.css; null means a fixed light (F), burning steady. Concepts carry
+   * no light at all: an unbuilt mark is unlit, and the type system in
+   * destinations.ts keeps it that way.
+   */
+  light: { characteristic: string; anim: string | null };
 }
 
 export const WORK: WorkItem[] = [
@@ -66,6 +75,7 @@ export const WORK: WorkItem[] = [
     desktop: "/work/the-aerial/desktop.webp",
     mobile: "/work/the-aerial/mobile.webp",
     hue: 210,
+    light: { characteristic: "Fl(2) 10s", anim: "sig-fl2-10s" },
   },
   {
     slug: "heymann-williams-coastal",
@@ -91,6 +101,7 @@ export const WORK: WorkItem[] = [
     desktop: "/work/heymann-williams-coastal/desktop.webp",
     mobile: "/work/heymann-williams-coastal/mobile.webp",
     hue: 43,
+    light: { characteristic: "Fl 6s", anim: "sig-fl-6s" },
   },
   {
     slug: "sold-on-amelia-island",
@@ -116,6 +127,7 @@ export const WORK: WorkItem[] = [
     desktop: "/work/sold-on-amelia-island/desktop.webp",
     mobile: "/work/sold-on-amelia-island/mobile.webp",
     hue: 28,
+    light: { characteristic: "Iso 4s", anim: "sig-iso-4s" },
   },
   {
     slug: "crane-island-bhhs",
@@ -141,6 +153,7 @@ export const WORK: WorkItem[] = [
     desktop: "/work/crane-island-bhhs/desktop.webp",
     mobile: "/work/crane-island-bhhs/mobile.webp",
     hue: 43,
+    light: { characteristic: "Oc 8s", anim: "sig-oc-8s" },
   },
   {
     slug: "ron-heymann-agent-page",
@@ -164,6 +177,42 @@ export const WORK: WorkItem[] = [
     desktop: "/work/ron-heymann-agent-page/desktop.webp",
     mobile: "/work/ron-heymann-agent-page/mobile.webp",
     hue: 43,
+    light: { characteristic: "LFl 8s", anim: "sig-lfl-8s" },
+  },
+  {
+    /*
+     * The storefront itself — the case study you are standing in.
+     *
+     * This entry is the site's strongest proof precisely because it is
+     * recursive: every claim below is verifiable by the page displaying it.
+     * The map behind this sheet is the product being described.
+     */
+    slug: "seamark-storefront",
+    name: "This Storefront",
+    kind: "The site you are on",
+    client: "Seamark Studio — in-house",
+    outcome:
+      "A map you navigate rather than a page you scroll, selling a 24-option catalog — with the honesty contract enforced by the build itself, which fails if any option claims shipped work without a named proof.",
+    summary:
+      "The studio's own storefront: the coast as the interface, every destination a real coordinate, every route prerendered — a case study you are reading from inside its subject.",
+    detail:
+      "One MapLibre instance mounts once and never remounts; navigation flies the camera between real coordinates instead of loading pages, and the document itself never scrolls — a verifier asserts that on every route at four breakpoints rather than trusting it. Every destination is stamped out as static HTML at build time from the same imported modules the React app renders, so the crawler's copy and the visitor's copy cannot drift. Shipped work draws solid beacons at true coordinates; build-ready concepts draw hollow dashed ones down the corridor, labeled Concept everywhere they appear. The tide reading in the rail is a live NOAA gauge, fetched when you arrived.",
+    highlights: [
+      "Every route prerendered from one imported route table — nothing duplicated",
+      "The build fails if a catalog option claims shipped without a proof project",
+      "The document never scrolls, and a verifier asserts it per route per breakpoint",
+      "Solid beacons for shipped work, hollow for concepts — honesty drawn on the map",
+      "Live NOAA tide and NWS conditions in the chrome, not a widget",
+    ],
+    stack: ["Vite", "React 19", "TypeScript", "Tailwind v4", "MapLibre GL"],
+    loc: 9945,
+    liveUrl: "https://seamark.studio",
+    shotSource: "local",
+    desktop: "/work/seamark-storefront/desktop.webp",
+    mobile: "/work/seamark-storefront/mobile.webp",
+    // The signal cyan the chrome is built around.
+    hue: 186,
+    light: { characteristic: "F", anim: null },
   },
 ];
 

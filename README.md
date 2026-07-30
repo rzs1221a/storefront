@@ -1,8 +1,8 @@
 # Storefront — Seamark Studio
 
 The commercial front door: a map you navigate, selling custom websites to real
-estate agents — a 24-option catalog of everything on offer, with five real
-shipped projects as the proof layer.
+estate agents — a 24-option catalog of everything on offer, with six real
+shipped projects as the proof layer — one of which is this site itself.
 
 ```bash
 npm install
@@ -43,7 +43,7 @@ self-demonstrating — it claims maps are the product, and it is one.
 | | |
 |---|---|
 | `src/lib/destinations.ts` | the route table: URL, camera frame, rail label, beacon |
-| `src/lib/work.ts` | the five shipped projects — verifiable claims only |
+| `src/lib/work.ts` | the six shipped projects (incl. this site) — verifiable claims only |
 | `src/lib/catalog.ts` | the 24 offerings, five categories, the honesty contract |
 | `src/lib/cameraFrames.ts` | verified coordinates and the flight queue |
 | `src/components/Shell.tsx` | the app frame; the map mounts here **once** |
@@ -63,9 +63,55 @@ Four placeholders, each in exactly one file.
 | What | Where | Note |
 |---|---|---|
 | **Prices** | `src/lib/offer.ts` → `TIERS` | $1,500 / $3,500 / $6,500 are invented. `SHOW_PRICING` in `brand.ts` is currently **false**, so every tier reads "Let's talk". |
-| **Phone + email** | `src/lib/brand.ts` → `CONTACT` | Live: (904) 548-8222 / rzs1221a@gmail.com. |
+| **Phone + email** | `src/lib/brand.ts` → `CONTACT` | Live: (904) 548-8222 / zander@seamark.studio (forwards via Squarespace/Mailgun). |
 | **Brand name** | `src/lib/brand.ts` → `BRAND` | "Seamark Studio". A seamark is a charted object mariners navigate by — the same idea as the beacons this site draws. Worth a trademark check. |
-| **Domain** | `src/lib/brand.ts` → `BRAND.domain`/`origin` | Currently the Netlify URL we actually control. `kedge.studio` was never ours — it belongs to a third party. Do not name a domain here until it is registered and pointed at this site: `origin` is stamped into every canonical, og:url and sitemap entry. |
+| **Domain** | `src/lib/brand.ts` → `BRAND.domain`/`origin` | Live: `seamark.studio` — registered at Squarespace, DNS stays there (the Mailgun MX records live in that zone; never delegate nameservers to Netlify), apex A record on Netlify's load balancer. `origin` is stamped into every canonical, og:url, sitemap and robots entry. |
+
+## The Living Chart
+
+The redesign's organizing idea: the site behaves like a working nautical
+chart of the offer. Nothing on it is decoration — every chart element is data.
+
+- **Light signatures.** Every shipped mark identifies itself by rhythm, the
+  way real lighted seamarks do. Authored in `work.ts` (`light`), drawn as
+  luminance keyframes in `index.css` (0.65–1.0, never a strobe):
+
+  | Mark | Characteristic |
+  |---|---|
+  | The Aerial | Fl(2) 10s |
+  | Heymann Williams | Fl 6s |
+  | Sold on Amelia Island | Iso 4s |
+  | Crane Island | Oc 8s |
+  | Ron Heymann | LFl 8s |
+  | This Storefront | F — fixed; the mark you are standing on |
+
+  Concepts are **unlit** — an unbuilt mark carries no light, and the type in
+  `destinations.ts` enforces it. Reduced motion freezes every dot lit.
+- **The wake** (`src/lib/wake.ts`). The visitor's own track, session-scoped:
+  a 1px hairline drawn between visited marks (`setData` per navigation, never
+  per frame) and a rail counter — "4 of 12 marks charted." No badges.
+- **Chart legs** (`src/lib/chart.ts`). Distance and course between the last
+  two marks, in nautical miles, sixteen-wind compass. Straight lines, not
+  routes.
+- **The sky grade.** `sky.ts` hands Shell a gradient keyed to real solar
+  elevation; one `soft-light` div tints the imagery — golden hour on the site
+  is golden hour on the coast. The conditions line carries the same truth:
+  the astronomical light label, the tide *source* ("— observed"), wind
+  direction, and a golden-hour countdown, polled live (tide 6 min,
+  forecast 15 min, clock 30 s).
+- **Padding choreography.** Every flight declares the chrome's occupancy, so
+  a destination's subject frames in the clear ground beside the sheet rather
+  than behind it.
+- **The deck** (`MarkDeck.tsx`, phones). All twelve marks as a snap carousel;
+  swiping flies the camera (URL stays home — a spyglass, like desktop
+  hover-fly), tapping commits. `Text Zander` (`sms:`) is the thumb-first
+  conversion path.
+- **Datum lines.** Each case study opens with its light characteristic and
+  true position: `OC 8S · 30.613° N 81.477° W`.
+
+Asset runbooks: `npm run capture:self` (serve dist on 4319 first) regenerates
+the storefront's own case-study screenshots; `tsx scripts/og.mjs` (after a
+build) regenerates the social card from BRAND + the live Geist face.
 
 ## SEO — read this before changing the build
 

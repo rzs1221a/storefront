@@ -93,6 +93,16 @@ export const FRAMES: Record<string, CameraFrame> = {
     bearing: -34,
   },
 
+  // The storefront itself — the island's southern tip, over the state park's
+  // beach and marsh. Lower zoom than the town frames: there are no buildings
+  // to descend among, and the sweep of Nassau Sound is the better shot.
+  "work-seamark-storefront": {
+    center: [-81.438, 30.53],
+    zoom: 14.8,
+    pitch: 61,
+    bearing: 18,
+  },
+
   // Studio destinations stay higher: they are arguments rather than places, and
   // the coast reads better behind them than a rooftop would.
   capabilities: { center: [-81.44, 30.65], zoom: 12.4, pitch: 58, bearing: 8 },
@@ -130,9 +140,23 @@ export const APPROACH: CameraFrame = {
   bearing: 0,
 };
 
+/**
+ * Chrome occupancy, declared to the camera. All four sides, always — MapLibre
+ * persists padding across moves, so a partial object would leak the previous
+ * flight's composition into this one.
+ */
+export interface CameraPadding {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+export const NO_PADDING: CameraPadding = { top: 0, right: 0, bottom: 0, left: 0 };
+
 /** What BackgroundMap hands us. Kept minimal so the map stays swappable. */
 export interface CameraController {
-  flyTo(frame: CameraFrame, durationMs: number): void;
+  flyTo(frame: CameraFrame, durationMs: number, padding: CameraPadding): void;
   isFlying(): boolean;
 }
 
@@ -152,7 +176,7 @@ export function registerCamera(next: CameraController | null) {
    * Honour whatever was last requested instead of stranding the camera at the
    * opening frame until the visitor navigates again.
    */
-  if (pendingFrame) controller.flyTo(pendingFrame, 1800);
+  if (pendingFrame) controller.flyTo(pendingFrame, 1800, pendingPadding);
   else if (pendingKey) applyFrame(pendingKey);
 }
 
@@ -170,7 +194,7 @@ function applyFrame(key: string) {
   const duration = controller.isFlying() ? 1500 : 3000;
 
   activeKey = key;
-  controller.flyTo(frame, duration);
+  controller.flyTo(frame, duration, pendingPadding);
 
   window.clearTimeout(settleTimer);
   settleTimer = window.setTimeout(() => {
@@ -191,16 +215,18 @@ export function currentFrameKey() {
  * target is flown to, and a flight already in the air shortens the next so the
  * camera keeps up with the visitor instead of trailing several seconds behind.
  */
-export function flyToFrame(frame: CameraFrame) {
+export function flyToFrame(frame: CameraFrame, padding: CameraPadding = NO_PADDING) {
   pendingFrame = frame;
+  pendingPadding = padding;
   if (!controller) return;
 
   const duration = controller.isFlying() ? 1600 : 2800;
-  controller.flyTo(frame, duration);
+  controller.flyTo(frame, duration, padding);
 }
 
 /** Held so a navigation that lands before the map is ready is not lost. */
 let pendingFrame: CameraFrame | null = null;
+let pendingPadding: CameraPadding = NO_PADDING;
 
 /* ── The tour ─────────────────────────────────────────────────────────── */
 

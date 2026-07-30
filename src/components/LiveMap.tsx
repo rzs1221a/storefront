@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerCamera, registerTourMap, FRAMES, APPROACH } from "../lib/cameraFrames";
 import { BEACONS } from "../lib/destinations";
+import { registerWakeSink, wakeCoords } from "../lib/wake";
 import StarSky from "./StarSky";
 
 /**
@@ -136,9 +137,19 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
                 ? `${dest.beacon.name} — build-ready concept, open the details`
                 : `${dest.beacon.name} — open this project`
             );
+            /*
+             * Shipped marks are lighted: each dot carries its authored light
+             * characteristic as a CSS keyframe class, so The Aerial flashes
+             * Fl(2) 10s and Crane Island occults on its own 8-second period —
+             * the way real seamarks identify themselves at night. A null anim
+             * is a fixed light (F), burning steady. Concepts stay unlit.
+             */
+            const light = dest.beacon.light;
+            const dotClass = light?.anim ? `beacon-dot ${light.anim}` : "beacon-dot";
+            if (light) el.title = `${dest.beacon.name} — ${light.characteristic}`;
             el.innerHTML = concept
               ? `<span class="beacon-dot"></span><span class="beacon-name">${dest.beacon.name}<span class="beacon-tag">Concept</span></span>`
-              : `<span class="beacon-dot"></span><span class="beacon-name">${dest.beacon.name}</span>`;
+              : `<span class="${dotClass}"></span><span class="beacon-name">${dest.beacon.name}</span>`;
             el.addEventListener("click", (event) => {
               event.stopPropagation();
               navRef.current(dest.path);
@@ -158,6 +169,40 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
            * stay named from much higher — which matters, because the catalog
            * frame sits at zoom ~8.9 and that is exactly where they need names.
            */
+          /*
+           * The wake — the visitor's own track, drawn as a hairline between
+           * the marks they have actually visited this session. Source and
+           * layer are created once here (the map mounts once); every later
+           * navigation reaches it through the registered sink as a setData,
+           * never a rebuild. No glow, no dash: a chart records a track, it
+           * does not celebrate one.
+           */
+          const wakeLine = (coords: [number, number][]) =>
+            coords.length >= 2
+              ? {
+                  type: "Feature" as const,
+                  properties: {},
+                  geometry: { type: "LineString" as const, coordinates: coords },
+                }
+              : { type: "FeatureCollection" as const, features: [] };
+
+          map.addSource("wake", { type: "geojson", data: wakeLine(wakeCoords()) });
+          map.addLayer({
+            id: "wake",
+            type: "line",
+            source: "wake",
+            paint: {
+              "line-color": "rgba(255, 255, 255, 0.16)",
+              "line-width": 1,
+            },
+          });
+          registerWakeSink((coords) => {
+            const source = map?.getSource("wake") as
+              | import("maplibre-gl").GeoJSONSource
+              | undefined;
+            source?.setData(wakeLine(coords));
+          });
+
           const WORK_LABEL_MIN_ZOOM = 10.6;
           const CONCEPT_LABEL_MIN_ZOOM = 8.6;
           const syncLabels = () => {
@@ -185,7 +230,7 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
           map.on("move", syncCamera);
 
           registerCamera({
-            flyTo: (frame, durationMs) => {
+            flyTo: (frame, durationMs, padding) => {
               if (!map) return;
 
               /*
@@ -195,7 +240,8 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
                * preference meant holding the camera still. Now the camera
                * position IS the destination — refusing to move would leave
                * someone on /work/crane-island looking at open ocean. So the
-               * camera still arrives, it simply arrives without the flight.
+               * camera still arrives, it simply arrives without the flight —
+               * with the same padding, so the composition matches too.
                */
               if (reduced) {
                 map.jumpTo({
@@ -203,6 +249,7 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
                   zoom: frame.zoom,
                   pitch: frame.pitch,
                   bearing: frame.bearing,
+                  padding,
                 });
                 return;
               }
@@ -213,6 +260,7 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
                 zoom: frame.zoom,
                 pitch: frame.pitch,
                 bearing: frame.bearing,
+                padding,
                 duration: durationMs,
                 easing: (t) => 1 - Math.pow(1 - t, 4),
               });
@@ -245,6 +293,7 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
     return () => {
       cancelled = true;
       registerCamera(null);
+      registerWakeSink(null);
       cancelAnimationFrame(raf);
       delete (window as unknown as { __seamarkMap?: unknown }).__seamarkMap;
       map?.remove();
