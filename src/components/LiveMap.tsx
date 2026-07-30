@@ -92,7 +92,7 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
           fadeDuration: 140,
         });
 
-        (window as unknown as { __flintMap?: unknown }).__flintMap = map;
+        (window as unknown as { __seamarkMap?: unknown }).__seamarkMap = map;
 
         map.on("load", () => {
           if (cancelled || !map) return;
@@ -246,7 +246,7 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
       cancelled = true;
       registerCamera(null);
       cancelAnimationFrame(raf);
-      delete (window as unknown as { __flintMap?: unknown }).__flintMap;
+      delete (window as unknown as { __seamarkMap?: unknown }).__seamarkMap;
       map?.remove();
     };
   }, []);

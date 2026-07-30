@@ -136,7 +136,9 @@ export default function Contact() {
       {/* The non-affiliation notice has to live somewhere now that there is no
           footer; the close is where a visitor is most likely to read it. */}
       <p className="mt-8 border-t border-(--line) pt-6 text-xs leading-relaxed text-(--color-ink-faint)">
-        {BRAND.name} is an independent studio — not affiliated with, endorsed
+        {/* BRAND.short, not BRAND.name — the full name ends in "Studio", and
+            "Seamark Studio is an independent studio" stutters. */}
+        {BRAND.short} is an independent studio — not affiliated with, endorsed
         by, or acting on behalf of Berkshire Hathaway HomeServices. All trademarks
         belong to their respective owners. Background imagery © Esri, Maxar,
         Earthstar Geographics. Building data © OpenStreetMap contributors.

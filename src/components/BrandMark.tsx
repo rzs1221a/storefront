@@ -1,7 +1,7 @@
 /**
- * The Flint Studio mark.
+ * The Seamark Studio mark.
  *
- * A rhombus — a struck flake of flint, reduced to one shape. Illustration was
+ * A rhombus — a seamark's daymark board, reduced to one shape. Illustration was
  * tried and abandoned: at wordmark size any drawn object collapses into a
  * smudge or, worse, reads as a stray letterform sitting in front of the name.
  * Geometry beats illustration below about 20px, and a knapped edge is already

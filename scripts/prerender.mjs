@@ -208,7 +208,9 @@ function bodyFor(dest) {
         `Call or text ${CONTACT.phoneDisplay}.`,
         `Email ${CONTACT.email}.`,
         `Based on ${CONTACT.location}. I reply within one business day.`,
-        `${BRAND.name} is an independent studio — not affiliated with, endorsed by, or acting on behalf of Berkshire Hathaway HomeServices.`,
+        // BRAND.short, matching routes/Contact.tsx — the full name ends in
+        // "Studio", and "Seamark Studio is an independent studio" stutters.
+        `${BRAND.short} is an independent studio — not affiliated with, endorsed by, or acting on behalf of Berkshire Hathaway HomeServices.`,
       ]),
   };
 

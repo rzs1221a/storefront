@@ -1,4 +1,4 @@
-# Storefront — Flint Studio
+# Storefront — Seamark Studio
 
 The commercial front door: a map you navigate, selling custom websites to real
 estate agents — a 24-option catalog of everything on offer, with five real
@@ -64,7 +64,7 @@ Four placeholders, each in exactly one file.
 |---|---|---|
 | **Prices** | `src/lib/offer.ts` → `TIERS` | $1,500 / $3,500 / $6,500 are invented. `SHOW_PRICING` in `brand.ts` is currently **false**, so every tier reads "Let's talk". |
 | **Phone + email** | `src/lib/brand.ts` → `CONTACT` | Live: (904) 548-8222 / rzs1221a@gmail.com. |
-| **Brand name** | `src/lib/brand.ts` → `BRAND` | "Flint Studio". Worth a trademark check — `flint` is a common word and heavily registered. |
+| **Brand name** | `src/lib/brand.ts` → `BRAND` | "Seamark Studio". A seamark is a charted object mariners navigate by — the same idea as the beacons this site draws. Worth a trademark check. |
 | **Domain** | `src/lib/brand.ts` → `BRAND.domain`/`origin` | Currently the Netlify URL we actually control. `kedge.studio` was never ours — it belongs to a third party. Do not name a domain here until it is registered and pointed at this site: `origin` is stamped into every canonical, og:url and sitemap entry. |
 
 ## SEO — read this before changing the build

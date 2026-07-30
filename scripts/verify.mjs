@@ -70,7 +70,7 @@ async function resolveChromium() {
 async function skipOpening(page) {
   await page.evaluate(() => {
     try {
-      sessionStorage.setItem("flint:opened", "1");
+      sessionStorage.setItem("seamark:opened", "1");
     } catch {
       /* ignore */
     }

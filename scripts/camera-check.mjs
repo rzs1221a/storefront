@@ -55,7 +55,7 @@ const READ_CAMERA_FN = `function readCamera() {
   const el = document.querySelector('.live-map .maplibregl-map')
           || document.querySelector('.live-map');
   const key = el && Object.keys(el).find((k) => k.startsWith('__maplibre'));
-  const map = key ? el[key] : window.__flintMap;
+  const map = key ? el[key] : window.__seamarkMap;
   if (!map || !map.getCenter) return null;
   const c = map.getCenter();
   return { lng: c.lng, lat: c.lat, zoom: map.getZoom() };

@@ -18,7 +18,7 @@ import { numberWord } from "../lib/format";
  * immediately by click, key, or the button — it must never feel like a gate.
  */
 
-const SEEN_KEY = "flint:opened";
+const SEEN_KEY = "seamark:opened";
 
 /**
  * How long the claim holds before dissolving.

@@ -45,7 +45,7 @@ export const WORK: WorkItem[] = [
     slug: "the-aerial",
     name: "The Aerial",
     kind: "Flagship product",
-    client: "Flint Studio — in-house flagship",
+    client: "Seamark Studio — in-house flagship",
     outcome:
       "One interface covering seventy named areas across four regions, where a buyer explores by flying rather than by filtering a list.",
     summary:

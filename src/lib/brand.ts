@@ -2,16 +2,16 @@
  * Single source of truth for who is selling. Change the name here and it
  * changes everywhere — nav, hero, footer, meta tags, JSON-LD.
  *
- * Flint is the stone you strike to make the spark: hard, sharp-edged, and
- * worthless until it hits something. Knapping it is deliberate work — you
- * shape an edge by taking material away. Fitting for a studio whose whole
- * argument is that a site should be the thing that starts the conversation,
- * and short enough to say once and have it stick.
+ * A seamark is a fixed, charted object that mariners navigate by — a marker
+ * that exists so people can find their way. That is what this studio sells:
+ * not a brochure, but the thing an agent gets found by. The product is
+ * literally a map with markers on it, and every beacon in LiveMap.tsx is a
+ * seamark in the original sense.
  */
 
 export const BRAND = {
-  name: "Flint Studio",
-  short: "Flint",
+  name: "Seamark Studio",
+  short: "Seamark",
   tagline: "Custom websites for real estate professionals.",
   /**
    * The one-line positioning statement. Deliberately concrete: it names the
