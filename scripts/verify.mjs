@@ -20,6 +20,7 @@ import path from "node:path";
 import { chromium } from "playwright";
 import { routeThroughCurl } from "./lib/egress.mjs";
 import { DESTINATIONS } from "../src/lib/destinations.ts";
+import { BRAND } from "../src/lib/brand.ts";
 
 const args = process.argv.slice(2).filter((a) => a !== "--quick");
 const QUICK = process.argv.includes("--quick");
@@ -69,7 +70,7 @@ async function resolveChromium() {
 async function skipOpening(page) {
   await page.evaluate(() => {
     try {
-      sessionStorage.setItem("kedge:opened", "1");
+      sessionStorage.setItem("flint:opened", "1");
     } catch {
       /* ignore */
     }
@@ -313,7 +314,7 @@ async function main() {
       if (text.trim().length < 120) {
         note("no-js", `${route.path} has almost no crawlable text`);
       }
-      if (!title || title === "Kedge") {
+      if (!title || title === BRAND.name) {
         note("no-js", `${route.path} has no page-specific <title> (got "${title}")`);
       }
       const canonical = await page.getAttribute('link[rel="canonical"]', "href");

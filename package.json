@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Kedge — custom real estate websites for BHHS agents.",
+  "description": "Flint Studio — custom real estate websites for BHHS agents.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && tsx scripts/prerender.mjs",

@@ -9,7 +9,7 @@
  * and will reject requests without one.
  */
 
-const UA = { "User-Agent": "(kedge.studio, storefront)" };
+const UA = { "User-Agent": "(kstorefront.netlify.app, storefront)" };
 const POINT = "30.61,-81.46"; // Amelia Island
 
 const CACHE = "public, s-maxage=900, stale-while-revalidate=1800";

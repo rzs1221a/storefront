@@ -1,4 +1,7 @@
+# Regenerated at build time by scripts/prerender.mjs so the Sitemap line always
+# carries the origin the site is actually deployed on. Editing the domain here
+# by hand is how it ends up pointing at a domain we do not own.
 User-agent: *
 Allow: /
 
-Sitemap: https://kedge.studio/sitemap.xml
+Sitemap: /sitemap.xml

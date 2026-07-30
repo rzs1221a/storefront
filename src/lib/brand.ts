@@ -2,15 +2,16 @@
  * Single source of truth for who is selling. Change the name here and it
  * changes everywhere — nav, hero, footer, meta tags, JSON-LD.
  *
- * A kedge is the light anchor a crew rows out ahead of a ship to warp it into
- * position when there is no wind — the small, deliberate thing that moves
- * something much larger. Fitting for coastal work, and short enough to say
- * once and have it stick.
+ * Flint is the stone you strike to make the spark: hard, sharp-edged, and
+ * worthless until it hits something. Knapping it is deliberate work — you
+ * shape an edge by taking material away. Fitting for a studio whose whole
+ * argument is that a site should be the thing that starts the conversation,
+ * and short enough to say once and have it stick.
  */
 
 export const BRAND = {
-  name: "Kedge",
-  short: "Kedge",
+  name: "Flint Studio",
+  short: "Flint",
   tagline: "Custom websites for real estate professionals.",
   /**
    * The one-line positioning statement. Deliberately concrete: it names the
@@ -18,9 +19,16 @@ export const BRAND = {
    */
   positioning:
     "Bespoke, high-performance websites for BHHS agents — built once, owned outright, no monthly platform fee.",
-  /** PLACEHOLDER — confirm the domain before launch. */
-  domain: "kedge.studio",
-  origin: "https://kedge.studio",
+  /**
+   * The live address. Deliberately the Netlify URL we actually control rather
+   * than an aspirational custom domain: `origin` is stamped into every
+   * canonical, og:url and sitemap entry by scripts/prerender.mjs, so naming a
+   * domain we do not own would tell search engines that someone else's site is
+   * the authoritative copy of ours. Change both lines the day a real domain is
+   * registered and pointed here — and not before.
+   */
+  domain: "kstorefront.netlify.app",
+  origin: "https://kstorefront.netlify.app",
 } as const;
 
 /**

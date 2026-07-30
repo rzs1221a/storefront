@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { WORK, TOTALS } from "../lib/work";
 import { TIERS } from "../lib/offer";
 import { CATALOG_TOTALS } from "../lib/catalog";
+import { BRAND, CONTACT } from "../lib/brand";
 import BrowserFrame from "../components/BrowserFrame";
 import MagneticButton from "../components/MagneticButton";
 import CountUp from "../components/CountUp";
@@ -29,7 +30,9 @@ export default function Coast() {
     <div className="coast-layer" id="sheet">
       <div className="hero panel">
         <div className="hero-copy">
-          <p className="eyebrow">Kedge — Amelia Island, Florida</p>
+          <p className="eyebrow">
+            {BRAND.name} — {CONTACT.location}
+          </p>
 
           <h1 className="hero-title">
             High-converting custom web systems and interactive real estate

@@ -1,10 +1,11 @@
 /**
- * The Kedge mark.
+ * The Flint Studio mark.
  *
- * A rhombus — the fluke of an anchor, reduced to one shape. An earlier
- * attempt drew a literal kedge anchor (stem, stock, and hook), but at
- * wordmark size the stem and crossbar simply read as a lowercase "t" sitting
- * in front of the name. Geometry beats illustration below about 20px.
+ * A rhombus — a struck flake of flint, reduced to one shape. Illustration was
+ * tried and abandoned: at wordmark size any drawn object collapses into a
+ * smudge or, worse, reads as a stray letterform sitting in front of the name.
+ * Geometry beats illustration below about 20px, and a knapped edge is already
+ * geometry.
  *
  * Keep this in sync with public/favicon.svg.
  */

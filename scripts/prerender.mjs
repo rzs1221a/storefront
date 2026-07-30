@@ -278,6 +278,20 @@ ${pages
 await writeFile(path.join(dist, "sitemap.xml"), sitemap, "utf8");
 
 /*
+ * robots.txt, from the same ORIGIN as the sitemap.
+ *
+ * The Sitemap directive takes an absolute URL, which means a hand-edited
+ * robots.txt is one more place a stale domain can hide — and it hid one: the
+ * checked-in file pointed crawlers at a domain the studio does not own.
+ * Generating it here means it can only ever name the origin actually built.
+ */
+await writeFile(
+  path.join(dist, "robots.txt"),
+  `User-agent: *\nAllow: /\n\nSitemap: ${ORIGIN}/sitemap.xml\n`,
+  "utf8"
+);
+
+/*
  * The tripwire, rebuilt as assertions over the actual invariants rather than a
  * hand-counted route total. Adding a destination now means editing exactly one
  * file — src/lib/destinations.ts (or the data it derives from) — and the build

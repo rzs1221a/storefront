@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from "react-router-dom";
-import { CONTACT, SHOW_PRICING } from "../lib/brand";
+import { BRAND, CONTACT, SHOW_PRICING } from "../lib/brand";
 import { tierBySlug, TIERS } from "../lib/offer";
 import { offeringBySlug, priceLabelFor } from "../lib/catalog";
 import Sheet from "../components/Sheet";
@@ -136,8 +136,8 @@ export default function Contact() {
       {/* The non-affiliation notice has to live somewhere now that there is no
           footer; the close is where a visitor is most likely to read it. */}
       <p className="mt-8 border-t border-(--line) pt-6 text-xs leading-relaxed text-(--color-ink-faint)">
-        Kedge is an independent studio — not affiliated with, endorsed by, or
-        acting on behalf of Berkshire Hathaway HomeServices. All trademarks
+        {BRAND.name} is an independent studio — not affiliated with, endorsed
+        by, or acting on behalf of Berkshire Hathaway HomeServices. All trademarks
         belong to their respective owners. Background imagery © Esri, Maxar,
         Earthstar Geographics. Building data © OpenStreetMap contributors.
       </p>

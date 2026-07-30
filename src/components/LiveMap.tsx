@@ -92,7 +92,7 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
           fadeDuration: 140,
         });
 
-        (window as unknown as { __kedgeMap?: unknown }).__kedgeMap = map;
+        (window as unknown as { __flintMap?: unknown }).__flintMap = map;
 
         map.on("load", () => {
           if (cancelled || !map) return;
@@ -246,7 +246,7 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
       cancelled = true;
       registerCamera(null);
       cancelAnimationFrame(raf);
-      delete (window as unknown as { __kedgeMap?: unknown }).__kedgeMap;
+      delete (window as unknown as { __flintMap?: unknown }).__flintMap;
       map?.remove();
     };
   }, []);

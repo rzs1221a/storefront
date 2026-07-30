@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { TOTALS } from "../lib/work";
+import { BRAND, CONTACT } from "../lib/brand";
 import { numberWord } from "../lib/format";
 
 /**
@@ -17,7 +18,7 @@ import { numberWord } from "../lib/format";
  * immediately by click, key, or the button — it must never feel like a gate.
  */
 
-const SEEN_KEY = "kedge:opened";
+const SEEN_KEY = "flint:opened";
 
 /**
  * How long the claim holds before dissolving.
@@ -82,7 +83,9 @@ export default function Opening() {
       aria-hidden="true"
     >
       <div className="opening-inner">
-        <p className="eyebrow">Kedge — Amelia Island, Florida</p>
+        <p className="eyebrow">
+          {BRAND.name} — {CONTACT.location}
+        </p>
         <p className="opening-claim">
           Your website should be the reason they call you.
         </p>
