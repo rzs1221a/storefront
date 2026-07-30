@@ -4,6 +4,8 @@ import Shell from "./components/Shell";
 import Coast from "./routes/Coast";
 import Work from "./routes/Work";
 import WorkDetail from "./routes/WorkDetail";
+import Options from "./routes/Options";
+import OptionDetail from "./routes/OptionDetail";
 import Packages from "./routes/Packages";
 import Capabilities from "./routes/Capabilities";
 import Contact from "./routes/Contact";
@@ -30,6 +32,8 @@ export default function App() {
           <Route path="packages" element={<Packages />} />
           <Route path="work" element={<Work />} />
           <Route path="work/:slug" element={<WorkDetail />} />
+          <Route path="options" element={<Options />} />
+          <Route path="options/:slug" element={<OptionDetail />} />
           <Route path="capabilities" element={<Capabilities />} />
           <Route path="contact" element={<Contact />} />
 

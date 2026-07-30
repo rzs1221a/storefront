@@ -13,6 +13,10 @@
  * place is worse than one that does not fly at all.
  */
 
+// Runtime-safe despite appearances: catalog.ts imports only the CameraFrame
+// type from this module, which is erased at compile time — no cycle.
+import { FLAGSHIP_CONCEPTS } from "./catalog";
+
 export interface CameraFrame {
   center: [number, number];
   zoom: number;
@@ -95,7 +99,24 @@ export const FRAMES: Record<string, CameraFrame> = {
   pricing: { center: [-81.46, 30.62], zoom: 11.4, pitch: 50, bearing: -20 },
   contact: { center: [-81.47, 30.66], zoom: 12.6, pitch: 60, bearing: 24 },
 
+  /*
+   * The catalog overview pulls all the way out to the working corridor —
+   * St. Marys, Georgia down to St. Augustine — because that is the frame in
+   * which the six concept markers read as a claim on a market rather than a
+   * cluster of pins. The zoom sits just above the concept-label threshold in
+   * LiveMap, so each hollow marker arrives named.
+   */
+  catalog: { center: [-81.5, 30.3], zoom: 8.9, pitch: 45, bearing: -10 },
 };
+
+/*
+ * The six flagship concepts each carry their own descent frame, declared
+ * beside the offering itself in catalog.ts and registered here so FRAMES
+ * remains the one lookup the camera ever consults.
+ */
+for (const o of FLAGSHIP_CONCEPTS) {
+  if (o.frame) FRAMES[`option-${o.slug}`] = o.frame;
+}
 
 /**
  * Where the arrival begins: far out over the corridor and flat, the way you

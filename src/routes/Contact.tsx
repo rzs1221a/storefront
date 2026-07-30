@@ -1,6 +1,7 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { CONTACT, SHOW_PRICING } from "../lib/brand";
-import { tierBySlug } from "../lib/offer";
+import { tierBySlug, TIERS } from "../lib/offer";
+import { offeringBySlug, priceLabelFor } from "../lib/catalog";
 import Sheet from "../components/Sheet";
 import LeadForm from "../components/LeadForm";
 
@@ -9,20 +10,33 @@ import LeadForm from "../components/LeadForm";
  * project sheet — on a map interface the conversion path has to be permanently
  * one tap away, because there is no "scroll to the bottom" to fall back on.
  *
- * Arriving from an offer card carries `?package=<slug>`, which pre-selects
- * that tier in the form and acknowledges the choice above it. Carrying the
- * selection in the URL rather than in component state is deliberate: it
- * survives a reload, it can be sent to someone, and it works from the
- * prerendered HTML before React has mounted.
+ * Arriving from an offer card carries `?package=<slug>`; arriving from a
+ * catalog option carries `?option=<slug>`. Either pre-selects the form and
+ * acknowledges the choice above it. Carrying the selection in the URL rather
+ * than in component state is deliberate: it survives a reload, it can be sent
+ * to someone, and it works from the prerendered HTML before React has mounted.
  */
 export default function Contact() {
   const [params] = useSearchParams();
-  const tier = tierBySlug(params.get("package"));
+  const offering = offeringBySlug(params.get("option"));
+  // An option implies its build size; an explicit ?package= still wins when
+  // that is how the visitor arrived.
+  const tier =
+    tierBySlug(params.get("package")) ??
+    (offering ? TIERS.find((t) => t.slug === offering.tierSlug) : undefined);
+
+  const subject = offering?.name ?? tier?.name;
 
   return (
     <Sheet
-      eyebrow={tier ? `Packages — ${tier.name}` : "Start here"}
-      title={tier ? `Let's talk about your ${tier.name}` : "Tell me what you need"}
+      eyebrow={
+        offering
+          ? `Everything I build — ${offering.name}`
+          : tier
+            ? `Packages — ${tier.name}`
+            : "Start here"
+      }
+      title={subject ? `Let's talk about your ${subject}` : "Tell me what you need"}
     >
       <p className="lede">
         Twenty minutes on the phone and you will know whether this is worth
@@ -30,7 +44,35 @@ export default function Contact() {
         than build something that does not earn its keep.
       </p>
 
-      {tier && (
+      {offering ? (
+        <div className="selected-package">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <p className="selected-package-name">
+              {offering.name}
+              {tier && (
+                <span className="selected-package-system"> · {tier.name} build</span>
+              )}{" "}
+              <span
+                className={`badge ${offering.status === "shipped" ? "badge-shipped" : "badge-concept"}`}
+              >
+                {offering.status === "shipped" ? "Shipped pattern" : "Concept"}
+              </span>
+            </p>
+            <p className="font-mono text-sm text-(--color-signal)">
+              {SHOW_PRICING ? priceLabelFor(offering) : "Fixed quote, in writing"}
+            </p>
+          </div>
+          <p className="mt-2 text-[0.875rem] leading-relaxed text-(--color-ink-soft)">
+            {offering.pitch}
+          </p>
+          <p className="mono-label mt-3">
+            {offering.timeline} ·{" "}
+            <Link to={`/options/${offering.slug}`} className="hover:text-(--color-ink)">
+              Back to the details →
+            </Link>
+          </p>
+        </div>
+      ) : tier ? (
         <div className="selected-package">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <p className="selected-package-name">
@@ -53,7 +95,7 @@ export default function Contact() {
             </Link>
           </p>
         </div>
-      )}
+      ) : null}
 
       <div className="mt-6 divide-y divide-(--line) overflow-hidden rounded-xl border border-(--line)">
         <a
@@ -80,7 +122,10 @@ export default function Contact() {
       </div>
 
       <div className="mt-6">
-        <LeadForm selectedPackage={tier?.name} />
+        <LeadForm
+          selectedPackage={offering ? undefined : tier?.name}
+          selectedOption={offering?.name}
+        />
       </div>
 
       <p className="mt-6 flex items-center gap-2 text-sm text-(--color-ink-faint)">
