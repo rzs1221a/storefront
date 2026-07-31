@@ -32,7 +32,7 @@ export function Process() {
               {step.step}
             </span>
             <div>
-              <h2 className="text-[1.0625rem] font-medium tracking-[-0.015em]">
+              <h2 className="text-[1.0625rem] font-medium tracking-[-0.004em]">
                 {step.name}
               </h2>
               <p className="mt-2 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
@@ -69,7 +69,7 @@ export function Questions() {
             key={item.q}
             className={`group py-4 ${i === 0 ? "" : "border-t border-(--line)"}`}
           >
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[1.0625rem] font-medium tracking-[-0.015em] [&::-webkit-details-marker]:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[1.0625rem] font-medium tracking-[-0.004em] [&::-webkit-details-marker]:hidden">
               {item.q}
               <svg
                 width="14"

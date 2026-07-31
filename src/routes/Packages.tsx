@@ -43,7 +43,7 @@ export default function Packages() {
       </p>
 
       {/* The ownership argument, which is the real objection-handler. */}
-      <h2 className="mt-12 border-t border-(--line) pt-8 text-lg font-medium tracking-[-0.015em]">
+      <h2 className="mt-12 border-t border-(--line) pt-8 text-lg font-medium tracking-[-0.004em]">
         {COMPARISON.headline}
       </h2>
       <p className="mt-3 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">

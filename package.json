@@ -22,7 +22,7 @@
     "last 2 iOS versions"
   ],
   "dependencies": {
-    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/fraunces": "^5.3.0",
     "@fontsource-variable/geist-mono": "^5.3.0",
     "@types/suncalc": "^1.9.2",
     "maplibre-gl": "^4.7.1",

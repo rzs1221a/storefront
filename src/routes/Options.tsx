@@ -59,7 +59,7 @@ export default function Options() {
         const offerings = offeringsByCategory(cat.slug);
         return (
           <section key={cat.slug} id={cat.slug} className="mt-10">
-            <h2 className="text-lg font-medium tracking-[-0.015em]">
+            <h2 className="text-lg font-medium tracking-[-0.004em]">
               {cat.name}
             </h2>
             <p className="mt-1 text-[0.875rem] text-(--color-ink-muted)">
