@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
 import { COMPARISON, TIERS } from "../lib/offer";
+import { MODULES, includedInLabel } from "../lib/catalog";
+import { SHOW_PRICING } from "../lib/brand";
 import { numberWord } from "../lib/format";
 import Page from "../components/Page";
 import OfferGrid from "../components/OfferGrid";
 
 /**
- * The store. Three productized packages, side by side, each with its own way
- * into the lead form carrying its own name.
+ * The store. Four build sizes side by side, then the six modules that attach
+ * to any of them — the two axes of the offer on one sheet, each with its own
+ * way into the lead form carrying its own name.
  *
  * The ownership comparison sits underneath rather than above: it is an
  * objection-handler, and a buyer who is already sold should reach a button
@@ -41,6 +44,44 @@ export default function Packages() {
           Describe what you sell and I will tell you.
         </Link>
       </p>
+
+      {/* ── The second axis: modules ──────────────────────────────────── */}
+      <h2 className="mt-12 border-t border-(--line) pt-8 text-lg font-medium tracking-[-0.004em]">
+        Add to any build
+      </h2>
+      <p className="mt-3 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
+        {numberWord(MODULES.length)} modules that attach to any build size —
+        or retrofit into the site you already have. Each is priced on its own,
+        and the larger builds include some outright.
+      </p>
+
+      <ul className="mt-6 divide-y divide-(--line)">
+        {MODULES.map((m) => (
+          <li key={m.slug}>
+            <Link to={`/options/${m.slug}`} className="module-row">
+              <span className="min-w-0 flex-1">
+                <span className="case-head">
+                  <span className="case-name">{m.name}</span>
+                  {m.status === "shipped" && (
+                    <span className="badge badge-shipped">Shipped</span>
+                  )}
+                </span>
+                <span className="case-summary">{m.pitch}</span>
+                {includedInLabel(m) && (
+                  <span className="mono-label mt-1.5 block">
+                    {includedInLabel(m)}
+                  </span>
+                )}
+              </span>
+              <span className="module-price">
+                {SHOW_PRICING && m.priceFrom != null
+                  ? `from $${m.priceFrom.toLocaleString("en-US")}`
+                  : "Let's talk"}
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
 
       {/* The ownership argument, which is the real objection-handler. */}
       <h2 className="mt-12 border-t border-(--line) pt-8 text-lg font-medium tracking-[-0.004em]">

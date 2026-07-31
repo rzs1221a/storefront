@@ -104,7 +104,27 @@ export default function Contact() {
         </div>
       ) : null}
 
-      <div className="mt-6 divide-y divide-(--line) overflow-hidden rounded-xl border border-(--line)">
+      {/* The form leads: it is the measurable conversion, and on a phone the
+          call/text row would otherwise push it below the fold. */}
+      <div className="mt-6">
+        <LeadForm
+          selectedPackage={offering ? undefined : tier?.name}
+          selectedOption={offering?.name}
+        />
+      </div>
+
+      <p className="mt-4 text-[0.8125rem] leading-relaxed text-(--color-ink-faint)">
+        A fixed quote in writing before anything starts —{" "}
+        <Link
+          to="/process"
+          className="text-(--color-ink-muted) underline decoration-(--line-strong) underline-offset-4"
+        >
+          see how a project runs
+        </Link>
+        .
+      </p>
+
+      <div className="mt-6 divide-y divide-(--line) overflow-hidden rounded-lg border border-(--line)">
         <a
           href={`tel:${CONTACT.phone}`}
           className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-white/[0.04]"
@@ -126,13 +146,6 @@ export default function Contact() {
           <span className="mono-label">Email</span>
           <span className="truncate text-[0.9375rem]">{CONTACT.email}</span>
         </a>
-      </div>
-
-      <div className="mt-6">
-        <LeadForm
-          selectedPackage={offering ? undefined : tier?.name}
-          selectedOption={offering?.name}
-        />
       </div>
 
       <p className="mt-6 flex items-center gap-2 text-sm text-(--color-ink-faint)">
