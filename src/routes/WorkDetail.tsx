@@ -47,7 +47,7 @@ export default function WorkDetail() {
            exactly as a chart would record it. The storefront's own reads F —
            fixed — because it is the mark you are standing on. */
         beacon && (
-          <p className="sheet-datum">
+          <p className="page-datum">
             {item.light.characteristic} · {formatLatLon(beacon.center)}
             {item.slug === "seamark-storefront" && " — the mark you are standing on"}
           </p>

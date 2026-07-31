@@ -29,7 +29,7 @@ function ChartLine() {
   if (wake.charted === 0) return null;
 
   return (
-    <div className="rail-chart">
+    <div className="foot-chart">
       <p className="mono-label">
         {wake.charted} of {TOTAL_MARKS} marks charted
       </p>

@@ -164,7 +164,7 @@ export default function Conditions({
           )}
       </p>
       {showGolden && (
-        <p className="rail-golden mt-1.5">
+        <p className="conditions-golden mt-1.5">
           Golden hour in {goldenCountdown(sky.minutesToGolden!)}
         </p>
       )}
