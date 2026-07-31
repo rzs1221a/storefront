@@ -1,25 +1,33 @@
 /**
  * The productized offer — the single file to edit when packaging changes.
  *
- * ⚠️  THE PRICES BELOW ARE PLACEHOLDERS. They are not published: `SHOW_PRICING`
- * in lib/brand.ts is false, so every tier reads "Let's talk" until the figures
- * are confirmed. Set the numbers here, flip that boolean, and all three go live
- * at once.
+ * The prices below are PUBLISHED: `SHOW_PRICING` in lib/brand.ts is true, and
+ * both the tier cards and the catalog's `priceLabelFor` render these figures.
+ * Change a number here and it changes everywhere at once.
  *
  * The model is deliberate: one-time build fee, no recurring platform charge,
  * the agent owns the code and the hosting account. That is the one claim the
  * subscription platforms structurally cannot match, so the whole offer is built
  * around it.
  *
- * On the naming: each tier carries both a `name` and a `system`. The name is
- * what an agent recognises themselves in — "I need an agent page" — and the
- * system is the same thing described as an engineering deliverable, for the
- * team lead or broker who wants to know what they are actually buying. Leading
- * with the system alone would be jargon at a reader who sells houses.
+ * The four tiers are named as the coast names its lights, smallest to largest:
+ * a daymark is an unlit charted mark, a beacon is lit, a light station is
+ * crewed, and the flagship leads the fleet. Each tier still carries both a
+ * `name` and a `system`. The name is the brand; the system is the same thing
+ * described as a plain deliverable, for the reader who sells houses and has
+ * never heard of a daymark. Leading with either alone would lose the other
+ * reader.
+ *
+ * Builds are only half the offer: the catalog's `tools` category is six
+ * MODULES — add-ons priced individually (`priceFrom` in catalog.ts) that
+ * attach to any build, or retrofit into a site that already exists.
  */
 
+/** The four build sizes. catalog.ts types every build offering against this. */
+export type TierSlug = "daymark" | "beacon" | "light-station" | "flagship";
+
 export interface Tier {
-  slug: string;
+  slug: TierSlug;
   /** What the buyer calls it. */
   name: string;
   /** The same thing as a productized system, for the technical reader. */
@@ -48,24 +56,24 @@ export interface Tier {
 
 export const TIERS: Tier[] = [
   {
-    slug: "agent-page",
-    name: "Agent Page",
-    system: "High-Performance Landing System",
+    slug: "daymark",
+    name: "Daymark",
+    system: "The single-page build",
     price: 1500,
     priceNote: "one-time",
-    audience: "A single agent who needs a real home online.",
+    audience: "One agent, one listing, or one campaign — one page done properly.",
     summary:
-      "One authoritative page that loads instantly, ranks for your name, and routes every enquiry into your CRM.",
+      "One authoritative page that loads instantly, ranks for its name, and routes every enquiry into your CRM. An agent page, a listing site, a funnel — any of the single-page builds in the catalog.",
     idealFor: [
       "You are an individual agent with no site, or a brokerage profile page",
-      "Your BoldTrail property-alert emails send traffic somewhere that is not yours",
+      "You have a listing or campaign that deserves its own address",
       "You want one link that works on a business card, a sign, and a phone",
     ],
     deliverables: [
       "Custom design — not a template with your headshot dropped in",
-      "Bio, listings, testimonials, and contact",
+      "Bio, listings, testimonials, and contact — or the campaign equivalent",
       "Lead form routed into BoldTrail or your inbox",
-      "BoldTrail property-alert links resolving on your own domain",
+      "Property-alert links resolving on your own domain",
       "Full SEO: metadata, Open Graph, schema.org, sitemap",
       "Free hosting on Netlify, in your account",
     ],
@@ -74,59 +82,84 @@ export const TIERS: Tier[] = [
     exampleSlug: "ron-heymann-agent-page",
   },
   {
-    slug: "community-site",
-    name: "Community Site",
-    system: "Interactive Coastal Platform",
+    slug: "beacon",
+    name: "Beacon",
+    system: "The multi-page site",
     price: 3500,
     priceNote: "one-time",
-    audience: "An agent who wants to own one niche completely.",
+    audience: "An agent, team, or niche that has outgrown one page.",
     summary:
-      "Stop fighting the whole county for one keyword. Take a single community — a neighborhood, a development, a price band — and become the definitive source for it.",
+      "A real site with real routes — a community claimed completely, a team under one brand, a name built to survive a brokerage change — each page able to rank on its own.",
     idealFor: [
       "You already have a farm area and want to be the obvious authority in it",
-      "You sell waterfront, a named development, or one distinct price band",
+      "You run a team and need buyer and seller flows that route correctly",
       "You want to update your own content without filing a request",
     ],
     deliverables: [
-      "Everything in Agent Page",
-      "Deep single-community authority content",
-      "Geo-targeted metadata and structured data for that specific search intent",
-      "Interactive map of the community",
+      "Everything in Daymark",
+      "Multi-page architecture — each page a separate entry point from search",
+      "Geo-targeted metadata and structured data for your specific intent",
       "Guided buyer and seller lead flows",
-      "Content editor so you update it yourself, no developer needed",
+      "CRM lead routing and content editor included",
+      "Interactive map of your community or coverage area",
     ],
     turnaroundTime: "Two to three weeks",
     ctaLabel: "Inquire about this tier",
-    exampleSlug: "crane-island-bhhs",
+    exampleSlug: "sold-on-amelia-island",
     featured: true,
     badge: "Most popular",
   },
   {
-    slug: "flagship",
-    name: "Flagship",
-    system: "Custom Enterprise Build",
+    slug: "light-station",
+    name: "Light Station",
+    system: "The platform build",
     price: 6500,
-    priceNote: "starting, one-time",
-    audience: "A team or brokerage that wants something nobody else has.",
+    priceNote: "from, one-time",
+    audience: "A brokerage or operation that needs a system, not a site.",
     summary:
-      "The full build. Multi-route, map-driven, prerendered for search, with whatever the business actually needs rather than whatever the template allowed.",
+      "Multi-route, map-driven, prerendered for search: a full roster, a page for every neighborhood you cover, and cinematic map storytelling — the pattern running today on a seventeen-route shipped build.",
     idealFor: [
       "You are a team or brokerage with a roster and more than one market",
       "You need pages for every neighborhood you cover, each one able to rank",
       "You want the site itself to be the reason someone calls you",
     ],
     deliverables: [
-      "Everything in Community Site",
+      "Everything in Beacon",
       "Multi-route architecture with a full agent roster",
-      "Live 3D mapping — real terrain, buildings, satellite imagery",
+      "Map-synced storytelling with authored camera stations",
       "Per-neighborhood pages prerendered to static HTML for SEO",
-      "Plain-English property search",
-      "Live local data — tide, weather, light, market signals",
-      "Complete design system documented for future work",
+      "Route-level code splitting and a documented design system",
+      "Full reduced-motion and keyboard accessibility pass",
     ],
-    turnaroundTime: "Four to eight weeks",
-    ctaLabel: "Discuss a custom build",
+    turnaroundTime: "Three to six weeks",
+    ctaLabel: "Inquire about this tier",
     exampleSlug: "heymann-williams-coastal",
+  },
+  {
+    slug: "flagship",
+    name: "Flagship",
+    system: "The custom market platform",
+    price: 12000,
+    priceNote: "from, one-time",
+    audience: "Whoever decides to own the map of their market.",
+    summary:
+      "The Aerial's model, pointed at your market: the whole area as a living 3D interface with plain-English search and live local data. The difference between having a website and having the map everyone else's website embeds.",
+    idealFor: [
+      "You want your market itself to be the interface, not a scroll feed",
+      "You need plain-English search over your actual inventory",
+      "You are building the thing nobody else in your market can copy",
+    ],
+    deliverables: [
+      "Everything in Light Station",
+      "Your whole market as a living 3D map — terrain, imagery, buildings",
+      "Named areas and communities, each descendable and linkable",
+      "Plain-English property search wired to your feed",
+      "Live local data — tide, weather, light — as instruments in the page",
+      "Desktop and mobile profiles shipped from one codebase",
+    ],
+    turnaroundTime: "Six to ten weeks",
+    ctaLabel: "Discuss a custom build",
+    exampleSlug: "the-aerial",
   },
 ];
 
@@ -237,7 +270,7 @@ export const FAQ = [
   },
   {
     q: "How long does it take?",
-    a: "An agent page is about a week. A community site is two to three. A flagship build runs four to eight weeks depending on scope. You get a real date with your quote, not an estimate that slips.",
+    a: "A Daymark — the single-page build — is about a week. A Beacon is two to three. A Light Station runs three to six weeks, and a Flagship six to ten depending on scope. You get a real date with your quote, not an estimate that slips.",
   },
   {
     q: "What do you need from me?",

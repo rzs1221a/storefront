@@ -60,7 +60,7 @@ export default function Page({
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className="mt-2 text-3xl font-medium tracking-[-0.028em] outline-none sm:text-4xl"
+            className="mt-2 text-3xl font-medium tracking-[-0.006em] outline-none sm:text-4xl"
           >
             {title}
           </h1>

@@ -1,55 +1,83 @@
 @import "tailwindcss";
 
 /* Self-hosted. No render-blocking CDN font request — a site that sells
-   performance cannot afford a 300 ms flash of invisible text. */
-@import "@fontsource-variable/geist";
+   performance cannot afford a 300 ms flash of invisible text.
+
+   Fraunces ships wght-only from its default subpath; the optical-size axis —
+   the entire reason to choose Fraunces,
+luxurious display cuts at high opsz
+   and a sturdy text cut at low — lives in the `opsz` subpaths,
+and the
+   italics (load-bearing here: one italic phrase per major heading) in
+   `opsz-italic`. Import both or ship neither. */
+@import "@fontsource-variable/fraunces/opsz.css";
+@import "@fontsource-variable/fraunces/opsz-italic.css";
 @import "@fontsource-variable/geist-mono";
 
 /*
- * Blackline Systems — design system
+ * Seamark Studio — design system
  *
  * Deliberately near-monochrome. The client work IS the color: Crane Island
- * and Heymann Williams are gold-and-cabernet, The Aerial is deep glass and
+ * and Heymann Williams are gold-and-cabernet,
+The Aerial is deep glass and
  * system blue. A studio frame carrying its own loud palette would fight every
  * screenshot it holds. Neutral chrome lets five differently-branded projects
- * all look correct on one page, and restraint reads as expensive — which is
+ * all look correct on one page,
+and restraint reads as expensive — which is
  * the register the pricing needs.
+ *
+ * The register is editorial luxury: Fraunces serif for every reading voice,
+* warm ink-black plates,
+parchment cream,
+and a single champagne-brass accent.
+ * Geist Mono stays as the instrument voice — eyebrows,
+data lines,
+datum
+ * coordinates — because the chart metaphor needs one.
  *
  * Explicitly NOT the Playfair/Inter + gold/cabernet system used in
  * heymann-williams-coastal. That vocabulary belongs to the BHHS client work;
  * reusing it here would make the storefront read as a brokerage microsite.
+ * Fraunces + brass-on-warm-black is the storefront's own voice.
  *
- * Accent discipline: `signal` is reserved for live state, eyebrows, focus
- * rings, and data emphasis. Primary CTAs invert to solid cream on black —
- * the highest-contrast treatment available, and the one that converts.
+ * Accent discipline: `signal` is reserved for live state,
+eyebrows,
+focus
+ * rings,
+and data emphasis. Primary CTAs invert to solid cream on black —
+ * the highest-contrast treatment available,
+and the one that converts.
  */
 
 @theme {
-  /* Plate — near-black through graphite. */
-  --color-plate: #08090b;
-  --color-plate-raised: #0e1013;
-  --color-plate-high: #16191d;
-  --color-graphite: #24282e;
-  --color-graphite-light: #363b43;
+  /* Plate — warm near-black through umber graphite. */
+  --color-plate: #0b0a08;
+  --color-plate-raised: #131109;
+  --color-plate-high: #1b1813;
+  --color-graphite: #2a2620;
+  --color-graphite-light: #3f3a32;
 
-  /* Ink — warm cream through muted. */
-  --color-ink: #f4f3f0;
-  --color-ink-soft: #b9bcc0;
-  /* Lifted twice, both times because measurement said so. #7d8288 measured
-     4.30:1 over the satellite plate; #8b9199 measured 3.84:1 once the chrome
-     became translucent glass sitting directly on a moving camera. Small text
-     needs 4.5:1 and the background here is never a fixed colour. */
-  --color-ink-muted: #979da5;
-  --color-ink-faint: #565b61;
+  /* Ink — parchment cream through muted. */
+  --color-ink: #f2ede2;
+  --color-ink-soft: #c6bfb1;
+  /* Lifted twice under the old cool ramp, both times because measurement said
+     so; this warm equivalent is tuned to the same luminance and verify.mjs
+     re-measures it at four live camera positions. Small text needs 4.5:1 and
+     the background here is never a fixed colour. */
+  --color-ink-muted: #a9a196;
+  --color-ink-faint: #5d574c;
 
-  /* The single accent. Cool, precise, chromatically neutral against both the
-     gold client work and The Aerial's blue. */
-  --color-signal: #4fd6e3;
-  --color-signal-dim: #2ba9b6;
-  --color-signal-glow: rgba(79, 214, 227, 0.15);
+  /* The single accent — champagne brass. Warm where the old signal was cool,
+     still chromatically quiet enough not to fight the client screenshots. */
+  --color-signal: #d9be82;
+  --color-signal-dim: #a8894f;
+  --color-signal-glow: rgba(217, 190, 130, 0.14);
 
-  --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", sans-serif;
+  /* All-serif editorial: the sans slot aliases to the serif so no stray
+     font-sans utility can resurrect a grotesque. Mono is the one exception. */
+  --font-serif: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --font-serif-text: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --font-sans: "Fraunces Variable", Georgia, "Times New Roman", serif;
   --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -57,8 +85,8 @@
 }
 
 :root {
-  --line: rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.16);
+  --line: rgba(255, 246, 230, 0.09);
+  --line-strong: rgba(255, 246, 230, 0.17);
   --shadow-lift: 0 24px 70px -24px rgba(0, 0, 0, 0.9);
   --shadow-deep: 0 40px 100px -30px rgba(0, 0, 0, 1);
   /* Page gutter, shared by every section so nothing drifts out of alignment. */
@@ -93,7 +121,11 @@ html {
 body {
   background-color: var(--color-plate);
   color: var(--color-ink);
-  font-family: var(--font-sans);
+  font-family: var(--font-serif-text);
+  /* Fraunces carries a real opsz axis; let the browser track rendered size
+     along it so display sizes get the high-contrast cut and body text the
+     sturdy one, from a single family. */
+  font-optical-sizing: auto;
   font-synthesis-weight: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -109,7 +141,7 @@ body {
 
 ::selection {
   background: var(--color-signal);
-  color: #04070a;
+  color: #0b0a08;
 }
 
 /* Skip link — visible only when focused. */
@@ -130,13 +162,12 @@ body {
 /*
  * Layout selectors below are scoped under `.shell-frame` deliberately.
  *
- * The rail, the sheet, and the coast card all wear `.panel` for its material,
- * and `.panel` sets `position: relative` to contain its own grain and rim
+ * The header, footer, and map layers all wear `.panel` for its material, and
+ * `.panel` sets `position: relative` to contain its own grain and rim
  * pseudo-elements. That rule is defined later in this file, so at equal
- * specificity it won — the sheet silently fell back into flow and rendered
- * half off the bottom-left of the screen. Scoping these to the frame both
- * fixes the cascade and states the truth: these are positioned children of
- * the app frame, not free-floating utilities.
+ * specificity it wins. Scoping layout to the frame both fixes the cascade
+ * and states the truth: these are positioned children of the app frame, not
+ * free-floating utilities.
  */
 
 .shell-frame {
@@ -181,7 +212,7 @@ body {
   outline: none;
 }
 
-/* A tint over the imagery so chrome and sheets always hold contrast. It
+/* A tint over the imagery so chrome and panels always hold contrast. It
    deepens while a destination is open, pushing the coast back a step without
    hiding it. */
 .map-tint {
@@ -189,12 +220,12 @@ body {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(72% 52% at 50% 0%, rgba(79, 214, 227, 0.07), transparent 66%),
+    radial-gradient(72% 52% at 50% 0%, rgba(217, 190, 130, 0.05), transparent 66%),
     linear-gradient(
       180deg,
-      rgba(6, 8, 11, 0.55),
-      rgba(6, 8, 11, 0.22) 32%,
-      rgba(6, 8, 11, 0.4)
+      rgba(8, 7, 5, 0.55),
+      rgba(8, 7, 5, 0.22) 32%,
+      rgba(8, 7, 5, 0.4)
     );
   transition: opacity 0.9s var(--ease-out-expo);
 }
@@ -213,7 +244,7 @@ body {
 .tour-button {
   width: 100%;
   min-height: 38px;
-  border-radius: 999px;
+  border-radius: 6px;
   border: 1px solid var(--line-strong);
   background: rgba(255, 255, 255, 0.04);
   font-size: 0.8125rem;
@@ -230,7 +261,7 @@ body {
   color: var(--color-signal);
 }
 
-/* The caption rides above the map, clear of the rail and the sheet. */
+/* The caption rides above the map, clear of the header and the panels. */
 .tour-caption {
   position: fixed;
   left: 50%;
@@ -241,17 +272,17 @@ body {
   align-items: baseline;
   gap: 0.75rem;
   white-space: nowrap;
-  border-radius: 999px;
+  border-radius: 6px;
   border: 1px solid var(--line-strong);
-  background: rgba(8, 11, 15, 0.82);
+  background: rgba(11, 10, 8, 0.82);
   backdrop-filter: blur(16px) saturate(160%);
   padding: 0.625rem 1.125rem;
   animation: captionIn 0.5s var(--ease-out-expo) both;
 }
 .tour-caption-name {
   font-size: 0.9375rem;
-  font-weight: 500;
-  letter-spacing: -0.015em;
+  font-weight: 480;
+  letter-spacing: -0.004em;
 }
 .tour-caption-line {
   font-family: var(--font-mono);
@@ -335,7 +366,7 @@ body {
   align-items: center;
   gap: 0.375rem;
   flex: none;
-  border-radius: 999px;
+  border-radius: 4px;
   border: 1px solid var(--line-strong);
   padding: 0.2rem 0.6rem;
   font-size: 0.6875rem;
@@ -351,7 +382,7 @@ body {
   background: rgba(255, 255, 255, 0.06);
 }
 
-/* Hold the poster's shape so swapping to the iframe never jumps the sheet. */
+/* Hold the poster's shape so swapping to the iframe never jumps the page. */
 .browser-live-stage {
   position: relative;
   aspect-ratio: 16 / 10;
@@ -451,7 +482,7 @@ body {
 
 /* The datum line under a case study's title: light characteristic and true
    coordinates, in the same register as every other instrument. */
-.sheet-datum {
+.page-datum {
   margin-top: 0.5rem;
   font-family: var(--font-mono);
   font-size: 0.625rem;
@@ -460,8 +491,8 @@ body {
   color: var(--color-ink-muted);
 }
 
-/* The wake counter and current leg, in the rail's foot. */
-.rail-chart {
+/* The wake counter and current leg, in the footer's chart legend. */
+.foot-chart {
   display: grid;
   gap: 0.3rem;
   padding-bottom: 0.75rem;
@@ -473,7 +504,7 @@ body {
    it. Quiet must not mean illegible. */
 
 /* The golden-hour countdown microline under the conditions sentence. */
-.rail-golden {
+.conditions-golden {
   font-family: var(--font-mono);
   font-size: 0.625rem;
   letter-spacing: 0.12em;
@@ -490,7 +521,7 @@ body {
   padding: 0.3rem 0.6rem 0.3rem 0.35rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(8, 11, 15, 0.6);
+  background: rgba(11, 10, 8, 0.6);
   backdrop-filter: blur(8px) saturate(150%);
   color: var(--color-ink);
   font-size: 0.75rem;
@@ -515,7 +546,7 @@ body {
   flex: none;
   border-radius: 999px;
   background: var(--color-signal);
-  box-shadow: 0 0 0 3px rgba(79, 214, 227, 0.18);
+  box-shadow: 0 0 0 3px rgba(217, 190, 130, 0.20);
 }
 
 /* Zoomed out, the labels collapse into dots — see LABEL_MIN_ZOOM in LiveMap.
@@ -541,7 +572,7 @@ body {
 .beacon--concept {
   border-style: dashed;
   border-color: rgba(255, 255, 255, 0.22);
-  background: rgba(8, 11, 15, 0.45);
+  background: rgba(11, 10, 8, 0.45);
 }
 .beacon--concept .beacon-dot {
   background: transparent;
@@ -580,12 +611,12 @@ body {
 
 /* ── Shipped / Concept badges ─────────────────────────────────────────── */
 
-/* The same distinction the beacons draw, carried into the sheets: solid means
+/* The same distinction the beacons draw, carried into the pages: solid means
    running today, dashed-hollow means build-ready. */
 .badge {
   display: inline-block;
   padding: 0.125rem 0.5rem;
-  border-radius: 999px;
+  border-radius: 3px;
   font-family: var(--font-mono, monospace);
   font-size: 0.625rem;
   letter-spacing: 0.1em;
@@ -593,14 +624,21 @@ body {
   vertical-align: middle;
 }
 .badge-shipped {
-  border: 1px solid rgba(79, 214, 227, 0.45);
-  background: rgba(79, 214, 227, 0.12);
+  border: 1px solid rgba(217, 190, 130, 0.45);
+  background: rgba(217, 190, 130, 0.12);
   color: var(--color-signal);
 }
 .badge-concept {
   border: 1px dashed var(--line-strong);
   background: transparent;
   color: var(--color-ink-muted);
+}
+/* The second axis of the offer: an add-on, not a whole build. Solid hairline
+   so it reads as a fact (like shipped) rather than a caveat (like concept). */
+.badge-module {
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-ink-soft);
 }
 
 /* The banner on every concept detail page. Visually calm, verbally absolute. */
@@ -639,291 +677,6 @@ body {
   color: var(--color-ink-muted);
 }
 
-/* ── The rail ─────────────────────────────────────────────────────────── */
-
-.shell-frame .rail {
-  position: absolute;
-  top: var(--gutter);
-  bottom: var(--gutter);
-  left: var(--gutter);
-  z-index: 20;
-  display: flex;
-  width: 17.5rem;
-  flex-direction: column;
-  padding: 1.25rem;
-}
-
-.rail-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
-.rail-claim {
-  margin-top: 0.875rem;
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  color: var(--color-ink-muted);
-}
-
-.rail-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  margin-top: 1.25rem;
-  /* Hairline scrollbar; the rail is chrome and should not shout. */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
-}
-
-.rail-group {
-  margin-top: 1rem;
-  margin-bottom: 0.375rem;
-}
-.rail-group:first-child {
-  margin-top: 0;
-}
-
-.rail-link {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  min-height: 34px;
-  border-radius: 0.5rem;
-  padding: 0.25rem 0.5rem 0.25rem 0.25rem;
-  font-size: 0.875rem;
-  color: var(--color-ink-soft);
-  transition:
-    color 0.24s ease,
-    background-color 0.24s ease;
-}
-.rail-link:hover {
-  color: var(--color-ink);
-  background: rgba(255, 255, 255, 0.045);
-}
-.rail-link.is-active {
-  color: var(--color-ink);
-  background: rgba(255, 255, 255, 0.07);
-}
-.rail-index {
-  width: 1.25rem;
-  flex: none;
-  font-family: var(--font-mono);
-  font-size: 0.625rem;
-  color: var(--color-ink-faint);
-}
-.rail-link.is-active .rail-index {
-  color: var(--color-signal);
-}
-
-.rail-foot {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--line);
-  display: grid;
-  gap: 0.75rem;
-}
-.rail-conditions {
-  font-size: 0.75rem;
-  line-height: 1.5;
-}
-.rail-phone {
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--color-ink-muted);
-  transition: color 0.24s ease;
-}
-.rail-phone:hover {
-  color: var(--color-ink);
-}
-
-/* ── Sheets ───────────────────────────────────────────────────────────── */
-
-.shell-frame .sheet {
-  position: absolute;
-  z-index: 30;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
-  animation: sheetIn 0.62s var(--ease-out-expo) both;
-}
-
-/* Desktop: held against the right edge, leaving the coast readable beside it. */
-@media (min-width: 900px) {
-  .shell-frame .sheet {
-    top: var(--gutter);
-    right: var(--gutter);
-    bottom: var(--gutter);
-    width: min(34rem, 46vw);
-  }
-  /*
-   * The two destinations that compare things side by side — packages and the
-   * capability showcase. Wider, but still short of the rail: the map has to
-   * stay visible between the two or this stops being a map interface and
-   * becomes a page with a picture behind it.
-   */
-  .shell-frame .sheet.is-wide {
-    width: min(52rem, 60vw);
-  }
-  .sheet-grip {
-    display: none;
-  }
-}
-
-/* Phone: a bottom sheet, capped so the map stays visible above it. */
-@media (max-width: 899px) {
-  .shell-frame .sheet {
-    left: 0.5rem;
-    right: 0.5rem;
-    bottom: 0;
-    max-height: 76vh;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    /* Clear the tab bar plus the home indicator. */
-    padding-bottom: calc(4.25rem + env(safe-area-inset-bottom, 0px));
-    transition: transform 0.32s var(--ease-out-expo);
-  }
-}
-
-@keyframes sheetIn {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.sheet-grip {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  margin: 0.5rem auto 0;
-  height: 4px;
-  width: 2.25rem;
-  flex: none;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.22);
-}
-
-.sheet-head {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1.5rem 1.5rem 1rem;
-  /* The sheet scrolls under the header, so it needs its own backing. */
-  background: linear-gradient(
-    to bottom,
-    rgba(12, 16, 21, 0.96),
-    rgba(12, 16, 21, 0.82) 70%,
-    transparent
-  );
-}
-@media (max-width: 899px) {
-  .sheet-head {
-    top: 4px;
-    padding-top: 0.75rem;
-  }
-}
-
-/*
- * The sheet heading is focused programmatically on open so a screen reader
- * announces what just opened rather than "close button". It carries
- * tabIndex={-1}, so it is not a keyboard stop and a ring on it communicates
- * nothing — it just draws a box around the title every time a sheet appears.
- * Suppressed here only; every real focus target keeps its ring.
- */
-.sheet-head h1:focus,
-.sheet-head h1:focus-visible {
-  outline: none;
-}
-
-.sheet-close {
-  display: grid;
-  place-items: center;
-  height: 34px;
-  width: 34px;
-  flex: none;
-  border-radius: 999px;
-  border: 1px solid var(--line-strong);
-  color: var(--color-ink-soft);
-  transition:
-    color 0.24s ease,
-    background-color 0.24s ease;
-}
-.sheet-close:hover {
-  color: var(--color-ink);
-  background: rgba(255, 255, 255, 0.07);
-}
-
-.sheet-body {
-  padding: 0 1.5rem 2rem;
-  /*
-   * The grids inside a sheet must size against the sheet, not the window.
-   * A viewport media query would put three package cards side by side on a
-   * 1000px screen where the sheet is only 460px wide, giving each card about
-   * eleven characters a line. Container queries ask the right question.
-   */
-  container-type: inline-size;
-}
-
-/* ── The coast layer ──────────────────────────────────────────────────── */
-
-.shell-frame .coast-layer {
-  position: absolute;
-  z-index: 20;
-  pointer-events: none;
-}
-.coast-layer > * {
-  pointer-events: auto;
-}
-
-@media (min-width: 900px) {
-  .shell-frame .coast-layer {
-    right: var(--gutter);
-    bottom: var(--gutter);
-    /* Wide enough to carry a headline, two calls to action, and a live
-       project preview — while still leaving the coast reading as the
-       subject rather than as wallpaper behind a slab. */
-    width: min(40rem, 52vw);
-    /* So the hero splits into two columns on its own width rather than the
-       window's — see .offer-grid for the same reasoning. */
-    container-type: inline-size;
-  }
-  .coast-list {
-    display: none;
-  }
-}
-
-@media (max-width: 899px) {
-  .shell-frame .coast-layer {
-    left: 0.75rem;
-    right: 0.75rem;
-    bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
-    /* The hero can outgrow a short phone; let it scroll inside its own layer
-       rather than pushing the chips off the bottom of the screen. */
-    top: 3.25rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    min-height: 0;
-  }
-}
-
 /* ── The hero ─────────────────────────────────────────────────────────── */
 
 .hero {
@@ -958,9 +711,10 @@ body {
 
 .hero-title {
   margin-top: 0.875rem;
+  font-family: var(--font-serif);
   font-size: clamp(1.5rem, 2.6vw, 2.125rem);
-  line-height: 1.08;
-  letter-spacing: -0.03em;
+  line-height: 1.16;
+  letter-spacing: -0.008em;
   font-weight: 500;
   text-wrap: balance;
 }
@@ -1009,18 +763,6 @@ body {
   font-size: 0.75rem;
   line-height: 1.5;
   color: var(--color-ink-muted);
-}
-
-.coast-list {
-  margin-top: 0.75rem;
-  display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding-bottom: 0.25rem;
-  scrollbar-width: none;
-}
-.coast-list::-webkit-scrollbar {
-  display: none;
 }
 
 /* ── The deck ─────────────────────────────────────────────────────────── */
@@ -1076,7 +818,7 @@ body {
   padding: 0.8rem 1rem;
   border-radius: 1rem;
   border: 1px solid var(--line-strong);
-  background: rgba(10, 14, 19, 0.72);
+  background: rgba(14, 12, 9, 0.72);
   backdrop-filter: blur(10px) saturate(150%);
   color: var(--color-ink);
   cursor: pointer;
@@ -1089,8 +831,8 @@ body {
 }
 .mark-card-name {
   font-size: 0.9375rem;
-  font-weight: 500;
-  letter-spacing: -0.015em;
+  font-weight: 480;
+  letter-spacing: -0.004em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1102,23 +844,6 @@ body {
   text-transform: uppercase;
   color: var(--color-ink-muted);
 }
-.coast-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  white-space: nowrap;
-  border-radius: 999px;
-  border: 1px solid var(--line-strong);
-  background: rgba(10, 14, 19, 0.72);
-  backdrop-filter: blur(10px);
-  padding: 0.5rem 0.875rem;
-  font-size: 0.8125rem;
-}
-/* The one chip that leads somewhere commercial reads as an action. */
-.coast-chip.is-primary {
-  border-color: var(--color-signal);
-  color: var(--color-signal);
-}
 
 /* ── The offer matrix ─────────────────────────────────────────────────── */
 
@@ -1128,18 +853,23 @@ body {
 }
 
 /*
- * Three abreast once each card can hold a readable line — measured against the
- * sheet, not the window. The wide sheet (Sheet `wide`) is what buys the room;
- * below it the cards stack, and source order — featured first — is what the
- * reader gets.
+ * Four tiers now: two-by-two once each card can hold a readable line, four
+ * abreast only when the container genuinely has the room — measured against
+ * the panel, not the window. Below that the cards stack, and source order —
+ * featured first — is what the reader gets.
  */
 @container (min-width: 44rem) {
   .offer-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     align-items: start;
   }
   .offer-grid > .tier-card {
     order: var(--tier-order, 0);
+  }
+}
+@container (min-width: 76rem) {
+  .offer-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -1148,9 +878,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
-  border-radius: 0.875rem;
+  border-radius: 0.5rem;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 246, 230, 0.02);
   padding: 1.25rem;
 }
 
@@ -1165,9 +895,9 @@ body {
   top: 0;
   right: 1.25rem;
   transform: translateY(-50%);
-  border-radius: 999px;
+  border-radius: 3px;
   border: 1px solid color-mix(in srgb, var(--color-signal) 45%, transparent);
-  background: #0b1016;
+  background: var(--color-plate-raised);
   padding: 0.1875rem 0.625rem;
   font-family: var(--font-mono);
   font-size: 0.5625rem;
@@ -1177,9 +907,10 @@ body {
 }
 
 .tier-name {
-  font-size: 1.125rem;
-  font-weight: 500;
-  letter-spacing: -0.018em;
+  font-family: var(--font-serif);
+  font-size: 1.1875rem;
+  font-weight: 480;
+  letter-spacing: -0.004em;
 }
 .tier-system {
   margin-top: 0.25rem;
@@ -1199,12 +930,24 @@ body {
   border-bottom: 1px solid var(--line);
 }
 .tier-figure {
-  font-family: var(--font-mono);
-  font-size: 1.375rem;
-  letter-spacing: -0.02em;
+  font-family: var(--font-serif);
+  font-variant-numeric: lining-nums;
+  font-size: 1.5rem;
+  font-weight: 470;
+  letter-spacing: -0.006em;
+}
+/* The "from " ahead of an open-ended figure — italic, lighter, a spoken
+   qualifier rather than part of the number. */
+.tier-from {
+  font-style: italic;
+  font-weight: 420;
+  font-size: 0.875em;
+  color: var(--color-ink-soft);
 }
 .tier-note {
-  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
   color: var(--color-ink-faint);
 }
 
@@ -1287,8 +1030,8 @@ body {
 }
 .case-name {
   font-size: 1.0625rem;
-  font-weight: 500;
-  letter-spacing: -0.015em;
+  font-weight: 480;
+  letter-spacing: -0.004em;
 }
 .case-kind {
   font-family: var(--font-mono);
@@ -1313,7 +1056,7 @@ body {
 }
 .case-tier,
 .case-live {
-  border-radius: 999px;
+  border-radius: 4px;
   border: 1px solid var(--line);
   padding: 0.125rem 0.5rem;
   font-family: var(--font-mono);
@@ -1365,8 +1108,8 @@ body {
 .showcase-title {
   margin-top: 0.625rem;
   font-size: 1.25rem;
-  font-weight: 500;
-  letter-spacing: -0.022em;
+  font-weight: 480;
+  letter-spacing: -0.006em;
 }
 .showcase-body {
   margin-top: 0.625rem;
@@ -1387,7 +1130,7 @@ body {
 .showcase-panel {
   border-radius: 0.625rem;
   border: 1px solid var(--line);
-  background: rgba(6, 8, 11, 0.4);
+  background: rgba(8, 7, 5, 0.4);
   padding: 1rem;
 }
 .showcase-note {
@@ -1420,8 +1163,8 @@ body {
 }
 .selected-package-name {
   font-size: 1rem;
-  font-weight: 500;
-  letter-spacing: -0.015em;
+  font-weight: 480;
+  letter-spacing: -0.004em;
 }
 .selected-package-system {
   font-family: var(--font-mono);
@@ -1436,57 +1179,6 @@ body {
   border-color: color-mix(in srgb, var(--color-signal) 40%, transparent);
 }
 
-/* ── Phone chrome ─────────────────────────────────────────────────────── */
-
-.mobile-top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.875rem 1rem;
-  background: linear-gradient(to bottom, rgba(6, 8, 11, 0.86), transparent);
-}
-
-.tab-bar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 40;
-  display: grid;
-  /* Five commercial destinations — Home, Packages, Work, Demo, Contact. Was
-     hard-coded to 4 columns and left the fifth tab wrapping onto its own
-     row; grid-auto-flow: column with an explicit count keeps this correct
-     if a tab is ever added or removed instead of drifting silently again. */
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
-  border-top: 1px solid var(--line);
-  background: rgba(8, 10, 14, 0.94);
-  backdrop-filter: blur(20px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-.tab {
-  display: grid;
-  place-items: center;
-  /* 48px clears the WCAG target-size minimum with room for a thumb. */
-  min-height: 48px;
-  padding: 0 0.25rem;
-  font-size: 0.75rem;
-  letter-spacing: -0.005em;
-  color: var(--color-ink-muted);
-  text-align: center;
-  transition: color 0.22s ease;
-}
-.tab.is-active {
-  color: var(--color-ink);
-  box-shadow: inset 0 1px 0 0 var(--color-signal);
-}
-
 /* ── The opening ──────────────────────────────────────────────────────── */
 
 .opening {
@@ -1496,7 +1188,7 @@ body {
   display: grid;
   place-items: center;
   padding: var(--gutter);
-  background: rgba(6, 8, 11, 0.9);
+  background: rgba(8, 7, 5, 0.9);
   backdrop-filter: blur(6px);
   /* 0.7s, matching FADE_MS in Opening.tsx — the component removes the node on
      that timer, so a slower fade here would cut the dissolve off mid-way. */
@@ -1518,9 +1210,10 @@ body {
 
 .opening-claim {
   margin-top: 1.25rem;
+  font-family: var(--font-serif);
   font-size: clamp(1.875rem, 5vw, 3.25rem);
-  line-height: 1.04;
-  letter-spacing: -0.032em;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
   font-weight: 500;
   text-wrap: balance;
 }
@@ -1552,123 +1245,20 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sheet,
   .opening-inner {
     animation: none;
   }
 }
 
-/* ── Atmosphere ───────────────────────────────────────────────────────── */
-
-/*
- * The living background. Fixed, non-interactive, and behind everything.
- *
- * Negative z-index works here because <body> carries the page background and
- * no background is set on <html> — so body's background propagates to the
- * root canvas and body itself paints without one, letting these layers show
- * through. Move the background to <html> and the whole thing disappears.
- */
-.atmosphere {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.atmosphere-map,
-.atmosphere-wash,
-.atmosphere-vignette {
-  position: absolute;
-  inset: 0;
-}
-
-/* The map fades in once tiles have actually arrived, so a half-drawn plate
-   never flashes over the hero. */
-.atmosphere-map {
-  opacity: 0;
-  transition: opacity 1.6s var(--ease-out-expo);
-}
-.atmosphere-map[data-loaded="true"] {
-  opacity: 1;
-}
-
-/*
- * The handful of rules MapLibre actually needs to lay its canvas out. Importing
- * the full maplibre-gl.css would pull ~40 kB of control, popup, and marker
- * styling for a map that has no controls, no popups, and no markers — and it
- * would load eagerly, defeating the point of importing the library lazily.
- */
-.atmosphere-map .maplibregl-map {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-}
-.atmosphere-map .maplibregl-canvas-container,
-.atmosphere-map canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  outline: none;
-}
-
-.atmosphere-wash {
-  /* Tuned against real imagery: sheer enough that the shoreline, the marsh
-     channels, and the Atlantic all read, opaque enough that cream body copy
-     still clears 4.5:1 over the brightest sand. Verified by sampling the
-     rendered background luminance — see scripts/verify.mjs. */
-  background: linear-gradient(
-    -45deg,
-    rgba(8, 9, 11, 0.66),
-    rgba(11, 21, 29, 0.52),
-    rgba(8, 9, 11, 0.68),
-    rgba(10, 17, 26, 0.58),
-    rgba(9, 14, 20, 0.68)
-  );
-  background-size: 220% 220%;
-  /* Drift via transform on an over-scaled layer, never background-position:
-     the latter repaints a full-screen gradient every frame and cannot be
-     composited. scale(1.3) keeps the edges covered through the translation. */
-  animation: atmosphereDrift 80s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-@keyframes atmosphereDrift {
-  from {
-    transform: scale(1.3) translate3d(-3.5%, -2.5%, 0);
-  }
-  to {
-    transform: scale(1.3) translate3d(3.5%, 2.5%, 0);
-  }
-}
-
-/* A cool pool of light at the top so the hero has somewhere to sit. */
-.atmosphere-vignette {
-  background:
-    radial-gradient(
-      74% 52% at 50% -6%,
-      rgba(79, 214, 227, 0.11),
-      transparent 68%
-    ),
-    radial-gradient(
-      120% 90% at 50% 50%,
-      transparent 42%,
-      rgba(6, 7, 9, 0.72) 100%
-    );
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .atmosphere-wash {
-    animation: none;
-    transform: scale(1.3);
-  }
-}
-
 /* ── Focus ────────────────────────────────────────────────────────────── */
 
-:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+:where(a,
+button,
+input,
+textarea,
+select,
+summary,
+[tabindex]):focus-visible {
   outline: 2px solid var(--color-signal);
   outline-offset: 3px;
   border-radius: 4px;
@@ -1711,33 +1301,41 @@ body {
   color: var(--color-signal);
 }
 
+/* Serif display wants the opposite tracking discipline from the grotesque it
+   replaced: -.038em would mangle Fraunces' serifs into each other, and
+   sub-1 leading clips its ascenders. The luxury register comes from the high
+   optical-size cut, not from weight — 470 reads engraved, never bold. */
 .display {
+  font-family: var(--font-serif);
   font-size: clamp(2.5rem, 7.5vw, 5.75rem);
-  line-height: 0.94;
-  letter-spacing: -0.038em;
-  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.012em;
+  font-weight: 470;
   text-wrap: balance;
 }
 
 .headline {
+  font-family: var(--font-serif);
   font-size: clamp(1.875rem, 4.2vw, 3.25rem);
-  line-height: 1.04;
-  letter-spacing: -0.03em;
-  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.008em;
+  font-weight: 460;
   text-wrap: balance;
 }
 
-.subhead {
-  font-size: clamp(1.0625rem, 1.7vw, 1.3125rem);
-  line-height: 1.55;
-  color: var(--color-ink-soft);
-  text-wrap: pretty;
+/* The editorial convention: one italic phrase per major heading. Slightly
+   lighter than the roman around it, so the emphasis is a change of voice
+   rather than a change of volume. */
+.display em,
+.headline em {
+  font-style: italic;
+  font-weight: 420;
 }
 
 .lede {
   max-width: var(--measure);
-  font-size: clamp(1rem, 1.35vw, 1.125rem);
-  line-height: 1.68;
+  font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
+  line-height: 1.7;
   color: var(--color-ink-soft);
   text-wrap: pretty;
 }
@@ -1769,19 +1367,17 @@ body {
  * on below as pure enhancement. If it never paints, this still looks like glass.
  */
 
-.panel,
-.panel-raised {
+.panel {
   position: relative;
   isolation: isolate;
-  border-radius: 1.25rem;
+  border-radius: 0.625rem;
   border: 1px solid var(--line);
-  border-top-color: rgba(255, 255, 255, 0.16);
-  border-bottom-color: rgba(255, 255, 255, 0.045);
+  border-top-color: rgba(255, 246, 230, 0.16);
+  border-bottom-color: rgba(255, 246, 230, 0.045);
 }
 
 /* Grain. A single inline SVG turbulence, no network request. */
-.panel::before,
-.panel-raised::before {
+.panel::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -1793,25 +1389,25 @@ body {
   mix-blend-mode: overlay;
 }
 
-/* The lit rim. */
-.panel::after,
-.panel-raised::after {
+/* The lit rim, doubling as the cartouche: an engraved inner hairline inset
+   5px from the edge, the double-rule frame of a paper chart. */
+.panel::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: 5px;
   z-index: 0;
   pointer-events: none;
-  border-radius: inherit;
+  border-radius: calc(0.625rem - 4px);
+  border: 1px solid rgba(255, 246, 230, 0.06);
   background: radial-gradient(
     150% 78% at 18% 0%,
-    rgba(255, 255, 255, 0.1),
+    rgba(255, 246, 230, 0.09),
     transparent 58%
   );
 }
 
 /* Content must clear the two decorative pseudo-elements. */
-.panel > *,
-.panel-raised > * {
+.panel > * {
   position: relative;
   z-index: 1;
 }
@@ -1822,54 +1418,25 @@ body {
  *
  * Without that base the effective background is whatever the satellite camera
  * happens to be framing, so contrast drifts as the map flies. The floor was
- * deepened from 0.58 to 0.74 when the rail and the sheets became `.panel`
- * themselves: decorative cards can afford to be sheer, but chrome carrying
- * dense small type over a camera that moves cannot. The coast still reads
- * through it — verified at four camera positions by scripts/verify.mjs.
+ * deepened from 0.58 to 0.74 when the site chrome became `.panel` itself:
+ * decorative cards can afford to be sheer, but chrome carrying dense small
+ * type over a camera that moves cannot. The coast still reads through it —
+ * verified at four camera positions by scripts/verify.mjs.
  */
 .panel {
   background:
     linear-gradient(
       150deg,
-      rgba(126, 142, 156, 0.14),
-      rgba(78, 90, 103, 0.09) 55%,
-      rgba(100, 114, 128, 0.12)
+      rgba(150, 140, 122, 0.14),
+      rgba(96, 88, 74, 0.09) 55%,
+      rgba(128, 118, 100, 0.12)
     ),
-    rgba(9, 12, 16, 0.74);
-}
-
-/* The heavier tier, for cards carrying dense text over bright imagery. */
-.panel-raised {
-  background: linear-gradient(
-    150deg,
-    rgba(24, 30, 37, 0.82),
-    rgba(16, 21, 27, 0.86) 55%,
-    rgba(21, 27, 34, 0.84)
-  );
+    rgba(12, 10, 8, 0.74);
 }
 
 @supports (backdrop-filter: blur(1px)) {
   .panel {
     backdrop-filter: blur(16px) saturate(170%) brightness(1.08);
-  }
-  .panel-raised {
-    backdrop-filter: blur(20px) saturate(150%);
-  }
-}
-
-/* Interactive lift. Transform-only so it never triggers layout. */
-.lift {
-  transition:
-    transform 0.5s var(--ease-out-expo),
-    border-color 0.4s ease,
-    box-shadow 0.5s var(--ease-out-expo);
-  will-change: transform;
-}
-@media (hover: hover) and (pointer: fine) {
-  .lift:hover {
-    transform: translateY(-4px);
-    border-color: var(--line-strong);
-    box-shadow: var(--shadow-lift);
   }
 }
 
@@ -1880,10 +1447,10 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 999px;
-  font-weight: 500;
+  border-radius: 3px;
+  font-weight: 480;
   font-size: 0.9375rem;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.01em;
   white-space: nowrap;
   cursor: pointer;
   transition:
@@ -1900,7 +1467,7 @@ body {
 /* Primary: inverted. Highest contrast on the page, reserved for conversion. */
 .btn-primary {
   background: var(--color-ink);
-  color: #06080a;
+  color: #0b0a08;
   padding: 0.9375rem 1.75rem;
   border: 1px solid var(--color-ink);
 }
@@ -1912,15 +1479,16 @@ body {
 }
 
 .btn-ghost {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 246, 230, 0.04);
   color: var(--color-ink);
   padding: 0.9375rem 1.75rem;
   border: 1px solid var(--line-strong);
 }
 @media (hover: hover) and (pointer: fine) {
+  /* Hover answers in brass — the accent, not a brighter gray. */
   .btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.09);
-    border-color: rgba(255, 255, 255, 0.28);
+    background: rgba(217, 190, 130, 0.08);
+    border-color: rgba(217, 190, 130, 0.45);
   }
 }
 
@@ -1935,7 +1503,7 @@ body {
   width: 100%;
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid var(--line-strong);
-  border-radius: 0.75rem;
+  border-radius: 6px;
   padding: 0.875rem 1rem;
   color: var(--color-ink);
   font-size: 1rem; /* 16px minimum — anything less zooms the page on iOS. */
@@ -1991,10 +1559,10 @@ select.field option {
 @keyframes pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(79, 214, 227, 0.45);
+    box-shadow: 0 0 0 0 rgba(217, 190, 130, 0.45);
   }
   50% {
-    box-shadow: 0 0 0 5px rgba(79, 214, 227, 0);
+    box-shadow: 0 0 0 5px rgba(217, 190, 130, 0);
   }
 }
 
@@ -2029,7 +1597,7 @@ select.field option {
 /* Browser chrome around portfolio captures — sells them as real shipped
    sites rather than mockups, at the cost of three dots of markup. */
 .browser-frame {
-  border-radius: 0.875rem;
+  border-radius: 0.5rem;
   overflow: hidden;
   border: 1px solid var(--line-strong);
   background: var(--color-plate-high);
@@ -2060,8 +1628,8 @@ select.field option {
     scroll-behavior: auto;
   }
   *,
-  *::before,
-  *::after {
+*::before,
+*::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
@@ -2071,9 +1639,6 @@ select.field option {
   [data-reveal] {
     opacity: 1 !important;
     transform: none !important;
-  }
-  .lift:hover {
-    transform: none;
   }
 }
 
@@ -2107,6 +1672,47 @@ select.field option {
 .chart-window.is-short {
   height: 30vh;
 }
+/* On a phone the chart reads at a glance and 58vh is pure scroll cost —
+   the windows narrow so the argument keeps moving. */
+@media (max-width: 640px) {
+  .chart-window {
+    height: 38vh;
+  }
+  .chart-window.is-short {
+    height: 22vh;
+  }
+}
+
+/* Phone-only sticky contact bar — see MobileCtaBar in routes/Coast.tsx. It
+   mounts outside the hit-transparent flow rules' reach when fixed, so it
+   re-enables its own pointer events explicitly. */
+.mobile-cta-bar {
+  position: fixed;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  z-index: 45;
+  display: none;
+  pointer-events: auto;
+  padding: 0.625rem;
+  gap: 0.5rem;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s var(--ease-out-expo);
+}
+.mobile-cta-bar .btn {
+  flex: 1;
+}
+.mobile-cta-bar.is-hidden {
+  opacity: 0;
+  transform: translateY(0.75rem);
+  pointer-events: none;
+}
+@media (max-width: 640px) {
+  .mobile-cta-bar {
+    display: flex;
+  }
+}
 
 /* ── Masthead ── */
 
@@ -2125,13 +1731,15 @@ select.field option {
   justify-content: space-between;
   gap: 1rem;
 }
+/* The masthead wordmark — the one place the serif speaks at chrome size. */
 .head-brand {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  font-weight: 520;
+  letter-spacing: 0;
   white-space: nowrap;
 }
 .site-head-command {
@@ -2178,7 +1786,7 @@ select.field option {
 }
 .head-link {
   padding: 0.55rem 0.7rem;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: var(--color-ink-muted);
   border-bottom: 2px solid transparent;
   white-space: nowrap;
@@ -2236,10 +1844,16 @@ select.field option {
 }
 .store-band-title {
   margin-top: 0.6rem;
+  font-family: var(--font-serif);
   font-size: clamp(1.6rem, 3.4vw, 2.4rem);
-  font-weight: 500;
-  letter-spacing: -0.028em;
+  font-weight: 470;
+  letter-spacing: -0.008em;
   line-height: 1.1;
+}
+.store-band-title em,
+.hero-title em {
+  font-style: italic;
+  font-weight: 420;
 }
 .store-band-lede {
   margin-top: 1rem;
@@ -2247,6 +1861,39 @@ select.field option {
   line-height: 1.6;
   color: var(--color-ink-soft);
   max-width: 58ch;
+}
+/* The offer grid renders inline on the home band; its container queries need
+   a containment context here exactly as they do inside a page panel. */
+.store-band-grid {
+  margin-top: 2.5rem;
+  container-type: inline-size;
+}
+/* One line under the tier cards: the second axis of the offer. */
+.modules-strip {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1.25rem;
+}
+.modules-strip-link {
+  font-size: 0.9375rem;
+  color: var(--color-ink-soft);
+  transition: color 0.2s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .modules-strip-link:hover {
+    color: var(--color-signal);
+  }
+}
+/* The embedded close form: page-panel width, left-aligned inside the
+   centered band, because forms read left-to-right even when framed. */
+.store-close-form {
+  margin: 2.25rem auto 0;
+  max-width: 40rem;
+  text-align: left;
 }
 .store-band-actions {
   margin-top: 1.75rem;
@@ -2285,8 +1932,8 @@ select.field option {
 }
 .category-name {
   font-size: 1.0625rem;
-  font-weight: 500;
-  letter-spacing: -0.015em;
+  font-weight: 480;
+  letter-spacing: -0.004em;
 }
 .category-blurb {
   margin-top: 0.35rem;
@@ -2302,6 +1949,8 @@ select.field option {
   align-items: center;
   justify-content: space-between;
   gap: 0.6rem;
+  /* 44px minimum touch target — these rows are the phone's main catalog. */
+  min-height: 2.75rem;
   padding: 0.45rem 0;
   border-top: 1px solid var(--line);
   font-size: 0.875rem;
@@ -2311,6 +1960,31 @@ select.field option {
 @media (hover: hover) and (pointer: fine) {
   .category-list a:hover {
     color: var(--color-ink);
+  }
+}
+
+/* ── Module rows (Packages page) ── */
+
+.module-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1rem 0;
+  transition: color 0.2s ease;
+}
+.module-price {
+  flex: none;
+  margin-top: 0.125rem;
+  font-family: var(--font-serif);
+  font-variant-numeric: lining-nums;
+  font-size: 0.9375rem;
+  color: var(--color-signal);
+  white-space: nowrap;
+}
+@media (hover: hover) and (pointer: fine) {
+  .module-row:hover .case-name {
+    color: var(--color-signal);
   }
 }
 
@@ -2343,7 +2017,7 @@ select.field option {
 .page-panel {
   margin: 0 auto;
   width: min(46rem, calc(100vw - 2 * var(--gutter)));
-  border-radius: 1.25rem 1.25rem 0 0;
+  border-radius: 0.625rem 0.625rem 0 0;
   padding: clamp(1.5rem, 3vw, 2.75rem);
 }
 .page-panel.is-wide {
@@ -2363,6 +2037,9 @@ select.field option {
 }
 .page-body {
   margin-top: 1.5rem;
+  /* Grids inside a page must size against the panel, not the window — the
+     offer grid's container queries ask this element. */
+  container-type: inline-size;
 }
 /* The heading takes programmatic focus on mount so screen readers announce
    the page. It is not an interactive control — no ring, ever: Chromium marks
@@ -2405,9 +2082,13 @@ select.field option {
 }
 .site-foot-nav ul {
   display: grid;
-  gap: 0.4rem;
 }
 .site-foot-nav a {
+  /* Block with real height: these are the phone's directory, and 44px is
+     the floor for a tap target. */
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
   font-size: 0.875rem;
   color: var(--color-ink-muted);
   transition: color 0.2s ease;

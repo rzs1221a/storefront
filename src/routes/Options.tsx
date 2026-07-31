@@ -4,6 +4,7 @@ import {
   CATALOG_TOTALS,
   CATEGORIES,
   offeringsByCategory,
+  priceLabelFor,
 } from "../lib/catalog";
 import { TIERS } from "../lib/offer";
 import { TOTALS, WORK } from "../lib/work";
@@ -58,7 +59,7 @@ export default function Options() {
         const offerings = offeringsByCategory(cat.slug);
         return (
           <section key={cat.slug} id={cat.slug} className="mt-10">
-            <h2 className="text-lg font-medium tracking-[-0.015em]">
+            <h2 className="text-lg font-medium tracking-[-0.004em]">
               {cat.name}
             </h2>
             <p className="mt-1 text-[0.875rem] text-(--color-ink-muted)">
@@ -81,13 +82,18 @@ export default function Options() {
                         >
                           {o.status === "shipped" ? "Shipped" : "Concept"}
                         </span>
+                        {o.kind === "module" && (
+                          <span className="badge badge-module">Module</span>
+                        )}
                       </span>
 
                       <span className="case-summary">{o.pitch}</span>
 
                       <span className="case-meta">
                         <span className="case-tier">
-                          {TIER_NAME.get(o.tierSlug)} build · {o.timeline.toLowerCase()}
+                          {o.kind === "module"
+                            ? `${priceLabelFor(o)} · ${o.timeline.toLowerCase()}`
+                            : `${TIER_NAME.get(o.tierSlug!)} build · ${o.timeline.toLowerCase()}`}
                         </span>
                         {o.proofSlug && (
                           <span className="font-mono text-[0.6875rem] text-(--color-ink-faint)">

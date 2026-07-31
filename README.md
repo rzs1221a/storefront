@@ -15,54 +15,54 @@ Netlify-ready — build `npm run build`, publish `dist` (already in `netlify.tom
 
 ## The shape
 
-This is not a page with a map on it. It is a map with destinations on it.
+A storefront that has a map, not a map that has a storefront. **The document
+scrolls**: content flows over a fixed, living satellite chart of the coast, and
+`.chart-window` gaps between sections open the map at full height wherever the
+camera has just flown. Every section declares a `data-frame`; `observeFrames`
+flies the camera to whichever owns the viewport, and navigation flies it
+between destinations.
 
-Each project is a beacon at its **real coordinate**. Click one and the camera
-descends while a glass sheet rises with the case study — read about Crane Island
-and you are looking at Crane Island. Pricing, Process, Questions and Contact are
-destinations on the same plane. A rail on the left names every one of them.
+The home page argues in selling order — hero, shipped work, the four tier cards
+with real prices, the catalog, and a close that embeds the lead form itself.
 
 The catalog (`/options`) is 24 offerings in five categories, each a real
-prerendered route. Two kinds, and the map draws the line itself: **shipped**
-patterns are solid beacons proven by a named project in `work.ts`; **concepts**
-are hollow dashed beacons spread down the corridor — St. Marys to St. Augustine
-— labeled Concept everywhere they appear. `work.ts` keeps its "nothing
-aspirational" rule absolutely; `catalog.ts` holds the mirror rule (everything is
-for sale, nothing is presented as shipped without a `proofSlug`), and the
-prerender fails the build on any violation.
-
-**The document never scrolls.** `html, body { height: 100%; overflow: hidden }`.
-Sheets scroll inside themselves. That is the brief, and `scripts/verify.mjs`
-asserts it on every route at every breakpoint rather than trusting it.
-
-The model is borrowed from the flagship in this portfolio. The Aerial's README
-states it: *"No homepage, no nav, no scroll feed — you open it and you're above
-the real county, and you descend into places."* Applied here it makes the site
-self-demonstrating — it claims maps are the product, and it is one.
+prerendered route, on two axes: **builds** (whole sites, priced by tier) and
+**modules** (add-ons with their own `priceFrom`, attachable to any build).
+Two statuses, and the map draws the line itself: **shipped** patterns are solid
+beacons proven by a named project in `work.ts`; **concepts** are hollow dashed
+beacons spread down the corridor — St. Marys to St. Augustine — labeled Concept
+everywhere they appear. `work.ts` keeps its "nothing aspirational" rule
+absolutely; `catalog.ts` holds the mirror rule (everything is for sale, nothing
+is presented as shipped without a `proofSlug`; every build resolves a real
+tier, every module carries a finite from-price), and the prerender fails the
+build on any violation.
 
 | | |
 |---|---|
-| `src/lib/destinations.ts` | the route table: URL, camera frame, rail label, beacon |
+| `src/lib/destinations.ts` | the route table: URL, camera frame, nav label, beacon |
 | `src/lib/work.ts` | the six shipped projects (incl. this site) — verifiable claims only |
-| `src/lib/catalog.ts` | the 24 offerings, five categories, the honesty contract |
+| `src/lib/offer.ts` | the four build tiers (Daymark / Beacon / Light Station / Flagship) |
+| `src/lib/catalog.ts` | the 24 offerings — builds + modules, five categories, the honesty contract |
 | `src/lib/cameraFrames.ts` | verified coordinates and the flight queue |
 | `src/components/Shell.tsx` | the app frame; the map mounts here **once** |
 | `src/components/LiveMap.tsx` | MapLibre, beacons (solid work / hollow concept), idle orbit |
-| `src/components/Sheet.tsx` | the glass panel, focus handling, swipe dismiss |
-| `src/components/Rail.tsx` | desktop navigation |
-| `src/components/MobileFrame.tsx` | phone tab bar, derived from `PRIMARY_NAV` |
+| `src/components/SiteHeader.tsx` | sticky glass masthead: wordmark, nav, command bar, CTA |
+| `src/components/SiteFooter.tsx` | chart instruments, live conditions, directory |
+| `src/routes/Coast.tsx` | the home page — the long scrolling storefront |
 | `src/routes/*` | route components; `/work/:slug` and `/options/:slug` are generic |
 
 The map instance must **never remount on navigation** — the whole effect depends
 on the camera flying between destinations rather than the plate reloading.
 
-## Before this goes live
+## The offer
 
-Four placeholders, each in exactly one file.
+Two axes, published. `SHOW_PRICING` in `brand.ts` is **true**; flip it off and
+every figure on the site reads "Let's talk" again without touching a number.
 
 | What | Where | Note |
 |---|---|---|
-| **Prices** | `src/lib/offer.ts` → `TIERS` | $1,500 / $3,500 / $6,500 are invented. `SHOW_PRICING` in `brand.ts` is currently **false**, so every tier reads "Let's talk". |
+| **Build tiers** | `src/lib/offer.ts` → `TIERS` | Daymark $1,500 · Beacon $3,500 · Light Station from $6,500 · Flagship from $12,000 — one-time, named as the coast names its lights. |
+| **Modules** | `src/lib/catalog.ts` → `kind: "module"` | The six `tools` offerings, from $500 to $4,500, each with optional `includedIn` tier attribution. |
 | **Phone + email** | `src/lib/brand.ts` → `CONTACT` | Live: (904) 548-8222 / zander@seamark.studio (forwards via Squarespace/Mailgun). |
 | **Brand name** | `src/lib/brand.ts` → `BRAND` | "Seamark Studio". A seamark is a charted object mariners navigate by — the same idea as the beacons this site draws. Worth a trademark check. |
 | **Domain** | `src/lib/brand.ts` → `BRAND.domain`/`origin` | Live: `seamark.studio` — registered at Squarespace, DNS stays there (the Mailgun MX records live in that zone; never delegate nameservers to Netlify), apex A record on Netlify's load balancer. `origin` is stamped into every canonical, og:url, sitemap and robots entry. |
@@ -89,7 +89,7 @@ chart of the offer. Nothing on it is decoration — every chart element is data.
   `destinations.ts` enforces it. Reduced motion freezes every dot lit.
 - **The wake** (`src/lib/wake.ts`). The visitor's own track, session-scoped:
   a 1px hairline drawn between visited marks (`setData` per navigation, never
-  per frame) and a rail counter — "4 of 12 marks charted." No badges.
+  per frame) and a footer counter — "4 of 12 marks charted." No badges.
 - **Chart legs** (`src/lib/chart.ts`). Distance and course between the last
   two marks, in nautical miles, sixteen-wind compass. Straight lines, not
   routes.
@@ -111,7 +111,7 @@ chart of the offer. Nothing on it is decoration — every chart element is data.
 
 Asset runbooks: `npm run capture:self` (serve dist on 4319 first) regenerates
 the storefront's own case-study screenshots; `tsx scripts/og.mjs` (after a
-build) regenerates the social card from BRAND + the live Geist face.
+build) regenerates the social card from BRAND + the live Fraunces face.
 
 ## SEO — read this before changing the build
 
@@ -144,7 +144,7 @@ protects the lead flow.
 
 ## The live conditions
 
-`src/components/Conditions.tsx` reads the real tide and weather into the rail:
+`src/components/Conditions.tsx` reads the real tide and weather into the hero and footer:
 *"It is 9:57 pm on the coast. The tide at Fernandina Beach is 5.9 feet and
 falling."* Backed by two Netlify Functions (`netlify/functions/tide.ts`,
 `conditions.ts`) hitting NOAA CO-OPS station 8720030 and the National Weather
@@ -158,10 +158,15 @@ functions do not exist and it renders nothing. Nothing may depend on its height.
 
 ## Design
 
-Near-monochrome on purpose. The client work is the color — Crane Island and
-Heymann Williams are gold-and-cabernet, The Aerial is deep glass and blue — so
-the chrome stays neutral and lets five differently-branded screenshots sit in the
-same frame. One accent (`--color-signal`) for live state, eyebrows, and focus.
+Near-monochrome on purpose, in a warm editorial register. The client work is
+the color — Crane Island and Heymann Williams are gold-and-cabernet, The Aerial
+is deep glass and blue — so the chrome stays quiet and lets five
+differently-branded screenshots sit in the same frame. The storefront's own
+voice is **Fraunces Variable** (all-serif, optical sizing on, italics as the
+emphasis register) over warm ink-black plates with parchment cream text, Geist
+Mono as the chart-instrument voice, and one champagne-brass accent
+(`--color-signal`) for live state, eyebrows, prices, and focus. Explicitly not
+the Playfair/Inter + gold/cabernet vocabulary of the client work.
 
 **Glass is load-bearing here, not decorative.** `.panel` is two layers: a light
 tint that reads as material, over a dark floor at 74% that makes it predictable.
@@ -170,10 +175,10 @@ contrast drifts as it flies — muted text measured 3.84:1 against a bright
 shoreline. If you lighten that floor, re-run `verify.mjs`; it samples real text
 contrast at four camera positions.
 
-Layout selectors are scoped under `.shell-frame` deliberately. The rail, sheets,
-and coast card all wear `.panel`, which sets `position: relative` to contain its
-own grain and rim pseudo-elements — at equal specificity that rule won, and the
-sheet silently fell into flow and rendered half off-screen.
+Layout selectors are scoped under `.shell-frame` deliberately. The header and
+footer wear `.panel`, which sets `position: relative` to contain its own grain
+and rim pseudo-elements — at equal specificity that rule wins, so layout must
+outrank it by scope.
 
 ## Verification
 
@@ -189,11 +194,11 @@ node scripts/camera-check.mjs  # the camera actually goes where the URL says
 script. `--quick` runs every route at mobile + desktop and samples the rest of
 the viewport matrix.
 
-`verify.mjs` covers four breakpoints: every route renders, the document never
-scrolls, sheets scroll internally when they overflow, prerendered HTML carries
-real content with correct titles and canonicals, text clears 4.5:1 against the
-live camera at four positions, and the rail, sheet close, and Escape all work
-from a keyboard.
+`verify.mjs` covers four breakpoints: every route renders, vertical scroll
+works and horizontal overflow never exists, prerendered HTML carries real
+content with correct titles and canonicals, text clears 4.5:1 against the live
+camera at four positions, and the nav and consultation CTA are reachable from a
+keyboard.
 
 `camera-check.mjs` exists because the flight is invisible to every other check —
 the site passes contrast, layout, and accessibility whether or not the map ever

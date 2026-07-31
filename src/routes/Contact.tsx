@@ -19,11 +19,13 @@ import LeadForm from "../components/LeadForm";
 export default function Contact() {
   const [params] = useSearchParams();
   const offering = offeringBySlug(params.get("option"));
-  // An option implies its build size; an explicit ?package= still wins when
-  // that is how the visitor arrived.
+  // A build implies its tier; a module prices on its own and implies none.
+  // An explicit ?package= still wins when that is how the visitor arrived.
   const tier =
     tierBySlug(params.get("package")) ??
-    (offering ? TIERS.find((t) => t.slug === offering.tierSlug) : undefined);
+    (offering?.kind === "build"
+      ? TIERS.find((t) => t.slug === offering.tierSlug)
+      : undefined);
 
   const subject = offering?.name ?? tier?.name;
 
@@ -50,8 +52,12 @@ export default function Contact() {
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <p className="selected-package-name">
               {offering.name}
-              {tier && (
-                <span className="selected-package-system"> · {tier.name} build</span>
+              {offering.kind === "module" ? (
+                <span className="selected-package-system"> · add-on module</span>
+              ) : (
+                tier && (
+                  <span className="selected-package-system"> · {tier.name} build</span>
+                )
               )}{" "}
               <span
                 className={`badge ${offering.status === "shipped" ? "badge-shipped" : "badge-concept"}`}
@@ -92,13 +98,33 @@ export default function Contact() {
           <p className="mono-label mt-3">
             {tier.turnaroundTime} ·{" "}
             <Link to="/packages" className="hover:text-(--color-ink)">
-              Compare all three →
+              Compare all {TIERS.length} →
             </Link>
           </p>
         </div>
       ) : null}
 
-      <div className="mt-6 divide-y divide-(--line) overflow-hidden rounded-xl border border-(--line)">
+      {/* The form leads: it is the measurable conversion, and on a phone the
+          call/text row would otherwise push it below the fold. */}
+      <div className="mt-6">
+        <LeadForm
+          selectedPackage={offering ? undefined : tier?.name}
+          selectedOption={offering?.name}
+        />
+      </div>
+
+      <p className="mt-4 text-[0.8125rem] leading-relaxed text-(--color-ink-faint)">
+        A fixed quote in writing before anything starts —{" "}
+        <Link
+          to="/process"
+          className="text-(--color-ink-muted) underline decoration-(--line-strong) underline-offset-4"
+        >
+          see how a project runs
+        </Link>
+        .
+      </p>
+
+      <div className="mt-6 divide-y divide-(--line) overflow-hidden rounded-lg border border-(--line)">
         <a
           href={`tel:${CONTACT.phone}`}
           className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-white/[0.04]"
@@ -120,13 +146,6 @@ export default function Contact() {
           <span className="mono-label">Email</span>
           <span className="truncate text-[0.9375rem]">{CONTACT.email}</span>
         </a>
-      </div>
-
-      <div className="mt-6">
-        <LeadForm
-          selectedPackage={offering ? undefined : tier?.name}
-          selectedOption={offering?.name}
-        />
       </div>
 
       <p className="mt-6 flex items-center gap-2 text-sm text-(--color-ink-faint)">
