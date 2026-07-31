@@ -130,7 +130,15 @@ const catalogDestinations: Destination[] = CATALOG.map((o) => ({
   path: `/options/${o.slug}`,
   frame: o.frame ? `option-${o.slug}` : "catalog",
   label: o.name,
-  title: `${o.name} — ${o.status === "concept" ? "build-ready concept" : "productized build"}`,
+  title: `${o.name} — ${
+    o.kind === "module"
+      ? o.status === "concept"
+        ? "build-ready add-on module"
+        : "add-on module"
+      : o.status === "concept"
+        ? "build-ready concept"
+        : "productized build"
+  }`,
   blurb: o.summary,
   group: "catalog" as const,
   beacon: o.beacon ? { ...o.beacon, kind: "concept" as const } : undefined,
@@ -169,7 +177,7 @@ export const DESTINATIONS: Destination[] = [
     label: "Packages",
     title: `${numberWord(TIERS.length)} build sizes. Pay once, own it forever`,
     blurb:
-      "An agent page, a community site, or a full flagship build. One fee agreed in writing before anything starts, and after launch you owe nothing — hosting is free at the traffic these sites see, and the code is yours.",
+      "Daymark, Beacon, Light Station, Flagship — four build sizes from $1,500, plus six add-on modules from $500. One fee agreed in writing before anything starts, and after launch you owe nothing — hosting is free at the traffic these sites see, and the code is yours.",
     group: "studio",
     navOrder: 3,
     mobileTab: "Packages",

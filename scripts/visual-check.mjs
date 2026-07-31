@@ -22,7 +22,7 @@ const ROUTES = [
   "/work/the-aerial",
   "/capabilities",
   "/contact",
-  "/contact?package=community-site",
+  "/contact?package=beacon",
 ];
 
 async function main() {

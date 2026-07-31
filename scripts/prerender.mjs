@@ -34,7 +34,9 @@ import {
   CATALOG,
   CATEGORIES,
   CATALOG_TOTALS,
+  MODULES,
   priceLabelFor,
+  includedInLabel,
 } from "../src/lib/catalog.ts";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -163,7 +165,7 @@ function bodyFor(dest) {
           <ul>${CATALOG.filter((o) => o.category === cat.slug)
             .map(
               (o) =>
-                `<li><a href="/options/${o.slug}"><strong>${esc(o.name)}</strong></a> — ${esc(o.pitch)} (${o.status === "concept" ? "build-ready concept" : "shipped pattern"})</li>`
+                `<li><a href="/options/${o.slug}"><strong>${esc(o.name)}</strong></a> — ${esc(o.pitch)} (${o.kind === "module" ? "add-on module, " : ""}${o.status === "concept" ? "build-ready concept" : "shipped pattern"})</li>`
             )
             .join("")}</ul>`
         ).join("")}
@@ -176,11 +178,23 @@ function bodyFor(dest) {
   if (dest.group === "catalog") {
     const o = CATALOG.find((item) => `/options/${item.slug}` === dest.path);
     const proof = o.proofSlug ? WORK.find((w) => w.slug === o.proofSlug) : null;
-    const tier = TIERS.find((t) => t.slug === o.tierSlug);
+    const tier =
+      o.kind === "build" ? TIERS.find((t) => t.slug === o.tierSlug) : null;
+    const included = includedInLabel(o);
+    const priceLine =
+      o.kind === "module"
+        ? `This is an add-on module — ${esc(o.timeline.toLowerCase())}, ${esc(priceLabelFor(o))} or to the site you already have.${included ? ` ${esc(included)}.` : ""}`
+        : `This is a ${esc(tier.name)} build — ${esc(o.timeline.toLowerCase())}, ${esc(priceLabelFor(o))}, and you own it outright.`;
     return `
       <article>
         <header><h1>${esc(o.name)}</h1><p>${esc(
-          o.status === "concept" ? "Build-ready concept" : "Shipped pattern"
+          o.kind === "module"
+            ? o.status === "concept"
+              ? "Build-ready add-on module"
+              : "Add-on module"
+            : o.status === "concept"
+              ? "Build-ready concept"
+              : "Shipped pattern"
         )}</p></header>
         ${
           o.status === "concept"
@@ -191,7 +205,7 @@ function bodyFor(dest) {
         <p>${esc(o.detail)}</p>
         <h2>What's included</h2>
         ${list(o.includes)}
-        <p>This is a ${esc(tier.name)} build — ${esc(o.timeline.toLowerCase())}, ${esc(priceLabelFor(o))}, and you own it outright.</p>
+        <p>${priceLine}</p>
         ${
           proof
             ? `<p>${o.status === "concept" ? "The parts are proven in" : "The pattern is running today in"} <a href="/work/${proof.slug}">${esc(proof.name)}</a>.</p>`
@@ -206,7 +220,11 @@ function bodyFor(dest) {
     "/packages": () =>
       list([
         ...TIERS.map(
-          (t) => `${t.name} — ${t.summary} ${t.turnaroundTime}.`
+          (t) => `${t.name}, ${t.system.toLowerCase()} — ${t.summary} ${t.turnaroundTime}.`
+        ),
+        ...MODULES.map(
+          (m) =>
+            `${m.name} (add-on module) — ${m.pitch} ${priceLabelFor(m)}.`
         ),
         ...COMPARISON.rows.map((r) => `${r.question} ${r.us}`),
       ]),
@@ -352,6 +370,18 @@ for (const o of CATALOG) {
   if (o.status === "shipped" && !WORK.some((w) => w.slug === o.proofSlug)) {
     failures.push(
       `catalog offering "${o.slug}" claims shipped without a real proof project`
+    );
+  }
+  // The two-axis contract: a build must price against a real tier, a module
+  // must carry its own from-price. Rendering either without breaks the page.
+  if (o.kind === "build" && !TIERS.some((t) => t.slug === o.tierSlug)) {
+    failures.push(
+      `catalog build "${o.slug}" names tier "${o.tierSlug}", which does not exist`
+    );
+  }
+  if (o.kind === "module" && !Number.isFinite(o.priceFrom)) {
+    failures.push(
+      `catalog module "${o.slug}" has no finite priceFrom`
     );
   }
 }

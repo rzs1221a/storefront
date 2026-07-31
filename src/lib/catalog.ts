@@ -1,5 +1,5 @@
 import type { CameraFrame } from "./cameraFrames";
-import { TIERS } from "./offer";
+import { TIERS, type TierSlug } from "./offer";
 import { SHOW_PRICING } from "./brand";
 
 /**
@@ -55,10 +55,21 @@ export interface Offering {
   detail: string;
   /** What is actually handed over. Deliverables, never past outcomes. */
   includes: string[];
-  /** The build size that prices it, from offer.ts. */
-  tierSlug: "agent-page" | "community-site" | "flagship";
-  /** Optional price override; tier price otherwise. SHOW_PRICING gates both. */
+  /**
+   * The two axes of the offer. A "build" is a whole site, priced by its tier.
+   * A "module" is an add-on — attached to any build, or retrofit into a site
+   * that already exists — priced on its own via `priceFrom`.
+   */
+  kind: "build" | "module";
+  /** The build size that prices it, from offer.ts. REQUIRED when kind is "build". */
+  tierSlug?: TierSlug;
+  /**
+   * Standalone from-price. REQUIRED when kind is "module"; for builds it is an
+   * optional override of the tier price. SHOW_PRICING gates both.
+   */
   priceFrom?: number | null;
+  /** Modules only: build tiers that already include this at no extra charge. */
+  includedIn?: TierSlug[];
   timeline: string;
   status: OfferingStatus;
   /** WorkItem slug that proves the pattern. REQUIRED when status is "shipped". */
@@ -101,8 +112,8 @@ export const CATEGORIES: OfferingCategory[] = [
   },
   {
     slug: "tools",
-    name: "Search, data & tools",
-    blurb: "The parts that make a site an instrument instead of a brochure.",
+    name: "Modules & add-ons",
+    blurb: "The instruments — added to any build, or retrofit into the site you already have.",
     order: 5,
   },
 ];
@@ -137,7 +148,8 @@ export const CATALOG: Offering[] = [
       "Full SEO: metadata, Open Graph, schema.org, sitemap",
       "Free hosting on Netlify, in your account",
     ],
-    tierSlug: "agent-page",
+    kind: "build",
+    tierSlug: "daymark",
     timeline: "About one week",
     status: "shipped",
     proofSlug: "ron-heymann-agent-page",
@@ -161,7 +173,8 @@ export const CATALOG: Offering[] = [
       "About page written for search, not just for visitors",
       "Content editor so you update it yourself",
     ],
-    tierSlug: "community-site",
+    kind: "build",
+    tierSlug: "beacon",
     timeline: "Two to three weeks",
     status: "concept",
     hue: HUE.agents,
@@ -184,7 +197,8 @@ export const CATALOG: Offering[] = [
       "A results page that books the conversation, not a fake instant number",
       "Runs standalone on its own domain or inside an existing site",
     ],
-    tierSlug: "agent-page",
+    kind: "build",
+    tierSlug: "daymark",
     timeline: "About one week",
     status: "concept",
     proofSlug: "sold-on-amelia-island",
@@ -208,7 +222,8 @@ export const CATALOG: Offering[] = [
       "Lead capture tuned to the research phase, not just \"contact me\"",
       "Content editor so the guide grows after launch",
     ],
-    tierSlug: "community-site",
+    kind: "build",
+    tierSlug: "beacon",
     timeline: "Two to three weeks",
     status: "concept",
     // St. Marys, GA — the corridor's northern anchor. GNIS: 30.7305, -81.5465.
@@ -234,7 +249,8 @@ export const CATALOG: Offering[] = [
       "Schema markup so the record is legible to search engines",
       "Private by default if you prefer — a link you send, not a page that ranks",
     ],
-    tierSlug: "agent-page",
+    kind: "build",
+    tierSlug: "daymark",
     timeline: "About one week",
     status: "concept",
     hue: HUE.agents,
@@ -259,7 +275,8 @@ export const CATALOG: Offering[] = [
       "Per-agent profiles under one brand",
       "Mortgage calculator, live listing links, full schema markup",
     ],
-    tierSlug: "community-site",
+    kind: "build",
+    tierSlug: "beacon",
     timeline: "Two to three weeks",
     status: "shipped",
     proofSlug: "sold-on-amelia-island",
@@ -284,7 +301,8 @@ export const CATALOG: Offering[] = [
       "Route-level code splitting — the map engine never loads where it isn't used",
       "Full reduced-motion and keyboard accessibility pass",
     ],
-    tierSlug: "flagship",
+    kind: "build",
+    tierSlug: "light-station",
     timeline: "Four to eight weeks",
     status: "shipped",
     proofSlug: "heymann-williams-coastal",
@@ -308,7 +326,8 @@ export const CATALOG: Offering[] = [
       "Roster index with search and area filters",
       "Each page carries schema markup for the agent as an entity",
     ],
-    tierSlug: "flagship",
+    kind: "build",
+    tierSlug: "light-station",
     timeline: "Four to six weeks",
     status: "concept",
     proofSlug: "heymann-williams-coastal",
@@ -332,7 +351,8 @@ export const CATALOG: Offering[] = [
       "Interview and onboarding content that filters as it attracts",
       "Runs on its own domain or a subdomain of the main site",
     ],
-    tierSlug: "community-site",
+    kind: "build",
+    tierSlug: "beacon",
     timeline: "Two to three weeks",
     status: "concept",
     hue: HUE.brokerages,
@@ -357,7 +377,8 @@ export const CATALOG: Offering[] = [
       "Fast enough to win the mobile ranking signal",
       "Deployable on your own subdomain",
     ],
-    tierSlug: "community-site",
+    kind: "build",
+    tierSlug: "beacon",
     timeline: "Two to three weeks",
     status: "shipped",
     proofSlug: "crane-island-bhhs",
@@ -381,7 +402,8 @@ export const CATALOG: Offering[] = [
       "Runs standalone or embedded in the development's existing site",
       "Built on the same map engine as the shipped flagship",
     ],
-    tierSlug: "flagship",
+    kind: "build",
+    tierSlug: "light-station",
     timeline: "Four to six weeks",
     status: "concept",
     proofSlug: "the-aerial",
@@ -409,7 +431,9 @@ export const CATALOG: Offering[] = [
       "The community's story told well enough to justify its price sheet",
       "Its own domain, so the equity accrues to the development",
     ],
+    kind: "build",
     tierSlug: "flagship",
+    priceFrom: 9500,
     timeline: "Four to eight weeks",
     status: "concept",
     // Nocatee, St. Johns County — 30.1054, -81.4160.
@@ -435,7 +459,8 @@ export const CATALOG: Offering[] = [
       "Adding a neighborhood is a content edit, not a project",
       "Sitemap and internal linking generated from the same source",
     ],
-    tierSlug: "flagship",
+    kind: "build",
+    tierSlug: "light-station",
     timeline: "Three to five weeks",
     status: "shipped",
     proofSlug: "heymann-williams-coastal",
@@ -459,6 +484,7 @@ export const CATALOG: Offering[] = [
       "Live local data wired into the interface, not widget embeds",
       "Desktop and mobile profiles shipped from one codebase",
     ],
+    kind: "build",
     tierSlug: "flagship",
     timeline: "Six to ten weeks",
     status: "shipped",
@@ -485,7 +511,8 @@ export const CATALOG: Offering[] = [
       "Open-graph and schema built so shared links unfurl properly",
       "Retires gracefully into a sold page that keeps working for you",
     ],
-    tierSlug: "agent-page",
+    kind: "build",
+    tierSlug: "daymark",
     timeline: "Under a week",
     status: "concept",
     // Jacksonville Beach — GNIS: 30.2947, -81.3931.
@@ -511,7 +538,8 @@ export const CATALOG: Offering[] = [
       "Reusable — new listing, same system, fresh QR",
       "Works on the visitor's phone with no app and no account",
     ],
-    tierSlug: "agent-page",
+    kind: "build",
+    tierSlug: "daymark",
     timeline: "Under a week",
     status: "concept",
     hue: HUE.listings,
@@ -534,7 +562,8 @@ export const CATALOG: Offering[] = [
       "Sold mode that adds the result to your public record",
       "Every stage feeds the same validated lead flow",
     ],
-    tierSlug: "agent-page",
+    kind: "build",
+    tierSlug: "daymark",
     timeline: "About one week",
     status: "concept",
     hue: HUE.listings,
@@ -557,7 +586,8 @@ export const CATALOG: Offering[] = [
       "Share links that unfurl correctly everywhere",
       "Works per-listing or as a permanent media hub",
     ],
-    tierSlug: "agent-page",
+    kind: "build",
+    tierSlug: "daymark",
     timeline: "Under a week",
     status: "concept",
     hue: HUE.listings,
@@ -582,7 +612,9 @@ export const CATALOG: Offering[] = [
       "Results as a list, a map, or both",
       "Degrades honestly when the feed is down, instead of pretending",
     ],
-    tierSlug: "flagship",
+    kind: "module",
+    priceFrom: 2500,
+    includedIn: ["flagship"],
     timeline: "Three to five weeks",
     status: "concept",
     proofSlug: "the-aerial",
@@ -609,7 +641,8 @@ export const CATALOG: Offering[] = [
       "Charts rendered as accessible HTML, not screenshot images",
       "Email-ready summaries cut from the same data",
     ],
-    tierSlug: "community-site",
+    kind: "module",
+    priceFrom: 1800,
     timeline: "Two to four weeks",
     status: "concept",
     // St. Augustine — the corridor's southern anchor. GNIS: 29.8947, -81.3131.
@@ -635,7 +668,9 @@ export const CATALOG: Offering[] = [
       "Designed failure states — no broken widget when a feed drops",
       "Drops into an existing site or ships inside a new one",
     ],
-    tierSlug: "community-site",
+    kind: "module",
+    priceFrom: 900,
+    includedIn: ["flagship"],
     timeline: "One to two weeks",
     status: "shipped",
     proofSlug: "the-aerial",
@@ -659,7 +694,9 @@ export const CATALOG: Offering[] = [
       "Fallback delivery to email if the CRM path ever fails",
       "Works with existing forms or the flows I build",
     ],
-    tierSlug: "agent-page",
+    kind: "module",
+    priceFrom: 500,
+    includedIn: ["beacon", "light-station", "flagship"],
     timeline: "Under a week",
     status: "shipped",
     proofSlug: "sold-on-amelia-island",
@@ -683,7 +720,9 @@ export const CATALOG: Offering[] = [
       "No database to host or secure",
       "Editable fields chosen deliberately, so nothing breaks by accident",
     ],
-    tierSlug: "agent-page",
+    kind: "module",
+    priceFrom: 750,
+    includedIn: ["beacon", "light-station", "flagship"],
     timeline: "About one week",
     status: "shipped",
     proofSlug: "sold-on-amelia-island",
@@ -707,7 +746,8 @@ export const CATALOG: Offering[] = [
       "Notifications when something actually changes",
       "Scales from a single team to a brokerage's whole pipeline",
     ],
-    tierSlug: "flagship",
+    kind: "module",
+    priceFrom: 4500,
     timeline: "Four to eight weeks",
     status: "concept",
     hue: HUE.tools,
@@ -733,14 +773,47 @@ export function offeringsByCategory(category: CategorySlug) {
 /** The concepts that carry a place on the map. */
 export const FLAGSHIP_CONCEPTS = CATALOG.filter((o) => o.beacon);
 
+/** The two axes, derived — builds are whole sites, modules attach to any of them. */
+export const BUILDS = CATALOG.filter((o) => o.kind === "build");
+export const MODULES = CATALOG.filter((o) => o.kind === "module");
+
 /**
  * The price line for an offering. Honors SHOW_PRICING exactly like the tier
  * cards do — nothing in the catalog can leak a number while pricing is off.
  */
 export function priceLabelFor(offering: Offering): string {
   if (!SHOW_PRICING) return "Let's talk";
+  if (offering.kind === "module") {
+    if (offering.priceFrom == null) return "Let's talk";
+    return `from $${offering.priceFrom.toLocaleString("en-US")}, added to any build`;
+  }
   const tier = TIERS.find((t) => t.slug === offering.tierSlug);
   const price = offering.priceFrom ?? tier?.price;
   if (price == null) return "Let's talk";
-  return `from $${price.toLocaleString("en-US")}, one-time`;
+  const from =
+    offering.priceFrom != null || tier?.priceNote.startsWith("from")
+      ? "from "
+      : "";
+  return `${from}$${price.toLocaleString("en-US")}, one-time`;
+}
+
+/**
+ * "Included in Beacon builds and up" — the sentence a module's includedIn
+ * earns, or null when it is purely an add-on.
+ */
+export function includedInLabel(offering: Offering): string | null {
+  if (!offering.includedIn?.length) return null;
+  const names = offering.includedIn
+    .map((slug) => TIERS.find((t) => t.slug === slug)?.name)
+    .filter(Boolean);
+  if (!names.length) return null;
+  if (names.length === 1) return `Included in ${names[0]} builds`;
+  // Contiguous run up the ladder reads as "and up".
+  const ladder = TIERS.map((t) => t.name);
+  const idxs = names.map((n) => ladder.indexOf(n as string)).sort((a, b) => a - b);
+  const contiguousToTop =
+    idxs[idxs.length - 1] === ladder.length - 1 &&
+    idxs.every((v, i) => i === 0 || v === idxs[i - 1] + 1);
+  if (contiguousToTop) return `Included in ${names[0]} builds and up`;
+  return `Included in ${names.join(" and ")} builds`;
 }

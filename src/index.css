@@ -602,6 +602,13 @@ body {
   background: transparent;
   color: var(--color-ink-muted);
 }
+/* The second axis of the offer: an add-on, not a whole build. Solid hairline
+   so it reads as a fact (like shipped) rather than a caveat (like concept). */
+.badge-module {
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-ink-soft);
+}
 
 /* The banner on every concept detail page. Visually calm, verbally absolute. */
 .concept-banner {

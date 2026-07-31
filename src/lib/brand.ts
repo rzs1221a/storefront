@@ -50,10 +50,9 @@ export const CONTACT = {
 } as const;
 
 /**
- * Prices are not public yet. With this false every tier reads "Let's talk"
- * and routes to the contact form — the packages, inclusions, and timelines
- * still do their work, but no number is committed to in writing.
- *
- * Set the figures in src/lib/offer.ts and flip this to true to publish them.
+ * Prices are public. The figures live in src/lib/offer.ts (build tiers) and
+ * src/lib/catalog.ts (module `priceFrom`s); this flag gates every rendering of
+ * them at once. Flip to false and the whole site reads "Let's talk" again
+ * without touching a number.
  */
-export const SHOW_PRICING = false;
+export const SHOW_PRICING = true;

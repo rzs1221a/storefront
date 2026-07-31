@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { BRAND, CONTACT } from "../lib/brand";
 import { TIERS } from "../lib/offer";
+import { MODULES } from "../lib/catalog";
 
 /**
  * The conversion point.
@@ -180,14 +181,26 @@ export default function LeadForm({
             <option value="" disabled>
               Choose one
             </option>
-            {selectedOption && (
-              <option value={selectedOption}>{selectedOption}</option>
-            )}
-            {TIERS.map((tier) => (
-              <option key={tier.slug} value={tier.name}>
-                {tier.name}
-              </option>
-            ))}
+            {/* An offering arriving via ?option= gets its own entry — unless
+                it is a module, which is already listed below. */}
+            {selectedOption &&
+              !MODULES.some((m) => m.name === selectedOption) && (
+                <option value={selectedOption}>{selectedOption}</option>
+              )}
+            <optgroup label="Build sizes">
+              {TIERS.map((tier) => (
+                <option key={tier.slug} value={tier.name}>
+                  {tier.name} — {tier.system.toLowerCase()}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="Modules & add-ons">
+              {MODULES.map((m) => (
+                <option key={m.slug} value={m.name}>
+                  {m.name}
+                </option>
+              ))}
+            </optgroup>
             <option value="Not sure yet">Not sure yet</option>
           </select>
         </div>

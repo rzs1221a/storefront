@@ -1,5 +1,10 @@
 import { Link, Navigate, useParams } from "react-router-dom";
-import { CATALOG, CATEGORIES, priceLabelFor } from "../lib/catalog";
+import {
+  CATALOG,
+  CATEGORIES,
+  includedInLabel,
+  priceLabelFor,
+} from "../lib/catalog";
 import { WORK } from "../lib/work";
 import { TIERS } from "../lib/offer";
 import Page from "../components/Page";
@@ -27,7 +32,11 @@ export default function OptionDetail() {
   if (!item) return <Navigate to="/options" replace />;
 
   const category = CATEGORIES.find((c) => c.slug === item.category)!;
-  const tier = TIERS.find((t) => t.slug === item.tierSlug)!;
+  // Modules price on their own; only builds resolve a tier.
+  const tier =
+    item.kind === "build"
+      ? TIERS.find((t) => t.slug === item.tierSlug)
+      : undefined;
   const proof = item.proofSlug
     ? WORK.find((w) => w.slug === item.proofSlug)
     : undefined;
@@ -47,10 +56,13 @@ export default function OptionDetail() {
       backTo="/options"
       backLabel="All options"
     >
-      <p className="mt-1">
+      <p className="mt-1 flex flex-wrap gap-2">
         <span className={`badge ${concept ? "badge-concept" : "badge-shipped"}`}>
           {concept ? "Build-ready concept" : "Shipped pattern"}
         </span>
+        {item.kind === "module" && (
+          <span className="badge badge-module">Add-on module</span>
+        )}
       </p>
 
       {/* The honesty banner. Non-negotiable on every concept page. */}
@@ -136,12 +148,30 @@ export default function OptionDetail() {
 
       {/* ── Call to action ───────────────────────────────────────────── */}
       <div className="case-cta">
-        <p className="case-cta-line">
-          This is a{" "}
-          <strong className="font-medium text-(--color-ink)">{tier.name}</strong>{" "}
-          build — {item.timeline.toLowerCase()}, {priceLabelFor(item)}, and you
-          own it outright.
-        </p>
+        {item.kind === "module" ? (
+          <>
+            <p className="case-cta-line">
+              This is an{" "}
+              <strong className="font-medium text-(--color-ink)">
+                add-on module
+              </strong>{" "}
+              — {item.timeline.toLowerCase()}, {priceLabelFor(item)} or to the
+              site you already have.
+            </p>
+            {includedInLabel(item) && (
+              <p className="mono-label mt-2">{includedInLabel(item)}</p>
+            )}
+          </>
+        ) : (
+          <p className="case-cta-line">
+            This is a{" "}
+            <strong className="font-medium text-(--color-ink)">
+              {tier!.name}
+            </strong>{" "}
+            build — {item.timeline.toLowerCase()}, {priceLabelFor(item)}, and
+            you own it outright.
+          </p>
+        )}
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Link
             to={`/contact?option=${item.slug}`}
@@ -150,7 +180,7 @@ export default function OptionDetail() {
             {concept ? "Be the first to build this" : "Get this built for you"}
           </Link>
           <Link to="/packages" className="btn btn-ghost btn-sm">
-            Compare build sizes →
+            {item.kind === "module" ? "See the build sizes →" : "Compare build sizes →"}
           </Link>
         </div>
       </div>

@@ -14,7 +14,7 @@ import Page from "../components/Page";
  *
  * Each row carries the tier it corresponds to, so browsing the work is also
  * browsing the offer — a visitor who likes Crane Island learns, on the same
- * row, that it is a Community Site.
+ * row, that it is a Beacon build.
  */
 
 /** Which package each project is an example of, from lib/offer.ts. */

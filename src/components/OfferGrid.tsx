@@ -5,7 +5,7 @@ import { WORK } from "../lib/work";
 import { CATALOG } from "../lib/catalog";
 
 /**
- * The offer matrix — three productized packages, side by side.
+ * The offer matrix — four productized build sizes, side by side.
  *
  * Side by side is the point. A buyer deciding between tiers is comparing, and
  * a stacked list makes them hold the first card in memory while they read the
@@ -33,9 +33,13 @@ const money = (n: number) =>
 function TierCard({ tier, order }: { tier: Tier; order: number }) {
   const example = WORK.find((w) => w.slug === tier.exampleSlug);
   const priced = SHOW_PRICING && tier.price !== null;
-  // Every catalog option maps to a build size; the card names a few so a
-  // buyer sees the tier as a family of things, not an abstraction.
-  const covers = CATALOG.filter((o) => o.tierSlug === tier.slug);
+  const from = priced && tier.priceNote.startsWith("from");
+  // Every catalog build maps to a size; the card names a few so a buyer sees
+  // the tier as a family of things, not an abstraction. Modules price on
+  // their own and never appear here.
+  const covers = CATALOG.filter(
+    (o) => o.kind === "build" && o.tierSlug === tier.slug
+  );
 
   return (
     <article
@@ -55,8 +59,13 @@ function TierCard({ tier, order }: { tier: Tier; order: number }) {
       <p className="tier-price">
         {priced ? (
           <>
-            <span className="tier-figure">{money(tier.price!)}</span>
-            <span className="tier-note">{tier.priceNote}</span>
+            <span className="tier-figure">
+              {from && <span className="tier-from">from </span>}
+              {money(tier.price!)}
+            </span>
+            <span className="tier-note">
+              {from ? tier.priceNote.replace(/^from,?\s*/, "") : tier.priceNote}
+            </span>
           </>
         ) : (
           <>

@@ -4,6 +4,7 @@ import {
   CATALOG_TOTALS,
   CATEGORIES,
   offeringsByCategory,
+  priceLabelFor,
 } from "../lib/catalog";
 import { TIERS } from "../lib/offer";
 import { TOTALS, WORK } from "../lib/work";
@@ -81,13 +82,18 @@ export default function Options() {
                         >
                           {o.status === "shipped" ? "Shipped" : "Concept"}
                         </span>
+                        {o.kind === "module" && (
+                          <span className="badge badge-module">Module</span>
+                        )}
                       </span>
 
                       <span className="case-summary">{o.pitch}</span>
 
                       <span className="case-meta">
                         <span className="case-tier">
-                          {TIER_NAME.get(o.tierSlug)} build · {o.timeline.toLowerCase()}
+                          {o.kind === "module"
+                            ? `${priceLabelFor(o)} · ${o.timeline.toLowerCase()}`
+                            : `${TIER_NAME.get(o.tierSlug!)} build · ${o.timeline.toLowerCase()}`}
                         </span>
                         {o.proofSlug && (
                           <span className="font-mono text-[0.6875rem] text-(--color-ink-faint)">
