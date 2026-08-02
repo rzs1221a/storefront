@@ -58,9 +58,6 @@
 
   --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
-  /* Transitional aliases while serif-era call sites are migrated. */
-  --font-serif: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-serif-text: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);

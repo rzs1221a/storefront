@@ -6,7 +6,7 @@
  * impression for a studio selling web presence.
  *
  * Rendered with Playwright rather than drawn by hand so it uses the real
- * Fraunces typeface and the real brand tokens — the card and the site cannot
+ * Geist typeface and the real brand tokens — the card and the site cannot
  * drift into looking like two different companies. Reads BRAND, so a rename
  * regenerates correctly with no edits here.
  *
@@ -35,22 +35,22 @@ async function resolveChromium() {
 }
 
 /** The Latin subset of the site's own variable font, inlined as a data URI. */
-async function frauncesDataUri() {
+async function geistDataUri() {
   const dir = path.join(root, "dist", "assets");
   const files = await readdir(dir);
   const latin = files.find(
-    (f) => f.startsWith("fraunces-latin-opsz-normal") && f.endsWith(".woff2")
+    (f) => f.startsWith("geist-latin-wght-normal") && f.endsWith(".woff2")
   );
-  if (!latin) throw new Error("Fraunces latin woff2 not found — run npm run build first");
+  if (!latin) throw new Error("Geist latin woff2 not found — run npm run build first");
   const buf = await readFile(path.join(dir, latin));
   return `data:font/woff2;base64,${buf.toString("base64")}`;
 }
 
-const font = await frauncesDataUri();
+const font = await geistDataUri();
 
 const html = `<!doctype html><meta charset="utf-8"><style>
   @font-face {
-    font-family: "Fraunces";
+    font-family: "Geist";
     src: url("${font}") format("woff2");
     font-weight: 100 900;
   }
@@ -70,40 +70,40 @@ const html = `<!doctype html><meta charset="utf-8"><style>
   .horizon {
     position: absolute; inset: auto 0 0 0; height: 62%;
     background:
-      radial-gradient(120% 100% at 78% 100%, rgba(217,190,130,0.16), transparent 62%),
-      linear-gradient(180deg, transparent, rgba(217,190,130,0.05));
+      radial-gradient(120% 100% at 78% 100%, rgba(255,255,255,0.12), transparent 62%),
+      linear-gradient(180deg, transparent, rgba(255,255,255,0.04));
   }
   .rule {
     position: absolute; left: 0; right: 0; bottom: 38%;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(217,190,130,0.45) 30%, rgba(217,190,130,0.12) 70%, transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45) 30%, rgba(255,255,255,0.12) 70%, transparent);
   }
   .brand { display: flex; align-items: center; gap: 16px; margin-bottom: 40px; }
   .brand svg { display: block; }
-  .brand span { font-size: 30px; font-weight: 520; letter-spacing: 0; }
+  .brand span { font-size: 30px; font-weight: 500; letter-spacing: -0.02em; }
   h1 {
-    font-size: 62px; font-weight: 470; line-height: 1.12;
-    letter-spacing: -0.01em; max-width: 15ch;
+    font-size: 62px; font-weight: 500; line-height: 1.08;
+    letter-spacing: -0.035em; max-width: 15ch;
     position: relative;
   }
-  h1 em { font-style: italic; font-weight: 420; }
+  h1 em { font-style: normal; font-weight: 420; color: #c9c9cf; }
   p {
     margin-top: 28px; font-size: 25px; line-height: 1.45;
-    color: #c6bfb1; max-width: 30ch; position: relative;
+    color: #c9c9cf; max-width: 30ch; position: relative;
   }
   .foot {
     position: absolute; left: 92px; right: 92px; bottom: 60px;
     display: flex; justify-content: space-between; align-items: baseline;
-    font-size: 19px; color: #a9a196; letter-spacing: 0;
+    font-size: 19px; color: #a7a7ae; letter-spacing: -0.01em;
   }
 </style>
 <div class="horizon"></div><div class="rule"></div>
 
 <div class="brand">
   <svg width="30" height="30" viewBox="0 0 16 16" fill="none">
-    <path d="M8 1.2 14.8 8 8 14.8 1.2 8Z" stroke="#d9be82"
+    <path d="M8 1.2 14.8 8 8 14.8 1.2 8Z" stroke="#f5f5f7"
           stroke-width="1.5" stroke-linejoin="round"/>
-    <path d="M8 5.4 10.6 8 8 10.6 5.4 8Z" fill="#d9be82"/>
+    <path d="M8 5.4 10.6 8 8 10.6 5.4 8Z" fill="#f5f5f7"/>
   </svg>
   <span>${BRAND.name}</span>
 </div>

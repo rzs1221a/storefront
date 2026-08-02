@@ -111,7 +111,7 @@ chart of the offer. Nothing on it is decoration — every chart element is data.
 
 Asset runbooks: `npm run capture:self` (serve dist on 4319 first) regenerates
 the storefront's own case-study screenshots; `tsx scripts/og.mjs` (after a
-build) regenerates the social card from BRAND + the live Fraunces face.
+build) regenerates the social card from BRAND + the live Geist face.
 
 ## SEO — read this before changing the build
 
@@ -158,15 +158,28 @@ functions do not exist and it renders nothing. Nothing may depend on its height.
 
 ## Design
 
-Near-monochrome on purpose, in a warm editorial register. The client work is
-the color — Crane Island and Heymann Williams are gold-and-cabernet, The Aerial
-is deep glass and blue — so the chrome stays quiet and lets five
-differently-branded screenshots sit in the same frame. The storefront's own
-voice is **Fraunces Variable** (all-serif, optical sizing on, italics as the
-emphasis register) over warm ink-black plates with parchment cream text, Geist
-Mono as the chart-instrument voice, and one champagne-brass accent
-(`--color-signal`) for live state, eyebrows, prices, and focus. Explicitly not
-the Playfair/Inter + gold/cabernet vocabulary of the client work.
+Monochrome on purpose, in a minimal register: **Geist Variable** as the only
+reading voice (tight grotesk tracking, no italics — emphasis is a lighter
+weight in softer ink), Geist Mono as the chart-instrument voice, and no hue
+accent at all — white light, silver glass, black depth. The client work is
+the color; the frame is achromatic so five differently-branded screenshots
+sit in one frame.
+
+**The material is Surface Liquid Glass**, ported from
+`heymann-williams-coastal` at the owner's direction — the glass MATERIAL is
+shared; the typography and palette are explicitly not (no Playfair/Inter, no
+gold/cabernet). Three tiers of one achromatic material: near-clear `.glass`
+for chrome and buttons, `.glass-deep` (alias `.panel`) as the legibility
+floor under body text, `.glass-card` for grids — each an opaque frosted
+fallback plus a `@supports` upgrade to the refractive pane, with a dark
+backing layer HW never needed because the backdrop here is a moving satellite
+map. A render-motion governor (`src/lib/renderMotion.ts`) watches real frame
+times and steps `data-render-load` silk/steady/austere on `<html>`, which the
+glass filter tokens read — the material lightens before the page gets slow
+(`?motionHud=1` shows the verdict). Route navigations bloom the incoming
+page's glass in over the flying chart, and first arrival runs a startup gate
+that holds until the map reports ready (capped, skippable, once per
+session).
 
 **Glass is load-bearing here, not decorative.** `.panel` is two layers: a light
 tint that reads as material, over a dark floor at 74% that makes it predictable.
