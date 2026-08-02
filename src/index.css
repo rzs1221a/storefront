@@ -70,11 +70,33 @@
 :root {
   --line: rgba(255, 255, 255, 0.1);
   --line-strong: rgba(255, 255, 255, 0.2);
+  /* Surface Liquid Glass filters, ported from heymann-williams-coastal.
+     Low blur so surfaces read clear/refractive (not frosted), heavy
+     saturate + brightness + contrast for the vivid, lensy quality. */
+  --glass-filter: blur(6px) saturate(220%) brightness(1.2) contrast(1.08);
+  --glass-hover-filter: blur(16px) saturate(185%) brightness(1.08);
+  --route-filter-start: blur(14px) saturate(0.68) brightness(0.5);
+  --route-control-filter-start: blur(10px) saturate(0.72) brightness(0.58);
+  --route-scrim-filter-start: blur(18px) brightness(0.7);
   --shadow-lift: 0 24px 70px -24px rgba(0, 0, 0, 0.9);
   --shadow-deep: 0 40px 100px -30px rgba(0, 0, 0, 1);
   /* Page gutter, shared by every section so nothing drifts out of alignment. */
   --gutter: clamp(1.25rem, 5vw, 5rem);
   --measure: 68ch;
+}
+
+/* The render-motion governor (src/lib/renderMotion.ts) steps these down when
+   real frame times slip — the glass gets lighter before the page gets slow. */
+html[data-render-load="steady"] {
+  --glass-filter: blur(5px) saturate(175%) brightness(1.12) contrast(1.03);
+  --glass-hover-filter: blur(8px) saturate(155%) brightness(1.03);
+}
+html[data-render-load="austere"] {
+  --glass-filter: blur(3px) saturate(145%) brightness(1.06) contrast(1.01);
+  --glass-hover-filter: blur(4px) saturate(138%) brightness(1.01);
+  --route-filter-start: none;
+  --route-control-filter-start: none;
+  --route-scrim-filter-start: none;
 }
 
 /*
@@ -225,7 +247,7 @@ body {
 .tour-button {
   width: 100%;
   min-height: 38px;
-  border-radius: 6px;
+  border-radius: 999px;
   border: 1px solid var(--line-strong);
   background: rgba(255, 255, 255, 0.04);
   font-size: 0.8125rem;
@@ -253,7 +275,7 @@ body {
   align-items: baseline;
   gap: 0.75rem;
   white-space: nowrap;
-  border-radius: 6px;
+  border-radius: 999px;
   border: 1px solid var(--line-strong);
   background: rgba(8, 8, 10, 0.82);
   backdrop-filter: blur(16px) saturate(160%);
@@ -597,7 +619,7 @@ body {
 .badge {
   display: inline-block;
   padding: 0.125rem 0.5rem;
-  border-radius: 3px;
+  border-radius: 999px;
   font-family: var(--font-mono, monospace);
   font-size: 0.625rem;
   letter-spacing: 0.1em;
@@ -875,7 +897,7 @@ body {
   top: 0;
   right: 1.25rem;
   transform: translateY(-50%);
-  border-radius: 3px;
+  border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--color-signal) 45%, transparent);
   background: var(--color-plate-raised);
   padding: 0.1875rem 0.625rem;
@@ -1033,7 +1055,7 @@ body {
 }
 .case-tier,
 .case-live {
-  border-radius: 4px;
+  border-radius: 999px;
   border: 1px solid var(--line);
   padding: 0.125rem 0.5rem;
   font-family: var(--font-mono);
@@ -1318,35 +1340,49 @@ summary,
   color: var(--color-ink-muted);
 }
 
-/* ── Surfaces ─────────────────────────────────────────────────────────── */
+/* ── Surfaces: Surface Liquid Glass ───────────────────────────────────── */
 
 /*
- * Glass, ported from heymann-williams-coastal/src/index.css.
+ * The glass, ported from heymann-williams-coastal/src/index.css at the
+ * user's direction — the same Surface Liquid Glass material, recolored
+ * achromatic and given one thing HW never needed: a dark backing layer,
+ * because our backdrop is a MOVING satellite map, not a dim photograph,
+ * and verify.mjs measures 4.5:1 text contrast at four live camera
+ * positions.
  *
- * Four things make a surface read as material rather than a painted rectangle:
- *   1. a base tint with real weight
- *   2. a fine noise grain, so it is not a flat wash
- *   3. a lit rim — a highlight down the top-left edge
- *   4. borders bright at the top, faint at the bottom (lit from above)
+ * Two tiers plus a card grade:
+ *   .glass       — near-clear refractive pane. Chrome, buttons, big text.
+ *   .glass-deep  — the legibility floor. Anything carrying body/small text.
+ *   .glass-card  — fine single-layer glass for grids (many on screen).
+ * `.panel` is a compatibility alias for .glass-deep — every serif-era call
+ * site keeps working.
  *
- * The base tint is deliberately opaque enough to work on its OWN, with no
- * backdrop-filter. That is the important part, and the reason the client site
- * does it this way: some browsers — and any machine with GPU acceleration
- * disabled — report `backdrop-filter` as supported and then render it fully
- * transparent, which makes a low-alpha tint vanish entirely. Blur is layered
- * on below as pure enhancement. If it never paints, this still looks like glass.
+ * Layer order per surface:
+ *   1. base tint that reads as frosted material ON ITS OWN — some browsers
+ *      report backdrop-filter as supported and render it fully transparent,
+ *      so the fallback must hold contrast by construction
+ *   2. ::before — inline-SVG noise grain so big surfaces don't band
+ *   3. ::after — the lit rim, a top-left radial highlight
+ *   4. the @supports block below the buttons swaps in the near-clear liquid
+ *      pane: even border, stacked inset edge lights, low-blur/high-saturate
+ *      backdrop-filter. The knob for a failing contrast sample is always the
+ *      surface's dark backing alpha — never the blur, never the ink.
  */
 
+.glass,
+.glass-deep,
+.glass-card,
 .panel {
   position: relative;
   isolation: isolate;
-  border-radius: 0.625rem;
+  border-radius: 1rem;
   border: 1px solid var(--line);
-  border-top-color: rgba(255, 255, 255, 0.16);
-  border-bottom-color: rgba(255, 255, 255, 0.045);
 }
 
 /* Grain. A single inline SVG turbulence, no network request. */
+.glass::before,
+.glass-deep::before,
+.glass-card::before,
 .panel::before {
   content: "";
   position: absolute;
@@ -1355,59 +1391,113 @@ summary,
   pointer-events: none;
   border-radius: inherit;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
-  opacity: 0.055;
+  opacity: 0.08;
   mix-blend-mode: overlay;
 }
 
-/* The lit rim, doubling as the cartouche: an engraved inner hairline inset
-   5px from the edge, the double-rule frame of a paper chart. */
+/* The lit rim. */
+.glass::after,
+.glass-deep::after,
+.glass-card::after,
 .panel::after {
   content: "";
   position: absolute;
-  inset: 5px;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
-  border-radius: calc(0.625rem - 4px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: inherit;
   background: radial-gradient(
-    150% 78% at 18% 0%,
-    rgba(255, 255, 255, 0.09),
-    transparent 58%
+    160% 80% at 20% 0%,
+    rgba(255, 255, 255, 0.14),
+    transparent 55%
   );
 }
 
-/* Content must clear the two decorative pseudo-elements. */
+/* Content must clear the decorative pseudo-elements. */
+.glass > *,
+.glass-deep > *,
+.glass-card > *,
 .panel > * {
   position: relative;
   z-index: 1;
 }
 
-/*
- * Two layers, and the order matters. The light tint on top is what reads as
- * glass; the dark base underneath is what makes the surface predictable.
- *
- * Without that base the effective background is whatever the satellite camera
- * happens to be framing, so contrast drifts as the map flies. The floor was
- * deepened from 0.58 to 0.74 when the site chrome became `.panel` itself:
- * decorative cards can afford to be sheer, but chrome carrying dense small
- * type over a camera that moves cannot. The coast still reads through it —
- * verified at four camera positions by scripts/verify.mjs.
- */
+/* Fallback tints — frosted material with no backdrop-filter at all. */
+.glass {
+  background:
+    linear-gradient(
+      138deg,
+      rgba(126, 128, 140, 0.3),
+      rgba(92, 94, 106, 0.2) 55%,
+      rgba(110, 112, 124, 0.26)
+    ),
+    rgba(8, 8, 10, 0.42);
+  box-shadow: 0 22px 60px -16px rgba(0, 0, 0, 0.65);
+}
+
+.glass-deep,
 .panel {
   background:
     linear-gradient(
-      150deg,
-      rgba(150, 150, 168, 0.14),
-      rgba(110, 110, 130, 0.09) 55%,
-      rgba(140, 140, 160, 0.12)
+      138deg,
+      rgba(126, 128, 140, 0.18),
+      rgba(92, 94, 106, 0.12) 55%,
+      rgba(110, 112, 124, 0.16)
     ),
-    rgba(8, 8, 10, 0.74);
+    rgba(8, 8, 10, 0.78);
+  box-shadow: 0 28px 80px -22px rgba(0, 0, 0, 0.75);
 }
 
-@supports (backdrop-filter: blur(1px)) {
-  .panel {
-    backdrop-filter: blur(16px) saturate(170%) brightness(1.08);
-  }
+.glass-card {
+  background:
+    linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.02)
+    ),
+    rgba(8, 8, 10, 0.6);
+  border-top-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 14px 36px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Feathered seams ──────────────────────────────────────────────────────
+ * A gradient hairline that fades to nothing at both ends, so adjacent
+ * sections dissolve into one piece instead of meeting at a ruled border.
+ * Use in place of border-t / border-y on full-bleed section breaks. */
+.seam-top,
+.seam-y {
+  position: relative;
+}
+.seam-top::before,
+.seam-y::before,
+.seam-y::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 24px;
+  pointer-events: none;
+  background: radial-gradient(
+    60% 100% at 50% 50%,
+    rgba(255, 255, 255, 0.05),
+    transparent 72%
+  );
+  filter: blur(2px);
+}
+.seam-top::before,
+.seam-y::before {
+  top: -12px;
+}
+.seam-y::after {
+  bottom: -12px;
+}
+
+/* Chromatic-aberration text — a faint red/blue fringe that makes labels read
+ * as if seen through the glass lens. Subtle by design; clear glass only. */
+.chromatic-text {
+  text-shadow:
+    -0.5px 0 0.5px rgba(255, 0, 0, 0.35),
+    0.5px 0 0.5px rgba(0, 0, 255, 0.35);
 }
 
 /* ── Buttons ──────────────────────────────────────────────────────────── */
@@ -1417,10 +1507,10 @@ summary,
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 3px;
-  font-weight: 480;
+  border-radius: 999px;
+  font-weight: 500;
   font-size: 0.9375rem;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
   white-space: nowrap;
   cursor: pointer;
   transition:
@@ -1473,7 +1563,7 @@ summary,
   width: 100%;
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid var(--line-strong);
-  border-radius: 6px;
+  border-radius: 0.75rem;
   padding: 0.875rem 1rem;
   color: var(--color-ink);
   font-size: 1rem; /* 16px minimum — anything less zooms the page on iOS. */
@@ -1512,6 +1602,105 @@ select.field {
 select.field option {
   background: var(--color-plate-high);
   color: var(--color-ink);
+}
+
+
+/* ---- Surface Liquid Glass — the universal recipe ----
+ * One material across every glass surface: a near-clear pane, one even
+ * border, and refraction concentrated at the EDGES — a crisp inner edge ring
+ * plus a soft inner rim glow that bends light around the perimeter, brighter
+ * than the clearer center. Placed here, after the button/field bases, so it
+ * wins the cascade. Ported from heymann-williams-coastal; the dark backing
+ * layers are ours — the backdrop here is a moving satellite map and the
+ * contrast gate is measured, not assumed. Author only the unprefixed
+ * backdrop-filter — lightningcss adds -webkit;
+ * writing both ships the -webkit-only form that Chromium ignores. */
+@supports (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .glass,
+  .glass-deep,
+  .glass-card,
+  .panel,
+  .btn-ghost,
+  .field,
+  .beacon,
+  .tour-button,
+  .mark-card {
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow:
+      0 18px 50px -16px rgba(0, 0, 0, 0.5),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+      inset 0 0 18px rgba(255, 255, 255, 0.14),
+      inset 0 0 42px -10px rgba(255, 255, 255, 0.1);
+    backdrop-filter: var(--glass-filter);
+  }
+
+  /* The clear tier — chrome, buttons, display text. */
+  .glass {
+    background:
+      linear-gradient(
+        138deg,
+        rgba(150, 150, 168, 0.14),
+        rgba(110, 110, 130, 0.08) 55%,
+        rgba(140, 140, 160, 0.12)
+      ),
+      rgba(8, 8, 10, 0.3);
+  }
+
+  /* The legibility floor — long-form and small text keep a real backing. */
+  .glass-deep,
+  .panel {
+    background:
+      linear-gradient(
+        138deg,
+        rgba(150, 150, 168, 0.14),
+        rgba(110, 110, 130, 0.08) 55%,
+        rgba(140, 140, 160, 0.12)
+      ),
+      rgba(8, 10, 13, 0.7);
+  }
+
+  /* Fine grid glass — many on screen at once. */
+  .glass-card {
+    background:
+      linear-gradient(
+        140deg,
+        rgba(255, 255, 255, 0.06),
+        rgba(255, 255, 255, 0.02)
+      ),
+      rgba(8, 8, 10, 0.45);
+  }
+
+  .btn-ghost,
+  .field {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  /* Keep the field focus ring on top of the liquid rim. */
+  .field:focus {
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow:
+      0 0 0 2px rgba(255, 255, 255, 0.35),
+      inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Mobile / tablet: the refractive lens and heavy blur repaint badly over the
+ * live map (visible flicker when the camera flies under the glass). Keep the
+ * light frost only, and rock-steady. */
+@media (max-width: 1023px) {
+  .glass,
+  .glass-deep,
+  .glass-card,
+  .panel,
+  .btn-ghost,
+  .field,
+  .beacon,
+  .tour-button,
+  .mark-card {
+    backdrop-filter: var(--glass-filter) !important;
+  }
 }
 
 /* ── Live indicator ───────────────────────────────────────────────────── */
