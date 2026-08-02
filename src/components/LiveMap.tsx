@@ -98,6 +98,8 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
         map.on("load", () => {
           if (cancelled || !map) return;
           setLoaded(true);
+          // The arrival gate (Opening.tsx) holds until the plate is real.
+          window.dispatchEvent(new CustomEvent("seamark:map-ready"));
 
           // Hand the raw map to the tour, which needs flyTo's arc rather than
           // easeTo's straight interpolation.

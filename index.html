@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0b0a08" />
+    <meta name="theme-color" content="#050505" />
 
     <title>Seamark Studio — Custom websites for real estate agents</title>
     <!-- The counts here are a static approximation of the derived ones in
@@ -78,6 +78,21 @@
     </script>
   </head>
   <body>
+    <!-- Liquid-glass refraction map, ported from heymann-williams-coastal.
+         backdrop-filter: url(#liquid-glass-filter) would bend the backdrop
+         through this turbulence field for a light-warping edge; the shipped
+         recipe uses the blur/saturate stack in index.css instead (Safari
+         ignores url() in backdrop-filter), but the lens ships with the page
+         for the surfaces that opt in. -->
+    <svg width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden">
+      <defs>
+        <filter id="liquid-glass-filter" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.008 0.013" numOctaves="2" seed="17" result="warp" />
+          <feGaussianBlur in="warp" stdDeviation="2.6" result="warpSoft" />
+          <feDisplacementMap in="SourceGraphic" in2="warpSoft" scale="30" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </defs>
+    </svg>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

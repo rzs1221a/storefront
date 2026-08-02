@@ -1,35 +1,31 @@
 import { useEffect, useState } from "react";
-import { TOTALS } from "../lib/work";
 import { BRAND, CONTACT } from "../lib/brand";
-import { numberWord } from "../lib/format";
+import BrandMark from "./BrandMark";
 
 /**
- * The orienting moment.
- *
- * A map you land on cold is thrilling if you build websites and disorienting
- * if you sell houses. This holds the claim still for a few seconds, then
- * dissolves into the live interface — enough to say what this is and where you
- * are before anything moves.
+ * The arrival, ported from heymann-williams-coastal's StartupGate and pointed
+ * at this coast: black → the mark's frame draws itself in light → the line,
+ * the caption, a progress sweep — then the gate parts and the chart is
+ * already beneath you, the hero glass blooming in over it.
  *
  * It also covers the map's first paint honestly. Without it the visitor's
- * first impression is a half-drawn plate assembling itself.
+ * first impression is a half-drawn plate assembling itself. The gate exits
+ * the moment the map reports ready (`seamark:map-ready` from LiveMap), or at
+ * a hard cap — whichever comes first. It is an introduction, never a gate:
+ * any key or pointer skips it instantly.
  *
- * Shown once per session, so a returning visitor lands straight in. Dismissible
- * immediately by click, key, or the button — it must never feel like a gate.
+ * Shown once per session (`seamark:opened`), so a returning visitor lands
+ * straight in — scripts/verify.mjs relies on exactly this contract.
  */
 
 const SEEN_KEY = "seamark:opened";
 
-/**
- * How long the claim holds before dissolving.
- *
- * Deliberately short. With the 700ms fade that follows, a visitor is looking
- * at the value proposition and both calls to action inside two seconds — well
- * under the three-second window where a cold visitor decides whether to stay.
- * An opening that costs a conversion is not worth the atmosphere.
- */
-const HOLD_MS = 1300;
-const FADE_MS = 700;
+/** Hard cap on the wait — the coast is worth 2.6 s, never more. */
+const CAP_MS = 2600;
+/** The exit choreography's length; the node leaves after it finishes. */
+const EXIT_MS = 1050;
+const REDUCED_HOLD_MS = 400;
+const REDUCED_FADE_MS = 600;
 
 export default function Opening() {
   const [present, setPresent] = useState(() => {
@@ -37,38 +33,55 @@ export default function Opening() {
     try {
       return sessionStorage.getItem(SEEN_KEY) !== "1";
     } catch {
-      // Private browsing can throw on sessionStorage; showing the opening is
+      // Private browsing can throw on sessionStorage; showing the arrival is
       // the safe fallback, never a crash.
       return true;
     }
   });
-  const [leaving, setLeaving] = useState(false);
+  const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
     if (!present) return;
 
-    const dismiss = () => {
-      setLeaving(true);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let exitTimer = 0;
+    let done = false;
+
+    const leave = () => {
+      if (done) return;
+      done = true;
       try {
         sessionStorage.setItem(SEEN_KEY, "1");
       } catch {
         /* ignore */
       }
-      // Match the CSS fade so the node leaves after it has finished fading.
-      window.setTimeout(() => setPresent(false), FADE_MS);
+      setExiting(true);
+      if (!reduced) {
+        // One-shot bloom so the hero glass settles in as the gate parts.
+        document.body.classList.add("route-blooming");
+        window.setTimeout(
+          () => document.body.classList.remove("route-blooming"),
+          620
+        );
+      }
+      exitTimer = window.setTimeout(
+        () => setPresent(false),
+        reduced ? REDUCED_FADE_MS : EXIT_MS
+      );
     };
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const timer = window.setTimeout(dismiss, reduced ? 400 : HOLD_MS);
-
-    const onKey = () => dismiss();
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onKey);
+    const cap = window.setTimeout(leave, reduced ? REDUCED_HOLD_MS : CAP_MS);
+    window.addEventListener("seamark:map-ready", leave);
+    window.addEventListener("keydown", leave);
+    window.addEventListener("pointerdown", leave);
 
     return () => {
-      window.clearTimeout(timer);
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onKey);
+      window.clearTimeout(cap);
+      window.clearTimeout(exitTimer);
+      window.removeEventListener("seamark:map-ready", leave);
+      window.removeEventListener("keydown", leave);
+      window.removeEventListener("pointerdown", leave);
+      document.body.classList.remove("route-blooming");
     };
   }, [present]);
 
@@ -76,26 +89,25 @@ export default function Opening() {
 
   return (
     <div
-      className="opening"
-      data-leaving={leaving ? "true" : "false"}
-      // Purely an introduction to content that is already in the DOM behind it,
-      // so it is not announced and never traps focus.
+      className={`startup-gate${exiting ? " startup-gate-exit" : ""}`}
+      // Purely an introduction to content that is already in the DOM behind
+      // it, so it is not announced and never traps focus.
       aria-hidden="true"
     >
-      <div className="opening-inner">
-        <p className="eyebrow">
-          {BRAND.name} — {CONTACT.location}
-        </p>
-        <p className="opening-claim">
-          Your website should be the reason they call you.
-        </p>
-        <p className="opening-sub">
-          {numberWord(TOTALS.projects)} shipped sites on this coast — and
-          everything I'll build next. Open one.
-        </p>
-        {/* Says out loud that this is not a gate. Any key or click dismisses
-            it, and it never blocks the interface behind it. */}
-        <p className="opening-skip">Click anywhere to skip</p>
+      <span className="startup-blackout" />
+
+      <div className="startup-mark">
+        <span className="startup-build-top" />
+        <span className="startup-field" />
+        <div className="startup-logo">
+          <BrandMark size={44} className="text-(--color-ink)" />
+        </div>
+        <p className="startup-name">{BRAND.name}</p>
+        <span className="startup-line" />
+        <span className="startup-caption">{CONTACT.location}</span>
+        <span className="startup-progress">
+          <span className="startup-progress-fill" />
+        </span>
       </div>
     </div>
   );

@@ -1,83 +1,63 @@
 @import "tailwindcss";
 
 /* Self-hosted. No render-blocking CDN font request — a site that sells
-   performance cannot afford a 300 ms flash of invisible text.
-
-   Fraunces ships wght-only from its default subpath; the optical-size axis —
-   the entire reason to choose Fraunces,
-luxurious display cuts at high opsz
-   and a sturdy text cut at low — lives in the `opsz` subpaths,
-and the
-   italics (load-bearing here: one italic phrase per major heading) in
-   `opsz-italic`. Import both or ship neither. */
-@import "@fontsource-variable/fraunces/opsz.css";
-@import "@fontsource-variable/fraunces/opsz-italic.css";
+   performance cannot afford a 300 ms flash of invisible text. */
+@import "@fontsource-variable/geist";
 @import "@fontsource-variable/geist-mono";
 
 /*
  * Seamark Studio — design system
  *
- * Deliberately near-monochrome. The client work IS the color: Crane Island
- * and Heymann Williams are gold-and-cabernet,
-The Aerial is deep glass and
+ * Deliberately monochrome. The client work IS the color: Crane Island and
+ * Heymann Williams are gold-and-cabernet, The Aerial is deep glass and
  * system blue. A studio frame carrying its own loud palette would fight every
- * screenshot it holds. Neutral chrome lets five differently-branded projects
- * all look correct on one page,
-and restraint reads as expensive — which is
- * the register the pricing needs.
+ * screenshot it holds. Achromatic chrome lets five differently-branded
+ * projects all look correct on one page, and restraint reads as expensive —
+ * which is the register the pricing needs.
  *
- * The register is editorial luxury: Fraunces serif for every reading voice,
-* warm ink-black plates,
-parchment cream,
-and a single champagne-brass accent.
- * Geist Mono stays as the instrument voice — eyebrows,
-data lines,
-datum
- * coordinates — because the chart metaphor needs one.
+ * The register is minimal and futureless-timeless: Geist grotesk for every
+ * reading voice, white light on black depth, and silver liquid glass as the
+ * only ornament. There is no hue accent at all — the accent IS the glass:
+ * edge light, refraction, and depth. Geist Mono stays as the instrument
+ * voice — eyebrows, data lines, datum coordinates.
  *
- * Explicitly NOT the Playfair/Inter + gold/cabernet system used in
- * heymann-williams-coastal. That vocabulary belongs to the BHHS client work;
- * reusing it here would make the storefront read as a brokerage microsite.
- * Fraunces + brass-on-warm-black is the storefront's own voice.
+ * The glass MATERIAL is deliberately shared with heymann-williams-coastal
+ * (Surface Liquid Glass, ported at the user's direction). The typography and
+ * palette are explicitly NOT shared: no Playfair/Inter, no gold/cabernet —
+ * that vocabulary belongs to the BHHS client work, and reusing it would make
+ * the storefront read as a brokerage microsite.
  *
- * Accent discipline: `signal` is reserved for live state,
-eyebrows,
-focus
- * rings,
-and data emphasis. Primary CTAs invert to solid cream on black —
- * the highest-contrast treatment available,
-and the one that converts.
+ * Accent discipline: `signal` is now white light — reserved for live state,
+ * eyebrows, focus rings, and data emphasis. Primary CTAs invert to solid
+ * white on black — the highest-contrast treatment available.
  */
 
 @theme {
-  /* Plate — warm near-black through umber graphite. */
-  --color-plate: #0b0a08;
-  --color-plate-raised: #131109;
-  --color-plate-high: #1b1813;
-  --color-graphite: #2a2620;
-  --color-graphite-light: #3f3a32;
+  /* Plate — pure depth, cool and colorless. */
+  --color-plate: #050505;
+  --color-plate-raised: #0a0a0c;
+  --color-plate-high: #101014;
+  --color-graphite: #232328;
+  --color-graphite-light: #3a3a41;
 
-  /* Ink — parchment cream through muted. */
-  --color-ink: #f2ede2;
-  --color-ink-soft: #c6bfb1;
-  /* Lifted twice under the old cool ramp, both times because measurement said
-     so; this warm equivalent is tuned to the same luminance and verify.mjs
-     re-measures it at four live camera positions. Small text needs 4.5:1 and
-     the background here is never a fixed colour. */
-  --color-ink-muted: #a9a196;
-  --color-ink-faint: #5d574c;
+  /* Ink — white light through silver to shadow. Each step sits at or above
+     the luminance of the warm value it replaced, so the swap alone can never
+     regress the measured contrast. */
+  --color-ink: #f5f5f7;
+  --color-ink-soft: #c9c9cf;
+  /* Lifted twice under the old ramps, both times because measurement said so.
+     Small text needs 4.5:1 and the background here is never a fixed colour —
+     verify.mjs re-measures at four live camera positions. */
+  --color-ink-muted: #a7a7ae;
+  --color-ink-faint: #55555c;
 
-  /* The single accent — champagne brass. Warm where the old signal was cool,
-     still chromatically quiet enough not to fight the client screenshots. */
-  --color-signal: #d9be82;
-  --color-signal-dim: #a8894f;
-  --color-signal-glow: rgba(217, 190, 130, 0.14);
+  /* The "accent" is white light. No hue anywhere in the chrome. */
+  --color-signal: #f5f5f7;
+  --color-signal-dim: #9a9aa1;
+  --color-signal-glow: rgba(255, 255, 255, 0.14);
 
-  /* All-serif editorial: the sans slot aliases to the serif so no stray
-     font-sans utility can resurrect a grotesque. Mono is the one exception. */
-  --font-serif: "Fraunces Variable", Georgia, "Times New Roman", serif;
-  --font-serif-text: "Fraunces Variable", Georgia, "Times New Roman", serif;
-  --font-sans: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
   --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -85,13 +65,35 @@ and the one that converts.
 }
 
 :root {
-  --line: rgba(255, 246, 230, 0.09);
-  --line-strong: rgba(255, 246, 230, 0.17);
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  /* Surface Liquid Glass filters, ported from heymann-williams-coastal.
+     Low blur so surfaces read clear/refractive (not frosted), heavy
+     saturate + brightness + contrast for the vivid, lensy quality. */
+  --glass-filter: blur(6px) saturate(220%) brightness(1.2) contrast(1.08);
+  --glass-hover-filter: blur(16px) saturate(185%) brightness(1.08);
+  --route-filter-start: blur(14px) saturate(0.68) brightness(0.5);
+  --route-control-filter-start: blur(10px) saturate(0.72) brightness(0.58);
+  --route-scrim-filter-start: blur(18px) brightness(0.7);
   --shadow-lift: 0 24px 70px -24px rgba(0, 0, 0, 0.9);
   --shadow-deep: 0 40px 100px -30px rgba(0, 0, 0, 1);
   /* Page gutter, shared by every section so nothing drifts out of alignment. */
   --gutter: clamp(1.25rem, 5vw, 5rem);
   --measure: 68ch;
+}
+
+/* The render-motion governor (src/lib/renderMotion.ts) steps these down when
+   real frame times slip — the glass gets lighter before the page gets slow. */
+html[data-render-load="steady"] {
+  --glass-filter: blur(5px) saturate(175%) brightness(1.12) contrast(1.03);
+  --glass-hover-filter: blur(8px) saturate(155%) brightness(1.03);
+}
+html[data-render-load="austere"] {
+  --glass-filter: blur(3px) saturate(145%) brightness(1.06) contrast(1.01);
+  --glass-hover-filter: blur(4px) saturate(138%) brightness(1.01);
+  --route-filter-start: none;
+  --route-control-filter-start: none;
+  --route-scrim-filter-start: none;
 }
 
 /*
@@ -121,12 +123,10 @@ html {
 body {
   background-color: var(--color-plate);
   color: var(--color-ink);
-  font-family: var(--font-serif-text);
-  /* Fraunces carries a real opsz axis; let the browser track rendered size
-     along it so display sizes get the high-contrast cut and body text the
-     sturdy one, from a single family. */
-  font-optical-sizing: auto;
+  font-family: var(--font-sans);
   font-synthesis-weight: none;
+  /* Geist ships no italic; a synthesized oblique would betray the register. */
+  font-synthesis-style: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -141,7 +141,7 @@ body {
 
 ::selection {
   background: var(--color-signal);
-  color: #0b0a08;
+  color: #050505;
 }
 
 /* Skip link — visible only when focused. */
@@ -220,12 +220,12 @@ body {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(72% 52% at 50% 0%, rgba(217, 190, 130, 0.05), transparent 66%),
+    radial-gradient(72% 52% at 50% 0%, rgba(255, 255, 255, 0.045), transparent 66%),
     linear-gradient(
       180deg,
-      rgba(8, 7, 5, 0.55),
-      rgba(8, 7, 5, 0.22) 32%,
-      rgba(8, 7, 5, 0.4)
+      rgba(5, 5, 6, 0.55),
+      rgba(5, 5, 6, 0.22) 32%,
+      rgba(5, 5, 6, 0.4)
     );
   transition: opacity 0.9s var(--ease-out-expo);
 }
@@ -244,7 +244,7 @@ body {
 .tour-button {
   width: 100%;
   min-height: 38px;
-  border-radius: 6px;
+  border-radius: 999px;
   border: 1px solid var(--line-strong);
   background: rgba(255, 255, 255, 0.04);
   font-size: 0.8125rem;
@@ -272,9 +272,9 @@ body {
   align-items: baseline;
   gap: 0.75rem;
   white-space: nowrap;
-  border-radius: 6px;
+  border-radius: 999px;
   border: 1px solid var(--line-strong);
-  background: rgba(11, 10, 8, 0.82);
+  background: rgba(8, 8, 10, 0.82);
   backdrop-filter: blur(16px) saturate(160%);
   padding: 0.625rem 1.125rem;
   animation: captionIn 0.5s var(--ease-out-expo) both;
@@ -521,7 +521,7 @@ body {
   padding: 0.3rem 0.6rem 0.3rem 0.35rem;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(11, 10, 8, 0.6);
+  background: rgba(8, 8, 10, 0.6);
   backdrop-filter: blur(8px) saturate(150%);
   color: var(--color-ink);
   font-size: 0.75rem;
@@ -546,7 +546,7 @@ body {
   flex: none;
   border-radius: 999px;
   background: var(--color-signal);
-  box-shadow: 0 0 0 3px rgba(217, 190, 130, 0.20);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
 }
 
 /* Zoomed out, the labels collapse into dots — see LABEL_MIN_ZOOM in LiveMap.
@@ -572,7 +572,7 @@ body {
 .beacon--concept {
   border-style: dashed;
   border-color: rgba(255, 255, 255, 0.22);
-  background: rgba(11, 10, 8, 0.45);
+  background: rgba(8, 8, 10, 0.45);
 }
 .beacon--concept .beacon-dot {
   background: transparent;
@@ -616,7 +616,7 @@ body {
 .badge {
   display: inline-block;
   padding: 0.125rem 0.5rem;
-  border-radius: 3px;
+  border-radius: 999px;
   font-family: var(--font-mono, monospace);
   font-size: 0.625rem;
   letter-spacing: 0.1em;
@@ -624,8 +624,8 @@ body {
   vertical-align: middle;
 }
 .badge-shipped {
-  border: 1px solid rgba(217, 190, 130, 0.45);
-  background: rgba(217, 190, 130, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.405);
+  background: rgba(255, 255, 255, 0.108);
   color: var(--color-signal);
 }
 .badge-concept {
@@ -711,10 +711,9 @@ body {
 
 .hero-title {
   margin-top: 0.875rem;
-  font-family: var(--font-serif);
   font-size: clamp(1.5rem, 2.6vw, 2.125rem);
-  line-height: 1.16;
-  letter-spacing: -0.008em;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
   font-weight: 500;
   text-wrap: balance;
 }
@@ -818,7 +817,7 @@ body {
   padding: 0.8rem 1rem;
   border-radius: 1rem;
   border: 1px solid var(--line-strong);
-  background: rgba(14, 12, 9, 0.72);
+  background: rgba(10, 10, 12, 0.72);
   backdrop-filter: blur(10px) saturate(150%);
   color: var(--color-ink);
   cursor: pointer;
@@ -874,13 +873,10 @@ body {
 }
 
 .tier-card {
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--line);
-  background: rgba(255, 246, 230, 0.02);
+  border-radius: 0.75rem;
   padding: 1.25rem;
 }
 
@@ -895,7 +891,7 @@ body {
   top: 0;
   right: 1.25rem;
   transform: translateY(-50%);
-  border-radius: 3px;
+  border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--color-signal) 45%, transparent);
   background: var(--color-plate-raised);
   padding: 0.1875rem 0.625rem;
@@ -907,10 +903,9 @@ body {
 }
 
 .tier-name {
-  font-family: var(--font-serif);
-  font-size: 1.1875rem;
-  font-weight: 480;
-  letter-spacing: -0.004em;
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: -0.018em;
 }
 .tier-system {
   margin-top: 0.25rem;
@@ -930,16 +925,14 @@ body {
   border-bottom: 1px solid var(--line);
 }
 .tier-figure {
-  font-family: var(--font-serif);
   font-variant-numeric: lining-nums;
   font-size: 1.5rem;
-  font-weight: 470;
-  letter-spacing: -0.006em;
+  font-weight: 500;
+  letter-spacing: -0.02em;
 }
 /* The "from " ahead of an open-ended figure — italic, lighter, a spoken
    qualifier rather than part of the number. */
 .tier-from {
-  font-style: italic;
   font-weight: 420;
   font-size: 0.875em;
   color: var(--color-ink-soft);
@@ -1056,7 +1049,7 @@ body {
 }
 .case-tier,
 .case-live {
-  border-radius: 4px;
+  border-radius: 999px;
   border: 1px solid var(--line);
   padding: 0.125rem 0.5rem;
   font-family: var(--font-mono);
@@ -1130,7 +1123,7 @@ body {
 .showcase-panel {
   border-radius: 0.625rem;
   border: 1px solid var(--line);
-  background: rgba(8, 7, 5, 0.4);
+  background: rgba(5, 5, 6, 0.4);
   padding: 1rem;
 }
 .showcase-note {
@@ -1179,74 +1172,270 @@ body {
   border-color: color-mix(in srgb, var(--color-signal) 40%, transparent);
 }
 
-/* ── The opening ──────────────────────────────────────────────────────── */
+/* ── The arrival ──────────────────────────────────────────────────────────
+ * Ported from heymann-williams-coastal's startup gate, recolored to white
+ * light on black. Black → the mark's frame draws itself in → logo, line,
+ * caption, progress sweep → the gate parts (the card collapses to a sliver
+ * of light and dissolves) while the hero glass blooms in behind it.
+ * Opening.tsx owns the timing; any input exits instantly. */
 
-.opening {
+.startup-gate {
   position: fixed;
   inset: 0;
   z-index: 60;
   display: grid;
   place-items: center;
-  padding: var(--gutter);
-  background: rgba(8, 7, 5, 0.9);
-  backdrop-filter: blur(6px);
-  /* 0.7s, matching FADE_MS in Opening.tsx — the component removes the node on
-     that timer, so a slower fade here would cut the dissolve off mid-way. */
-  transition:
-    opacity 0.7s var(--ease-out-expo),
-    backdrop-filter 0.7s var(--ease-out-expo);
+  background: #000;
+  color: var(--color-ink);
+  overflow: hidden;
+  pointer-events: auto;
+  opacity: 1;
 }
-.opening[data-leaving="true"] {
-  opacity: 0;
-  backdrop-filter: blur(0);
+
+.startup-gate-exit {
+  animation: startupGateClear 1.05s var(--ease-out-expo) forwards;
+}
+.startup-gate-exit .startup-blackout {
+  animation: startupExitBlackout 1.05s var(--ease-out-expo) forwards;
+}
+.startup-gate-exit .startup-mark {
+  animation: startupExitCard 1.05s var(--ease-out-expo) forwards !important;
+}
+.startup-gate-exit .startup-field {
+  animation: startupExitPulse 1.05s var(--ease-out-expo) forwards !important;
+}
+.startup-gate-exit .startup-build-top {
+  animation: startupExitFrame 1.05s var(--ease-out-expo) forwards !important;
+}
+.startup-gate-exit .startup-logo,
+.startup-gate-exit .startup-name,
+.startup-gate-exit .startup-line,
+.startup-gate-exit .startup-caption,
+.startup-gate-exit .startup-progress {
+  animation: startupExitContent 0.52s var(--ease-out-expo) forwards !important;
+}
+
+.startup-blackout {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: #000;
+  pointer-events: none;
+  animation: startupBlackout 1.08s var(--ease-out-expo) forwards;
+}
+
+.startup-mark {
+  position: relative;
+  z-index: 1;
+  width: min(480px, calc(100vw - 2rem));
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: clamp(1rem, 3vw, 1.8rem);
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.07), transparent 52%),
+    rgba(255, 255, 255, 0.045);
+  box-shadow:
+    0 42px 120px rgba(0, 0, 0, 0.86),
+    0 0 70px rgba(255, 255, 255, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 0 70px rgba(255, 255, 255, 0.055);
+  backdrop-filter: blur(14px) saturate(145%);
+  text-align: center;
+  animation: startupMarkBuild 1.05s var(--ease-out-expo) 0.18s both;
+}
+
+.startup-build-top,
+.startup-field {
+  position: absolute;
   pointer-events: none;
 }
 
-.opening-inner {
-  max-width: 34rem;
-  text-align: center;
-  animation: openingIn 1.1s var(--ease-out-expo) both;
+/* The frame, drawing itself in light around the card. */
+.startup-build-top {
+  inset: 0;
+  z-index: 2;
+  opacity: 0.9;
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  border-radius: inherit;
+  box-shadow:
+    0 0 24px rgba(255, 255, 255, 0.35),
+    inset 0 0 18px rgba(255, 255, 255, 0.08);
+  clip-path: inset(0 100% 0 0 round clamp(1rem, 3vw, 1.8rem));
+  animation: startupFrameReveal 1.05s var(--ease-out-expo) 0.12s both;
 }
 
-.opening-claim {
-  margin-top: 1.25rem;
-  font-family: var(--font-serif);
-  font-size: clamp(1.875rem, 5vw, 3.25rem);
-  line-height: 1.12;
-  letter-spacing: -0.01em;
+/* The field — a breathing pool of white light behind the mark. */
+.startup-field {
+  inset: -26%;
+  z-index: 0;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.1) 30%,
+    rgba(255, 255, 255, 0.04) 48%,
+    transparent 68%
+  );
+  opacity: 0.8;
+  mix-blend-mode: screen;
+  animation: startupFieldPulse 3.8s var(--ease-in-out-soft) infinite;
+}
+
+.startup-logo,
+.startup-name,
+.startup-line,
+.startup-caption,
+.startup-progress {
+  position: relative;
+  z-index: 3;
+}
+
+.startup-logo {
+  display: inline-flex;
+  animation: startupLogoBuild 0.8s var(--ease-out-expo) 0.58s both;
+}
+
+.startup-name {
+  margin-top: 0.9rem;
+  font-size: 1.0625rem;
   font-weight: 500;
-  text-wrap: balance;
+  letter-spacing: -0.01em;
+  animation: startupTextClip 0.7s var(--ease-out-expo) 1.1s both;
 }
 
-.opening-sub {
+.startup-line {
+  display: block;
+  height: 1px;
+  width: min(220px, 42vw);
+  margin: clamp(0.75rem, 2vw, 1rem) auto 0;
+  transform-origin: center;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+  box-shadow: 0 0 24px rgba(255, 255, 255, 0.45);
+  animation: startupBuildX 0.9s var(--ease-out-expo) 1.16s both;
+}
+
+.startup-caption {
+  display: block;
   margin-top: 1rem;
-  font-size: 0.9375rem;
-  color: var(--color-ink-muted);
-}
-
-.opening-skip {
-  margin-top: 2rem;
   font-family: var(--font-mono);
   font-size: 0.625rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--color-ink-faint);
+  color: var(--color-ink-muted);
+  animation: startupTextClip 0.7s var(--ease-out-expo) 1.28s both;
 }
 
-@keyframes openingIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+/* A light sweep — gives the wait a satisfying, alive payoff. */
+.startup-progress {
+  display: block;
+  width: min(200px, 42vw);
+  height: 2px;
+  margin: 1.1rem auto 0;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.09);
+  animation: startupTextClip 0.7s var(--ease-out-expo) 1.42s both;
 }
 
+.startup-progress-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -45%;
+  width: 42%;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.65),
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.65),
+    transparent
+  );
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.45);
+  animation: startupProgressSweep 1.45s var(--ease-in-out-soft) 1.5s infinite;
+}
+
+@keyframes startupProgressSweep {
+  0% { left: -45%; }
+  100% { left: 100%; }
+}
+@keyframes startupBlackout {
+  0%, 34% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+@keyframes startupGateClear {
+  0%, 82% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+@keyframes startupExitBlackout {
+  0%, 54% { opacity: 0; visibility: hidden; }
+  78% { opacity: 0.92; visibility: visible; }
+  100% { opacity: 0; visibility: hidden; }
+}
+@keyframes startupExitCard {
+  0% { opacity: 1; transform: scale(1); filter: blur(0); }
+  28% { opacity: 1; transform: scale(1.025); filter: blur(0); }
+  64% { opacity: 1; transform: scaleX(0.82) scaleY(0.055); filter: blur(0); }
+  100% { opacity: 0; transform: scaleX(0.18) scaleY(0.01); filter: blur(10px); }
+}
+@keyframes startupExitContent {
+  from { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  to { opacity: 0; transform: translateY(-8px) scale(0.96); filter: blur(8px); }
+}
+@keyframes startupExitPulse {
+  0% { opacity: 0.6; transform: scale(0.82); filter: blur(4px); }
+  48% { opacity: 1; transform: scale(1.55); filter: blur(14px); }
+  100% { opacity: 0; transform: scale(2.1); filter: blur(22px); }
+}
+@keyframes startupExitFrame {
+  0% { opacity: 0.9; clip-path: inset(0 round clamp(1rem, 3vw, 1.8rem)); }
+  62% { opacity: 1; clip-path: inset(48% 4% 48% 4% round 9999px); }
+  100% { opacity: 0; clip-path: inset(49% 44% 49% 44% round 9999px); }
+}
+@keyframes startupMarkBuild {
+  from { opacity: 0; transform: scaleX(0.82) scaleY(0.04); filter: blur(14px); }
+  48% { opacity: 1; transform: scaleX(1) scaleY(0.04); filter: blur(0); }
+  to { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+@keyframes startupBuildX {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes startupFrameReveal {
+  from { clip-path: inset(0 100% 0 0 round clamp(1rem, 3vw, 1.8rem)); }
+  to { clip-path: inset(0 round clamp(1rem, 3vw, 1.8rem)); }
+}
+@keyframes startupFieldPulse {
+  0%, 100% { opacity: 0.38; transform: scale(0.72); filter: blur(0); }
+  50% { opacity: 0.9; transform: scale(1.18); filter: blur(8px); }
+}
+@keyframes startupLogoBuild {
+  from { opacity: 0; transform: translateY(6px) scale(0.9); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes startupTextClip {
+  from { opacity: 0; clip-path: inset(0 0 100% 0); transform: translateY(4px); }
+  to { opacity: 1; clip-path: inset(0); transform: none; }
+}
+
+/* Reduced motion: the gate is a brief still card that simply fades — the
+   component holds 400 ms then removes it after a 600 ms fade. */
 @media (prefers-reduced-motion: reduce) {
-  .opening-inner {
-    animation: none;
+  .startup-gate,
+  .startup-gate * {
+    animation: none !important;
+  }
+  .startup-blackout {
+    opacity: 0;
+  }
+  .startup-gate {
+    transition: opacity 0.6s ease;
+  }
+  .startup-gate-exit {
+    opacity: 0;
+    pointer-events: none;
   }
 }
 
@@ -1301,35 +1490,29 @@ summary,
   color: var(--color-signal);
 }
 
-/* Serif display wants the opposite tracking discipline from the grotesque it
-   replaced: -.038em would mangle Fraunces' serifs into each other, and
-   sub-1 leading clips its ascenders. The luxury register comes from the high
-   optical-size cut, not from weight — 470 reads engraved, never bold. */
 .display {
-  font-family: var(--font-serif);
   font-size: clamp(2.5rem, 7.5vw, 5.75rem);
-  line-height: 1.04;
-  letter-spacing: -0.012em;
-  font-weight: 470;
+  line-height: 0.94;
+  letter-spacing: -0.038em;
+  font-weight: 500;
   text-wrap: balance;
 }
 
 .headline {
-  font-family: var(--font-serif);
   font-size: clamp(1.875rem, 4.2vw, 3.25rem);
-  line-height: 1.12;
-  letter-spacing: -0.008em;
-  font-weight: 460;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  font-weight: 500;
   text-wrap: balance;
 }
 
-/* The editorial convention: one italic phrase per major heading. Slightly
-   lighter than the roman around it, so the emphasis is a change of voice
-   rather than a change of volume. */
+/* Emphasis inside a display line is a lighter roman weight in softer ink —
+   Geist ships no italic and a synthesized slant would cheapen the register. */
 .display em,
 .headline em {
-  font-style: italic;
+  font-style: normal;
   font-weight: 420;
+  color: var(--color-ink-soft);
 }
 
 .lede {
@@ -1348,35 +1531,49 @@ summary,
   color: var(--color-ink-muted);
 }
 
-/* ── Surfaces ─────────────────────────────────────────────────────────── */
+/* ── Surfaces: Surface Liquid Glass ───────────────────────────────────── */
 
 /*
- * Glass, ported from heymann-williams-coastal/src/index.css.
+ * The glass, ported from heymann-williams-coastal/src/index.css at the
+ * user's direction — the same Surface Liquid Glass material, recolored
+ * achromatic and given one thing HW never needed: a dark backing layer,
+ * because our backdrop is a MOVING satellite map, not a dim photograph,
+ * and verify.mjs measures 4.5:1 text contrast at four live camera
+ * positions.
  *
- * Four things make a surface read as material rather than a painted rectangle:
- *   1. a base tint with real weight
- *   2. a fine noise grain, so it is not a flat wash
- *   3. a lit rim — a highlight down the top-left edge
- *   4. borders bright at the top, faint at the bottom (lit from above)
+ * Two tiers plus a card grade:
+ *   .glass       — near-clear refractive pane. Chrome, buttons, big text.
+ *   .glass-deep  — the legibility floor. Anything carrying body/small text.
+ *   .glass-card  — fine single-layer glass for grids (many on screen).
+ * `.panel` is a compatibility alias for .glass-deep — every serif-era call
+ * site keeps working.
  *
- * The base tint is deliberately opaque enough to work on its OWN, with no
- * backdrop-filter. That is the important part, and the reason the client site
- * does it this way: some browsers — and any machine with GPU acceleration
- * disabled — report `backdrop-filter` as supported and then render it fully
- * transparent, which makes a low-alpha tint vanish entirely. Blur is layered
- * on below as pure enhancement. If it never paints, this still looks like glass.
+ * Layer order per surface:
+ *   1. base tint that reads as frosted material ON ITS OWN — some browsers
+ *      report backdrop-filter as supported and render it fully transparent,
+ *      so the fallback must hold contrast by construction
+ *   2. ::before — inline-SVG noise grain so big surfaces don't band
+ *   3. ::after — the lit rim, a top-left radial highlight
+ *   4. the @supports block below the buttons swaps in the near-clear liquid
+ *      pane: even border, stacked inset edge lights, low-blur/high-saturate
+ *      backdrop-filter. The knob for a failing contrast sample is always the
+ *      surface's dark backing alpha — never the blur, never the ink.
  */
 
+.glass,
+.glass-deep,
+.glass-card,
 .panel {
   position: relative;
   isolation: isolate;
-  border-radius: 0.625rem;
+  border-radius: 1rem;
   border: 1px solid var(--line);
-  border-top-color: rgba(255, 246, 230, 0.16);
-  border-bottom-color: rgba(255, 246, 230, 0.045);
 }
 
 /* Grain. A single inline SVG turbulence, no network request. */
+.glass::before,
+.glass-deep::before,
+.glass-card::before,
 .panel::before {
   content: "";
   position: absolute;
@@ -1385,59 +1582,113 @@ summary,
   pointer-events: none;
   border-radius: inherit;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
-  opacity: 0.055;
+  opacity: 0.08;
   mix-blend-mode: overlay;
 }
 
-/* The lit rim, doubling as the cartouche: an engraved inner hairline inset
-   5px from the edge, the double-rule frame of a paper chart. */
+/* The lit rim. */
+.glass::after,
+.glass-deep::after,
+.glass-card::after,
 .panel::after {
   content: "";
   position: absolute;
-  inset: 5px;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
-  border-radius: calc(0.625rem - 4px);
-  border: 1px solid rgba(255, 246, 230, 0.06);
+  border-radius: inherit;
   background: radial-gradient(
-    150% 78% at 18% 0%,
-    rgba(255, 246, 230, 0.09),
-    transparent 58%
+    160% 80% at 20% 0%,
+    rgba(255, 255, 255, 0.14),
+    transparent 55%
   );
 }
 
-/* Content must clear the two decorative pseudo-elements. */
+/* Content must clear the decorative pseudo-elements. */
+.glass > *,
+.glass-deep > *,
+.glass-card > *,
 .panel > * {
   position: relative;
   z-index: 1;
 }
 
-/*
- * Two layers, and the order matters. The light tint on top is what reads as
- * glass; the dark base underneath is what makes the surface predictable.
- *
- * Without that base the effective background is whatever the satellite camera
- * happens to be framing, so contrast drifts as the map flies. The floor was
- * deepened from 0.58 to 0.74 when the site chrome became `.panel` itself:
- * decorative cards can afford to be sheer, but chrome carrying dense small
- * type over a camera that moves cannot. The coast still reads through it —
- * verified at four camera positions by scripts/verify.mjs.
- */
+/* Fallback tints — frosted material with no backdrop-filter at all. */
+.glass {
+  background:
+    linear-gradient(
+      138deg,
+      rgba(126, 128, 140, 0.3),
+      rgba(92, 94, 106, 0.2) 55%,
+      rgba(110, 112, 124, 0.26)
+    ),
+    rgba(8, 8, 10, 0.42);
+  box-shadow: 0 22px 60px -16px rgba(0, 0, 0, 0.65);
+}
+
+.glass-deep,
 .panel {
   background:
     linear-gradient(
-      150deg,
-      rgba(150, 140, 122, 0.14),
-      rgba(96, 88, 74, 0.09) 55%,
-      rgba(128, 118, 100, 0.12)
+      138deg,
+      rgba(126, 128, 140, 0.18),
+      rgba(92, 94, 106, 0.12) 55%,
+      rgba(110, 112, 124, 0.16)
     ),
-    rgba(12, 10, 8, 0.74);
+    rgba(8, 8, 10, 0.78);
+  box-shadow: 0 28px 80px -22px rgba(0, 0, 0, 0.75);
 }
 
-@supports (backdrop-filter: blur(1px)) {
-  .panel {
-    backdrop-filter: blur(16px) saturate(170%) brightness(1.08);
-  }
+.glass-card {
+  background:
+    linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.02)
+    ),
+    rgba(8, 8, 10, 0.6);
+  border-top-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 14px 36px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Feathered seams ──────────────────────────────────────────────────────
+ * A gradient hairline that fades to nothing at both ends, so adjacent
+ * sections dissolve into one piece instead of meeting at a ruled border.
+ * Use in place of border-t / border-y on full-bleed section breaks. */
+.seam-top,
+.seam-y {
+  position: relative;
+}
+.seam-top::before,
+.seam-y::before,
+.seam-y::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 24px;
+  pointer-events: none;
+  background: radial-gradient(
+    60% 100% at 50% 50%,
+    rgba(255, 255, 255, 0.05),
+    transparent 72%
+  );
+  filter: blur(2px);
+}
+.seam-top::before,
+.seam-y::before {
+  top: -12px;
+}
+.seam-y::after {
+  bottom: -12px;
+}
+
+/* Chromatic-aberration text — a faint red/blue fringe that makes labels read
+ * as if seen through the glass lens. Subtle by design; clear glass only. */
+.chromatic-text {
+  text-shadow:
+    -0.5px 0 0.5px rgba(255, 0, 0, 0.35),
+    0.5px 0 0.5px rgba(0, 0, 255, 0.35);
 }
 
 /* ── Buttons ──────────────────────────────────────────────────────────── */
@@ -1447,10 +1698,10 @@ summary,
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 3px;
-  font-weight: 480;
+  border-radius: 999px;
+  font-weight: 500;
   font-size: 0.9375rem;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
   white-space: nowrap;
   cursor: pointer;
   transition:
@@ -1467,7 +1718,7 @@ summary,
 /* Primary: inverted. Highest contrast on the page, reserved for conversion. */
 .btn-primary {
   background: var(--color-ink);
-  color: #0b0a08;
+  color: #050505;
   padding: 0.9375rem 1.75rem;
   border: 1px solid var(--color-ink);
 }
@@ -1479,7 +1730,7 @@ summary,
 }
 
 .btn-ghost {
-  background: rgba(255, 246, 230, 0.04);
+  background: rgba(255, 255, 255, 0.04);
   color: var(--color-ink);
   padding: 0.9375rem 1.75rem;
   border: 1px solid var(--line-strong);
@@ -1487,8 +1738,8 @@ summary,
 @media (hover: hover) and (pointer: fine) {
   /* Hover answers in brass — the accent, not a brighter gray. */
   .btn-ghost:hover {
-    background: rgba(217, 190, 130, 0.08);
-    border-color: rgba(217, 190, 130, 0.45);
+    background: rgba(255, 255, 255, 0.072);
+    border-color: rgba(255, 255, 255, 0.405);
   }
 }
 
@@ -1503,7 +1754,7 @@ summary,
   width: 100%;
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid var(--line-strong);
-  border-radius: 6px;
+  border-radius: 0.75rem;
   padding: 0.875rem 1rem;
   color: var(--color-ink);
   font-size: 1rem; /* 16px minimum — anything less zooms the page on iOS. */
@@ -1544,6 +1795,105 @@ select.field option {
   color: var(--color-ink);
 }
 
+
+/* ---- Surface Liquid Glass — the universal recipe ----
+ * One material across every glass surface: a near-clear pane, one even
+ * border, and refraction concentrated at the EDGES — a crisp inner edge ring
+ * plus a soft inner rim glow that bends light around the perimeter, brighter
+ * than the clearer center. Placed here, after the button/field bases, so it
+ * wins the cascade. Ported from heymann-williams-coastal; the dark backing
+ * layers are ours — the backdrop here is a moving satellite map and the
+ * contrast gate is measured, not assumed. Author only the unprefixed
+ * backdrop-filter — lightningcss adds -webkit;
+ * writing both ships the -webkit-only form that Chromium ignores. */
+@supports (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .glass,
+  .glass-deep,
+  .glass-card,
+  .panel,
+  .btn-ghost,
+  .field,
+  .beacon,
+  .tour-button,
+  .mark-card {
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow:
+      0 18px 50px -16px rgba(0, 0, 0, 0.5),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+      inset 0 0 18px rgba(255, 255, 255, 0.14),
+      inset 0 0 42px -10px rgba(255, 255, 255, 0.1);
+    backdrop-filter: var(--glass-filter);
+  }
+
+  /* The clear tier — chrome, buttons, display text. */
+  .glass {
+    background:
+      linear-gradient(
+        138deg,
+        rgba(150, 150, 168, 0.14),
+        rgba(110, 110, 130, 0.08) 55%,
+        rgba(140, 140, 160, 0.12)
+      ),
+      rgba(8, 8, 10, 0.3);
+  }
+
+  /* The legibility floor — long-form and small text keep a real backing. */
+  .glass-deep,
+  .panel {
+    background:
+      linear-gradient(
+        138deg,
+        rgba(150, 150, 168, 0.14),
+        rgba(110, 110, 130, 0.08) 55%,
+        rgba(140, 140, 160, 0.12)
+      ),
+      rgba(8, 10, 13, 0.7);
+  }
+
+  /* Fine grid glass — many on screen at once. */
+  .glass-card {
+    background:
+      linear-gradient(
+        140deg,
+        rgba(255, 255, 255, 0.06),
+        rgba(255, 255, 255, 0.02)
+      ),
+      rgba(8, 8, 10, 0.45);
+  }
+
+  .btn-ghost,
+  .field {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  /* Keep the field focus ring on top of the liquid rim. */
+  .field:focus {
+    border-color: rgba(255, 255, 255, 0.7);
+    box-shadow:
+      0 0 0 2px rgba(255, 255, 255, 0.35),
+      inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Mobile / tablet: the refractive lens and heavy blur repaint badly over the
+ * live map (visible flicker when the camera flies under the glass). Keep the
+ * light frost only, and rock-steady. */
+@media (max-width: 1023px) {
+  .glass,
+  .glass-deep,
+  .glass-card,
+  .panel,
+  .btn-ghost,
+  .field,
+  .beacon,
+  .tour-button,
+  .mark-card {
+    backdrop-filter: var(--glass-filter) !important;
+  }
+}
+
 /* ── Live indicator ───────────────────────────────────────────────────── */
 
 .live-dot {
@@ -1559,10 +1909,10 @@ select.field option {
 @keyframes pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(217, 190, 130, 0.45);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.405);
   }
   50% {
-    box-shadow: 0 0 0 5px rgba(217, 190, 130, 0);
+    box-shadow: 0 0 0 5px rgba(255, 255, 255, 0);
   }
 }
 
@@ -1619,6 +1969,109 @@ select.field option {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.18);
   flex: none;
+}
+
+
+/* ── Route bloom ──────────────────────────────────────────────────────────
+ * Ported from heymann-williams-coastal: on each client-side navigation
+ * Shell re-arms body.route-blooming for 620 ms and the incoming page's
+ * glass blooms in from the center of the chart — an ellipse clip sweep with
+ * the surface arriving out of the route filter. Controls bloom on a tighter
+ * ellipse; the store bands scrim in with a blur-fade. will-change is scoped
+ * to the blooming window only, and the whole choreography is disabled under
+ * reduced motion and the austere render tier. */
+body.route-blooming main :is(.glass, .glass-deep, .glass-card, .panel, .page-panel, .tier-card) {
+  animation: routePortraitBloomIn 0.42s var(--ease-out-expo) both;
+  will-change: opacity, transform, filter, clip-path;
+}
+body.route-blooming main :is(.btn, .field, .beacon, .tour-button) {
+  animation: routePortraitControlIn 0.38s var(--ease-out-expo) both;
+}
+body.route-blooming main .store-band {
+  animation: routePortraitScrimIn 0.48s var(--ease-out-expo) both;
+  will-change: opacity, filter;
+}
+
+@keyframes routePortraitBloomIn {
+  0% {
+    opacity: 0;
+    clip-path: ellipse(2% 2% at 52% 46%);
+    filter: var(--route-filter-start);
+    transform: translate3d(0, 0, -120px) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    clip-path: ellipse(145% 115% at 52% 46%);
+    filter: none;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes routePortraitControlIn {
+  0% {
+    opacity: 0;
+    clip-path: ellipse(8% 48% at 52% 50%);
+    filter: var(--route-control-filter-start);
+  }
+  100% {
+    opacity: 1;
+    clip-path: ellipse(140% 140% at 52% 50%);
+    filter: none;
+  }
+}
+
+@keyframes routePortraitScrimIn {
+  0% {
+    opacity: 0;
+    filter: var(--route-scrim-filter-start);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+/* Phones/tablets: the ellipse clip + filter sweep repaints badly over the
+   live map; a cheap transform/opacity push keeps the same felt rhythm. */
+@media (max-width: 1023px) {
+  body.route-blooming main :is(.glass, .glass-deep, .glass-card, .panel, .page-panel, .tier-card),
+  body.route-blooming main :is(.btn, .field, .beacon, .tour-button),
+  body.route-blooming main .store-band {
+    animation: routeMobilePush 0.34s var(--ease-out-expo) both;
+    will-change: opacity, transform;
+  }
+}
+@keyframes routeMobilePush {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.992);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* The governor's austere tier keeps navigation instant. */
+html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-deep, .glass-card, .panel, .page-panel, .tier-card, .btn, .field, .beacon, .tour-button, .store-band) {
+  animation: none !important;
+}
+
+/* The ?motionHud=1 diagnostics readout. */
+.render-motion-hud {
+  position: fixed;
+  right: 0.75rem;
+  bottom: calc(5.25rem + env(safe-area-inset-bottom));
+  z-index: 99998;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(5, 5, 6, 0.85);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-soft);
+  pointer-events: none;
 }
 
 /* ── Motion preference ────────────────────────────────────────────────── */
@@ -1688,14 +2141,23 @@ select.field option {
    re-enables its own pointer events explicitly. */
 .mobile-cta-bar {
   position: fixed;
-  bottom: 0.75rem;
+  bottom: 0.55rem;
   left: 0.75rem;
   right: 0.75rem;
   z-index: 45;
   display: none;
   pointer-events: auto;
+  overflow: hidden;
   padding: 0.625rem;
   gap: 0.5rem;
+  border-radius: 1.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background:
+    linear-gradient(135deg, rgba(28, 30, 36, 0.82), rgba(8, 9, 12, 0.9)),
+    rgba(5, 5, 7, 0.88);
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
   transition:
     opacity 0.3s ease,
     transform 0.3s var(--ease-out-expo);
@@ -1716,14 +2178,37 @@ select.field option {
 
 /* ── Masthead ── */
 
+/* The dock: a floating glass pill, HW's glass-nav grammar. Sticky rather
+   than fixed so it keeps its flow space (content clearance and tab order
+   need no compensation) while floating over everything once scrolled. */
 .site-head {
   position: sticky;
-  top: 0;
+  top: 0.6rem;
   z-index: 40;
-  border-radius: 0;
-  border-inline: 0;
-  border-top: 0;
-  padding: 0.65rem var(--gutter) 0;
+  margin-inline: 0.75rem;
+  border-radius: 1.4rem;
+  padding: 0.65rem 1.1rem 0;
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  pointer-events: auto;
+}
+/* The dock carries small nav text over the flying chart — it takes the clear
+   pane but with a deeper backing than card glass. The rule lives after the
+   universal @supports block in source order, so it wins at equal specificity. */
+@supports (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .site-head {
+    background:
+      linear-gradient(
+        138deg,
+        rgba(150, 150, 168, 0.14),
+        rgba(110, 110, 130, 0.08) 55%,
+        rgba(140, 140, 160, 0.12)
+      ),
+      rgba(8, 8, 10, 0.55);
+  }
 }
 .site-head-row {
   display: flex;
@@ -1731,15 +2216,13 @@ select.field option {
   justify-content: space-between;
   gap: 1rem;
 }
-/* The masthead wordmark — the one place the serif speaks at chrome size. */
 .head-brand {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  font-family: var(--font-serif);
-  font-size: 1.0625rem;
-  font-weight: 520;
-  letter-spacing: 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
   white-space: nowrap;
 }
 .site-head-command {
@@ -1787,7 +2270,7 @@ select.field option {
 .head-link {
   padding: 0.55rem 0.7rem;
   font-size: 0.875rem;
-  color: var(--color-ink-muted);
+  color: var(--color-ink-soft);
   border-bottom: 2px solid transparent;
   white-space: nowrap;
   transition: color 0.2s ease;
@@ -1835,8 +2318,11 @@ select.field option {
 
 .store-band {
   position: relative;
-  background: var(--color-plate);
-  border-block: 1px solid var(--line);
+  /* A scrim, not a plate: the chart reads through every band now. No
+     backdrop-filter here — a full-width blur repaints the whole viewport on
+     every camera frame. The scrim alpha is the contrast knob for the h2 and
+     lede sampled directly on it. */
+  background: linear-gradient(180deg, rgba(6, 6, 8, 0.7), rgba(6, 6, 8, 0.6));
   padding: clamp(3rem, 7vh, 5.5rem) var(--gutter);
 }
 .store-band-head {
@@ -1844,16 +2330,18 @@ select.field option {
 }
 .store-band-title {
   margin-top: 0.6rem;
-  font-family: var(--font-serif);
   font-size: clamp(1.6rem, 3.4vw, 2.4rem);
-  font-weight: 470;
-  letter-spacing: -0.008em;
+  font-weight: 500;
+  letter-spacing: -0.028em;
   line-height: 1.1;
 }
+/* Geist has no italic: emphasis inside a display line is a lighter roman
+   weight in softer ink — a change of light, not of slant. */
 .store-band-title em,
 .hero-title em {
-  font-style: italic;
+  font-style: normal;
   font-weight: 420;
+  color: var(--color-ink-soft);
 }
 .store-band-lede {
   margin-top: 1rem;
@@ -1976,7 +2464,6 @@ select.field option {
 .module-price {
   flex: none;
   margin-top: 0.125rem;
-  font-family: var(--font-serif);
   font-variant-numeric: lining-nums;
   font-size: 0.9375rem;
   color: var(--color-signal);
