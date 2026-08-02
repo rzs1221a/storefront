@@ -1780,6 +1780,109 @@ select.field option {
   flex: none;
 }
 
+
+/* ── Route bloom ──────────────────────────────────────────────────────────
+ * Ported from heymann-williams-coastal: on each client-side navigation
+ * Shell re-arms body.route-blooming for 620 ms and the incoming page's
+ * glass blooms in from the center of the chart — an ellipse clip sweep with
+ * the surface arriving out of the route filter. Controls bloom on a tighter
+ * ellipse; the store bands scrim in with a blur-fade. will-change is scoped
+ * to the blooming window only, and the whole choreography is disabled under
+ * reduced motion and the austere render tier. */
+body.route-blooming main :is(.glass, .glass-deep, .glass-card, .panel, .page-panel, .tier-card) {
+  animation: routePortraitBloomIn 0.42s var(--ease-out-expo) both;
+  will-change: opacity, transform, filter, clip-path;
+}
+body.route-blooming main :is(.btn, .field, .beacon, .tour-button) {
+  animation: routePortraitControlIn 0.38s var(--ease-out-expo) both;
+}
+body.route-blooming main .store-band {
+  animation: routePortraitScrimIn 0.48s var(--ease-out-expo) both;
+  will-change: opacity, filter;
+}
+
+@keyframes routePortraitBloomIn {
+  0% {
+    opacity: 0;
+    clip-path: ellipse(2% 2% at 52% 46%);
+    filter: var(--route-filter-start);
+    transform: translate3d(0, 0, -120px) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    clip-path: ellipse(145% 115% at 52% 46%);
+    filter: none;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes routePortraitControlIn {
+  0% {
+    opacity: 0;
+    clip-path: ellipse(8% 48% at 52% 50%);
+    filter: var(--route-control-filter-start);
+  }
+  100% {
+    opacity: 1;
+    clip-path: ellipse(140% 140% at 52% 50%);
+    filter: none;
+  }
+}
+
+@keyframes routePortraitScrimIn {
+  0% {
+    opacity: 0;
+    filter: var(--route-scrim-filter-start);
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+/* Phones/tablets: the ellipse clip + filter sweep repaints badly over the
+   live map; a cheap transform/opacity push keeps the same felt rhythm. */
+@media (max-width: 1023px) {
+  body.route-blooming main :is(.glass, .glass-deep, .glass-card, .panel, .page-panel, .tier-card),
+  body.route-blooming main :is(.btn, .field, .beacon, .tour-button),
+  body.route-blooming main .store-band {
+    animation: routeMobilePush 0.34s var(--ease-out-expo) both;
+    will-change: opacity, transform;
+  }
+}
+@keyframes routeMobilePush {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.992);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* The governor's austere tier keeps navigation instant. */
+html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-deep, .glass-card, .panel, .page-panel, .tier-card, .btn, .field, .beacon, .tour-button, .store-band) {
+  animation: none !important;
+}
+
+/* The ?motionHud=1 diagnostics readout. */
+.render-motion-hud {
+  position: fixed;
+  right: 0.75rem;
+  bottom: calc(5.25rem + env(safe-area-inset-bottom));
+  z-index: 99998;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(5, 5, 6, 0.85);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-soft);
+  pointer-events: none;
+}
+
 /* ── Motion preference ────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {

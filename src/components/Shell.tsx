@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { frameFor, destinationFor } from "../lib/destinations";
 import { flyToFrame, type CameraPadding } from "../lib/cameraFrames";
 import { getSky } from "../lib/sky";
 import { recordVisit } from "../lib/wake";
 import { BRAND } from "../lib/brand";
+import { prefersReducedMotion, setRenderMotionIntent } from "../lib/renderMotion";
 import LiveMap from "./LiveMap";
 import SiteHeader from "./SiteHeader";
 import SiteFooter from "./SiteFooter";
@@ -53,6 +54,31 @@ export default function Shell() {
   useEffect(() => {
     flyToFrame(frameFor(pathname), paddingFor(pathname));
     recordVisit(pathname);
+  }, [pathname]);
+
+  /* Route bloom, ported from heymann-williams-coastal's Layout: each
+     client-side navigation re-arms `body.route-blooming` (remove → forced
+     reflow → add) so the incoming page's glass blooms in over the flying
+     chart. Skipped on first mount — the arrival gate owns that moment — and
+     under reduced motion. */
+  const firstRoute = useRef(true);
+  useEffect(() => {
+    if (firstRoute.current) {
+      firstRoute.current = false;
+      return;
+    }
+    if (prefersReducedMotion()) return;
+    setRenderMotionIntent("route", 760);
+    document.body.classList.remove("route-blooming");
+    void document.body.offsetWidth;
+    document.body.classList.add("route-blooming");
+    const timer = window.setTimeout(() => {
+      document.body.classList.remove("route-blooming");
+    }, 620);
+    return () => {
+      window.clearTimeout(timer);
+      document.body.classList.remove("route-blooming");
+    };
   }, [pathname]);
 
   /* Keep the document title honest — these are real pages. */
