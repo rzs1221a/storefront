@@ -145,7 +145,7 @@ export default function Coast() {
         aria-hidden="true"
       />
 
-      <section className="store-band" data-frame="top">
+      <section className="store-band seam-y" data-frame="top">
         <header className="store-band-head">
           <p className="eyebrow">Selected work</p>
           <h2 className="store-band-title">
@@ -219,7 +219,7 @@ export default function Coast() {
       {/* ── The offer ───────────────────────────────────────────────── */}
       <div className="chart-window is-short" data-frame="pricing" aria-hidden="true" />
 
-      <section className="store-band">
+      <section className="store-band seam-y">
         <header className="store-band-head">
           <p className="eyebrow">Packages</p>
           <h2 className="store-band-title">
@@ -260,7 +260,7 @@ export default function Coast() {
       {/* ── The catalog ─────────────────────────────────────────────── */}
       <div className="chart-window" data-frame="catalog" aria-hidden="true" />
 
-      <section className="store-band">
+      <section className="store-band seam-y">
         <header className="store-band-head">
           <p className="eyebrow">Everything I build</p>
           <h2 className="store-band-title">
@@ -280,7 +280,7 @@ export default function Coast() {
           {CATEGORIES.map((cat) => {
             const offerings = offeringsByCategory(cat.slug);
             return (
-              <div key={cat.slug} className="category-card panel">
+              <div key={cat.slug} className="category-card glass-card">
                 <h3 className="category-name">{cat.name}</h3>
                 <p className="category-blurb">{cat.blurb}</p>
                 <ul className="category-list">
@@ -301,7 +301,7 @@ export default function Coast() {
             );
           })}
 
-          <div className="category-card panel is-cta">
+          <div className="category-card glass-card is-cta">
             <h3 className="category-name">Not sure which?</h3>
             <p className="category-blurb">
               Describe what you sell and I will point at the closest thing I

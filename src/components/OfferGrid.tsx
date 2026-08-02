@@ -43,7 +43,7 @@ function TierCard({ tier, order }: { tier: Tier; order: number }) {
 
   return (
     <article
-      className={`tier-card${tier.featured ? " is-featured" : ""}`}
+      className={`tier-card glass-card${tier.featured ? " is-featured" : ""}`}
       // Source order leads with the featured tier for the single-column phone
       // layout; the wide grid reads this back to restore price order, where
       // the centre position is what marks the recommendation out.

@@ -18,9 +18,9 @@ export default function SiteHeader() {
     `head-link${isActive ? " is-active" : ""}`;
 
   return (
-    <header className="site-head panel">
+    <header className="site-head glass">
       <div className="site-head-row">
-        <NavLink to="/" className="head-brand">
+        <NavLink to="/" className="head-brand chromatic-text">
           <BrandMark size={18} className="text-(--color-signal)" />
           <span>{BRAND.name}</span>
         </NavLink>
