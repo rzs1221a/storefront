@@ -199,6 +199,14 @@ body {
 }
 html {
   scroll-behavior: smooth;
+  /* Anchor jumps, skip links, and scroll restoration all clear the sticky
+     masthead instead of landing beneath it. */
+  scroll-padding-top: var(--head-clearance);
+}
+/* scrollIntoView (Options.tsx category hashes, etc.) honours the same
+   clearance — scroll-padding only covers native anchor navigation. */
+[id] {
+  scroll-margin-top: var(--head-clearance);
 }
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -963,17 +971,20 @@ body {
 }
 
 .tier-card {
+  --surface-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
-  border-radius: 0.75rem;
   padding: 1.25rem;
 }
 
+/* Featured emphasis is expressed as recipe parameters, never as direct
+   border/box-shadow declarations — a variant that overrides the recipe's
+   properties silently discards the liquid rim stack (it did, for months). */
 .tier-card.is-featured {
-  border-color: color-mix(in srgb, var(--color-signal) 38%, transparent);
-  background: rgba(255, 255, 255, 0.045);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-signal) 12%, transparent);
+  --card-rim: color-mix(in srgb, var(--color-signal) 38%, transparent);
+  --card-rim-inner: color-mix(in srgb, var(--color-signal) 14%, transparent);
+  --card-backing: rgba(18, 18, 22, 0.6);
 }
 
 .tier-badge {
@@ -1650,14 +1661,17 @@ summary,
  *      surface's dark backing alpha — never the blur, never the ink.
  */
 
+/* Callers pick a radius by setting --surface-radius; the recipe never
+   competes with them on the property itself, so source order and
+   specificity stop mattering. */
 .glass,
 .glass-deep,
 .glass-card,
 .panel {
   position: relative;
   isolation: isolate;
-  border-radius: 1rem;
-  border: 1px solid var(--line);
+  border-radius: var(--surface-radius, var(--radius-lg));
+  border: 1px solid var(--card-rim, var(--line));
 }
 
 /* Grain. A single inline SVG turbulence, no network request. */
@@ -1731,13 +1745,8 @@ summary,
 
 .glass-card {
   background:
-    linear-gradient(
-      140deg,
-      rgba(255, 255, 255, 0.06),
-      rgba(255, 255, 255, 0.02)
-    ),
-    rgba(8, 8, 10, 0.6);
-  border-top-color: rgba(255, 255, 255, 0.16);
+    linear-gradient(140deg, var(--tint-2), var(--tint-1)),
+    var(--card-backing, rgba(8, 8, 10, 0.6));
   box-shadow: 0 14px 36px -12px rgba(0, 0, 0, 0.5);
 }
 
@@ -1908,12 +1917,12 @@ select.field option {
   .beacon,
   .tour-button,
   .mark-card {
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid var(--card-rim, rgba(255, 255, 255, 0.18));
     box-shadow:
-      0 18px 50px -16px rgba(0, 0, 0, 0.5),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.1),
-      inset 0 0 18px rgba(255, 255, 255, 0.14),
-      inset 0 0 42px -10px rgba(255, 255, 255, 0.1);
+      var(--shadow-e2),
+      inset 0 0 0 1px var(--card-rim-inner, var(--tint-3)),
+      inset 0 0 18px var(--tint-4),
+      inset 0 0 42px -10px var(--tint-3);
     backdrop-filter: var(--glass-filter);
   }
 
@@ -1945,12 +1954,8 @@ select.field option {
   /* Fine grid glass — many on screen at once. */
   .glass-card {
     background:
-      linear-gradient(
-        140deg,
-        rgba(255, 255, 255, 0.06),
-        rgba(255, 255, 255, 0.02)
-      ),
-      rgba(8, 8, 10, 0.45);
+      linear-gradient(140deg, var(--tint-2), var(--tint-1)),
+      var(--card-backing, rgba(8, 8, 10, 0.45));
   }
 
   .btn-ghost,
@@ -1968,19 +1973,13 @@ select.field option {
 }
 
 /* Mobile / tablet: the refractive lens and heavy blur repaint badly over the
- * live map (visible flicker when the camera flies under the glass). Keep the
- * light frost only, and rock-steady. */
+ * live map (visible flicker when the camera flies under the glass). Lighten
+ * the filter itself rather than fighting the recipe — the governor's
+ * data-render-load overrides (higher specificity) still win where they
+ * should. */
 @media (max-width: 1023px) {
-  .glass,
-  .glass-deep,
-  .glass-card,
-  .panel,
-  .btn-ghost,
-  .field,
-  .beacon,
-  .tour-button,
-  .mark-card {
-    backdrop-filter: var(--glass-filter) !important;
+  :root {
+    --glass-filter: blur(4px) saturate(150%) brightness(1.08);
   }
 }
 
@@ -2405,6 +2404,13 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-dee
 }
 
 /* ── Store bands ── */
+
+/* The home page's spine. Referenced by scripts/verify.mjs (reduced-motion
+   assertion queries ".page-panel, .storefront-home") — keep the class. */
+.storefront-home {
+  display: flex;
+  flex-direction: column;
+}
 
 .store-band {
   position: relative;

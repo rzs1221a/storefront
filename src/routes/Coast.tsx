@@ -79,7 +79,7 @@ export default function Coast() {
     <div className="storefront-home" id="sheet">
       {/* ── The arrival ─────────────────────────────────────────────── */}
       <section className="hero-band" data-frame="top">
-        <div className="hero-copy panel hero-panel">
+        <div className="panel hero-panel">
           <p className="eyebrow">
             {BRAND.name} — {CONTACT.location}
           </p>
