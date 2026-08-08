@@ -947,16 +947,26 @@ body[data-map-stage="veiled"] .site-head {
 
 /* ── The offer matrix ─────────────────────────────────────────────────── */
 
+.offer-grid-note {
+  margin-bottom: 0.875rem;
+}
+
 .offer-grid {
   display: grid;
   gap: 1rem;
 }
 
 /*
- * Four tiers now: two-by-two once each card can hold a readable line, four
+ * Four tiers: two-by-two once each card can hold a readable line, four
  * abreast only when the container genuinely has the room — measured against
  * the panel, not the window. Below that the cards stack, and source order —
  * featured first — is what the reader gets.
+ *
+ * Side by side, each card becomes a SUBGRID of seven row tracks the parent
+ * owns: flag / name / price / summary / CTA / meta / disclosure. Rows are
+ * therefore pixel-aligned across every column — the alignment IS the
+ * comparison. Browsers without subgrid (none in our browserslist, but the
+ * fallback is free) keep the flex column, which is exactly the old layout.
  */
 @container (min-width: 44rem) {
   .offer-grid {
@@ -965,6 +975,14 @@ body[data-map-stage="veiled"] .site-head {
   }
   .offer-grid > .tier-card {
     order: var(--tier-order, 0);
+  }
+  @supports (grid-template-rows: subgrid) {
+    .offer-grid > .tier-card {
+      display: grid;
+      grid-row: span 7;
+      grid-template-rows: subgrid;
+      align-items: start;
+    }
   }
 }
 @container (min-width: 76rem) {
@@ -990,20 +1008,27 @@ body[data-map-stage="veiled"] .site-head {
   --card-backing: rgba(18, 18, 22, 0.6);
 }
 
-.tier-badge {
-  position: absolute;
-  top: 0;
-  right: 1.25rem;
-  transform: translateY(-50%);
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--color-signal) 45%, transparent);
-  background: var(--color-plate-raised);
-  padding: 0.1875rem 0.625rem;
+/* In-flow, present on every card — an absolutely-positioned badge on one
+   card offsets its content and breaks the shared rows the comparison
+   depends on. Empty flags still occupy the track. */
+.tier-flag {
+  min-height: 1rem;
   font-family: var(--font-mono);
   font-size: 0.5625rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--color-signal);
+}
+
+.tier-details {
+  border-top: 1px solid var(--line);
+  padding-top: 0.875rem;
+}
+.tier-details > .tier-section {
+  margin-top: 0.875rem;
+}
+.tier-details summary::-webkit-details-marker {
+  display: none;
 }
 
 .tier-name {

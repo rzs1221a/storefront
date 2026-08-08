@@ -96,7 +96,6 @@ export const TIERS: Tier[] = [
       "You want to update your own content without filing a request",
     ],
     deliverables: [
-      "Everything in Daymark",
       "Multi-page architecture — each page a separate entry point from search",
       "Geo-targeted metadata and structured data for your specific intent",
       "Guided buyer and seller lead flows",
@@ -124,7 +123,6 @@ export const TIERS: Tier[] = [
       "You want the site itself to be the reason someone calls you",
     ],
     deliverables: [
-      "Everything in Beacon",
       "Multi-route architecture with a full agent roster",
       "Map-synced storytelling with authored camera stations",
       "Per-neighborhood pages prerendered to static HTML for SEO",
@@ -150,7 +148,6 @@ export const TIERS: Tier[] = [
       "You are building the thing nobody else in your market can copy",
     ],
     deliverables: [
-      "Everything in Light Station",
       "Your whole market as a living 3D map — terrain, imagery, buildings",
       "Named areas and communities, each descendable and linkable",
       "Plain-English property search wired to your feed",

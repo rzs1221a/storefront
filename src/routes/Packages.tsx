@@ -30,7 +30,7 @@ export default function Packages() {
       </p>
 
       <div className="mt-8">
-        <OfferGrid />
+        <OfferGrid expanded />
       </div>
 
       <p className="mt-6 text-caption text-(--color-ink-faint)">
