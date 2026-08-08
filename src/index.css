@@ -333,6 +333,40 @@ body {
   transition: opacity 0.9s var(--ease-out-expo);
 }
 
+/* ── The reveal ──────────────────────────────────────────────────────────
+ * While the opaque hero holds the first screen, the chart behind it wears
+ * an extra veil: over-dimmed, waiting. The moment the curtain starts to
+ * lift (body[data-map-stage] flips to "revealed" — see Coast.tsx), the
+ * veil dissolves over a long beat and the coast settles to its resting
+ * grade. Arriving, not switching on. Under reduced motion the stage is
+ * never set, so none of this runs and the chart is simply at rest. */
+.map-fix::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--color-plate);
+  opacity: 0;
+  transition: opacity calc(var(--dur-5) * 2.2) var(--ease-out-quart);
+}
+body[data-map-stage="veiled"] .map-fix::after {
+  opacity: 0.62;
+  transition: none;
+}
+
+/* The chrome acknowledges the world opening behind it: solid masthead over
+   the curtain, glass again once the chart is out. */
+body[data-map-stage="veiled"] .site-head {
+  background: var(--color-plate);
+  backdrop-filter: none;
+  box-shadow: none;
+}
+.site-head {
+  transition:
+    background-color var(--dur-5) var(--ease-out-quart),
+    box-shadow var(--dur-5) var(--ease-out-quart);
+}
+
 /* The real sky. Above the plate, below every piece of chrome, never
    interactive. Draws nothing at all while the sun is up. */
 .star-sky {
@@ -2274,22 +2308,29 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-car
 
 /* ── The hero band ── */
 
+/* The curtain. Opaque on purpose: first paint owes nothing to WebGL, and
+   the chart earns its entrance by being withheld for exactly one screen.
+   100svh, not 100vh — mobile browser chrome would otherwise jump the
+   curtain's bottom edge at the precise moment it must read as seamless.
+   The negative top margin tucks it under the floating masthead so no map
+   sliver shows above the curtain. */
 .hero-band {
-  min-height: calc(100vh - 7rem);
+  min-height: 100svh;
+  margin-top: calc(-1 * var(--head-clearance));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 2rem;
-  padding: clamp(1.5rem, 4vh, 4rem) var(--gutter) 1.25rem;
+  padding: clamp(6rem, 16vh, 9.5rem) var(--gutter) 1.25rem;
+  background: var(--surface-solid);
   pointer-events: none;
 }
 .hero-band > * {
   pointer-events: auto;
 }
+/* Type directly on the plate — no card. The claim IS the surface. */
 .hero-panel {
-  max-width: 44rem;
-  padding: clamp(1.5rem, 3vw, 2.75rem);
-  border-radius: 1.25rem;
+  max-width: 62rem;
 }
 .hero-conditions {
   margin-top: 1.5rem;

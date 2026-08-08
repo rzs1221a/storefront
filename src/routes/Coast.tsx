@@ -71,15 +71,57 @@ function MobileCtaBar({ hideWhenVisible }: { hideWhenVisible: React.RefObject<HT
   );
 }
 
+/**
+ * The reveal. The hero is an opaque curtain over the live chart: while the
+ * visitor reads it, the map engine loads behind it (Shell defers the mount
+ * past first paint). As the curtain begins to lift, `data-map-stage` flips
+ * from "veiled" to "revealed" and the chart settles from an over-dimmed
+ * grade to its resting one — the world opening, not a texture switching on.
+ *
+ * Driven by the hero's own scroll position through an IntersectionObserver;
+ * the page never hijacks input. Under reduced motion the stage is never set
+ * and the chart is simply present, already at rest, when the visitor gets
+ * there — the reveal is a reward, not a gate.
+ */
+function useMapReveal(heroRef: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (
+      !hero ||
+      typeof IntersectionObserver === "undefined" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+    document.body.dataset.mapStage = "veiled";
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.intersectionRatio < 0.85) {
+          document.body.dataset.mapStage = "revealed";
+          observer.disconnect();
+        }
+      },
+      { threshold: [0.85] }
+    );
+    observer.observe(hero);
+    return () => {
+      observer.disconnect();
+      delete document.body.dataset.mapStage;
+    };
+  }, [heroRef]);
+}
+
 export default function Coast() {
   useEffect(() => observeFrames(), []);
   const closeRef = useRef<HTMLElement | null>(null);
+  const heroRef = useRef<HTMLElement | null>(null);
+  useMapReveal(heroRef);
 
   return (
     <div className="storefront-home" id="sheet">
       {/* ── The arrival ─────────────────────────────────────────────── */}
-      <section className="hero-band" data-frame="top">
-        <div className="surface-glass hero-panel">
+      <section className="hero-band" data-frame="top" ref={heroRef}>
+        <div className="hero-panel">
           <p className="eyebrow">
             {BRAND.name} — {CONTACT.location}
           </p>

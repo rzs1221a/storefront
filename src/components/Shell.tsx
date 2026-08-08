@@ -31,6 +31,43 @@ function useSky() {
 }
 
 /**
+ * Routes that open with no map in view. A visitor landing here never pays
+ * for the WebGL engine — the chunk is fetched only if they later navigate
+ * somewhere the chart shows. The sky gradient (the designed no-WebGL
+ * fallback) holds the chart windows in the meantime.
+ */
+const MAP_FREE = new Set(["/contact", "/packages", "/options", "/questions"]);
+
+/**
+ * The map mounts AFTER first paint, never on the critical path. The home
+ * hero is an opaque curtain occupying the first viewport, so the engine and
+ * its tiles load during the seconds the visitor spends reading — and the
+ * chart is warm before the scroll reveals it. Once mounted it stays mounted
+ * for the session (the single-instance invariant): flyToFrame already queues
+ * a pending frame for navigations that land before the camera is ready.
+ */
+function useDeferredMap(pathname: string) {
+  const [mountMap, setMountMap] = useState(false);
+  useEffect(() => {
+    if (mountMap || MAP_FREE.has(pathname)) return;
+    type IdleWindow = Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    const w = window as IdleWindow;
+    if (w.requestIdleCallback) {
+      const handle = w.requestIdleCallback(() => setMountMap(true), {
+        timeout: 1200,
+      });
+      return () => w.cancelIdleCallback?.(handle);
+    }
+    const handle = window.setTimeout(() => setMountMap(true), 300);
+    return () => window.clearTimeout(handle);
+  }, [pathname, mountMap]);
+  return mountMap;
+}
+
+/**
  * Detail pages open with a chart window above the article, so the camera
  * frames its subject in that upper band rather than centered behind the
  * panel. The home page manages its own camera through observeFrames.
@@ -48,6 +85,7 @@ function paddingFor(pathname: string): CameraPadding {
 export default function Shell() {
   const { pathname } = useLocation();
   const sky = useSky();
+  const mountMap = useDeferredMap(pathname);
 
   /* Fly to the destination's frame on every navigation, framed into the
      page's chart window — and log the mark into the session's wake. */
@@ -97,9 +135,10 @@ export default function Shell() {
       </a>
 
       {/* The sky: map, sun grade, and legibility tint, all fixed behind the
-          scrolling storefront. */}
+          scrolling storefront. The map itself arrives off the critical
+          path — see useDeferredMap. */}
       <div className="map-fix" aria-hidden="false">
-        <LiveMap dimmed={false} />
+        {mountMap && <LiveMap dimmed={false} />}
         <div
           className="sky-grade"
           style={{ background: sky.gradient }}
