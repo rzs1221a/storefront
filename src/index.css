@@ -844,21 +844,6 @@ body[data-map-stage="veiled"] .site-head {
   gap: 0.625rem;
 }
 
-.hero-stats {
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--line);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-}
-.hero-stats dd {
-  margin-top: 0.25rem;
-  font-family: var(--font-mono);
-  font-size: 1.125rem;
-  letter-spacing: -0.01em;
-}
-
 .hero-proof-caption {
   margin-top: 0.625rem;
   font-size: 0.75rem;
@@ -2357,10 +2342,121 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-car
 .hero-panel {
   max-width: 62rem;
 }
-.hero-conditions {
+
+/* A quiet promise at the curtain's hem. Muted, not faint — it is still
+   text, and the verifier measures it like any other. */
+.hero-cue {
+  align-self: center;
+  color: var(--color-ink-muted);
+}
+
+/* ── The proof rail ── */
+.proof-rail {
   margin-top: 1.5rem;
-  border-top: 1px solid var(--line);
-  padding-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 3rem;
+  max-width: min(76rem, 100%);
+}
+.proof-rail dd {
+  margin-top: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-title);
+  letter-spacing: -0.01em;
+}
+.work-feature.is-wide {
+  max-width: min(76rem, 100%);
+}
+
+/* ── The demonstration band ──────────────────────────────────────────────
+ * The one section where the scrim lifts entirely and the chart is bare.
+ * Everything inside floats as an instrument; the map is the surface. */
+.demo-band {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: clamp(3rem, 8vh, 5rem) var(--gutter) 1.25rem;
+  pointer-events: none;
+}
+.demo-band > * {
+  pointer-events: auto;
+}
+.demo-head {
+  max-width: 46rem;
+}
+.demo-helm {
+  align-self: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  padding: 1rem 1.25rem;
+  max-width: 44rem;
+}
+
+/* ── The close: the page's one inversion ─────────────────────────────────
+ * White plate, dark ink. Everything inside that was built for the dark
+ * system is re-grounded here — the glass recipe's white rims and grain
+ * make no sense on paper, so the surfaces go flat. */
+/* Compound selector on purpose: .store-band declares its scrim later in
+   the file, and the inversion must beat it on specificity, not on source
+   order. */
+.store-band.store-close {
+  background: var(--color-ink);
+  color: var(--color-plate);
+}
+.store-close .store-band-title,
+.store-close .store-band-title em {
+  color: var(--color-plate);
+}
+.store-close .store-band-title em {
+  color: rgba(5, 5, 5, 0.66);
+}
+.store-close .store-band-lede {
+  color: rgba(5, 5, 5, 0.72);
+}
+.store-close .surface-glass {
+  background: rgba(0, 0, 0, 0.045);
+  border-color: rgba(0, 0, 0, 0.16);
+  backdrop-filter: none;
+  box-shadow: none;
+}
+.store-close .surface-glass::before,
+.store-close .surface-glass::after {
+  display: none;
+}
+.store-close .field {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.28);
+  color: var(--color-plate);
+}
+.store-close .field::placeholder {
+  color: rgba(5, 5, 5, 0.45);
+}
+.store-close .field:focus {
+  border-color: rgba(0, 0, 0, 0.75);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
+}
+.store-close .field-label,
+.store-close .mono-label {
+  color: rgba(5, 5, 5, 0.66);
+}
+.store-close .btn-primary {
+  background: var(--color-plate);
+  color: var(--color-ink);
+  border-color: var(--color-plate);
+}
+.store-close .btn-ghost {
+  color: var(--color-plate);
+  border-color: rgba(0, 0, 0, 0.32);
+  background: rgba(0, 0, 0, 0.04);
+  backdrop-filter: none;
+  box-shadow: none;
+}
+.store-close a {
+  color: inherit;
 }
 .hero-actions .tour-button {
   width: auto;

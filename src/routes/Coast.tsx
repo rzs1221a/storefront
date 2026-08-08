@@ -1,15 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { WORK, TOTALS } from "../lib/work";
-import {
-  CATALOG_TOTALS,
-  CATEGORIES,
-  MODULES,
-  offeringsByCategory,
-} from "../lib/catalog";
+import { CATALOG_TOTALS } from "../lib/catalog";
 import { TIERS } from "../lib/offer";
 import { BRAND, CONTACT } from "../lib/brand";
-import { observeFrames, flyOnHover, cancelHoverFly } from "../lib/cameraFrames";
+import { observeFrames } from "../lib/cameraFrames";
 import { numberWord } from "../lib/format";
 import BrowserFrame from "../components/BrowserFrame";
 import MagneticButton from "../components/MagneticButton";
@@ -21,23 +16,26 @@ import OfferGrid from "../components/OfferGrid";
 import LeadForm from "../components/LeadForm";
 
 /**
- * The storefront. One grand page that scrolls — and as it scrolls, the coast
- * flies beneath it: every section declares a camera frame, and chart windows
- * between sections open the map at full height wherever the argument has
- * just landed.
+ * The storefront — five sections, each with one job, in the order that
+ * convinces:
  *
- * The order is the sales argument: the claim (hero), the evidence (work),
- * the offer (packages, with real prices), the range (catalog), the close
- * (the form itself, not a link to it). Proof before price, price before
- * breadth — a visitor who never leaves this page has still seen the whole
- * pitch in the order it convinces.
+ *   1. The claim         — the offer in one breath, on an opaque curtain
+ *      ⟶ the reveal: the curtain lifts and the live coast arrives ⟵
+ *   2. The proof         — one artifact ends "can he actually build?"
+ *   3. The demonstration — the visitor drives the product (the map, bare)
+ *   4. The offer         — four tiers, comparable, one click to buy
+ *   5. The close         — the form itself; the page's single inversion
+ *
+ * Nothing renders here that has a detail route, unless it is the single
+ * best instance of that thing: the proof shows one site and links to five
+ * more; the catalog is one sentence pointing at /options. The old page was
+ * an index of the whole site — 9.4 screens; this is an argument.
  *
  * The scroll-synced camera is observeFrames in lib/cameraFrames.ts — it
  * observes every [data-frame] and flies to whichever owns the most viewport.
  */
 
 const FEATURED = WORK[0];
-const ENTRY_PRICE = TIERS[0].price;
 
 /**
  * Phone-only sticky contact bar. The header CTA scrolls away in the long
@@ -119,7 +117,7 @@ export default function Coast() {
 
   return (
     <div className="storefront-home" id="sheet">
-      {/* ── The arrival ─────────────────────────────────────────────── */}
+      {/* ── 1 · The claim ───────────────────────────────────────────── */}
       <section className="hero-band" data-frame="top" ref={heroRef}>
         <div className="hero-panel">
           <p className="eyebrow">
@@ -148,48 +146,18 @@ export default function Coast() {
             <Link to="/work" className="btn btn-ghost">
               See the shipped work
             </Link>
-            <TourControl />
-          </div>
-
-          <dl className="hero-stats">
-            <div>
-              <dt className="mono-label">Sites shipped</dt>
-              <dd>
-                <CountUp to={TOTALS.projects} />
-              </dd>
-            </div>
-            <div>
-              <dt className="mono-label">Builds start at</dt>
-              <dd>
-                {ENTRY_PRICE != null
-                  ? `$${ENTRY_PRICE.toLocaleString("en-US")}`
-                  : "A call"}
-              </dd>
-            </div>
-            <div>
-              <dt className="mono-label">Monthly fee</dt>
-              <dd>$0</dd>
-            </div>
-          </dl>
-
-          <div className="hero-conditions">
-            <Conditions />
           </div>
         </div>
 
-        {/* The chart's own helm: sail the twelve marks without leaving the
-            hero. Swiping flies the camera; tapping commits. */}
-        <MarkDeck />
+        <p className="hero-cue mono-label" aria-hidden="true">
+          The coast is loading behind this page ↓
+        </p>
       </section>
 
-      {/* ── The proof ───────────────────────────────────────────────── */}
-      <div
-        className="chart-window"
-        data-frame="work-sold-on-amelia-island"
-        aria-hidden="true"
-      />
+      {/* ⟶ the reveal happens here: the curtain lifts off the live chart ⟵ */}
 
-      <section className="store-band seam-y" data-frame="top">
+      {/* ── 2 · The proof ───────────────────────────────────────────── */}
+      <section className="store-band seam-y" data-frame="work-sold-on-amelia-island">
         <header className="store-band-head">
           <p className="eyebrow">Selected work</p>
           <h2 className="store-band-title">
@@ -197,12 +165,12 @@ export default function Coast() {
           </h2>
           <p className="store-band-lede">
             Every one is the actual site, captured from the live deployment or
-            a production build — no mockups and no concepts. Hover a row and
-            the chart beneath you flies to its mark.
+            a production build — no mockups and no concepts. This is the
+            flagship; the chart behind you is it, running.
           </p>
         </header>
 
-        <div className="work-feature surface-glass">
+        <div className="work-feature is-wide surface-glass">
           <BrowserFrame
             url={FEATURED.liveUrl?.replace(/^https:\/\//, "")}
             liveUrl={FEATURED.liveUrl}
@@ -214,6 +182,7 @@ export default function Coast() {
                 alt={`The ${FEATURED.name} website — ${FEATURED.kind.toLowerCase()}`}
                 width={1440}
                 height={900}
+                loading="lazy"
                 decoding="async"
                 className="block w-full"
               />
@@ -230,40 +199,52 @@ export default function Coast() {
           </p>
         </div>
 
-        <ul className="work-rows surface-glass">
-          {WORK.map((item, i) => (
-            <li key={item.slug}>
-              <Link
-                to={`/work/${item.slug}`}
-                className="case-row"
-                onMouseEnter={() => flyOnHover(`work-${item.slug}`)}
-                onMouseLeave={cancelHoverFly}
-              >
-                <span className="case-index">{String(i + 1).padStart(2, "0")}</span>
-                <span className="min-w-0 flex-1">
-                  <span className="case-head">
-                    <span className="case-name">{item.name}</span>
-                    <span className="case-kind">{item.kind}</span>
-                  </span>
-                  <span className="case-summary">{item.summary}</span>
-                  <span className="case-meta">
-                    <span className="font-mono text-micro text-(--color-ink-faint)">
-                      {item.light.characteristic} ·{" "}
-                      {item.loc.toLocaleString("en-US")} lines
-                    </span>
-                    {item.liveUrl && <span className="case-live">Public</span>}
-                  </span>
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        {/* The stats moved here from the hero: they are captions on
+            evidence, not claims before it. */}
+        <dl className="proof-rail">
+          <div>
+            <dt className="mono-label">Sites shipped</dt>
+            <dd>
+              <CountUp to={TOTALS.projects} />
+            </dd>
+          </div>
+          <div>
+            <dt className="mono-label">Lines of source</dt>
+            <dd>{TOTALS.loc.toLocaleString("en-US")}</dd>
+          </div>
+          <div>
+            <dt className="mono-label">Monthly fee</dt>
+            <dd>$0</dd>
+          </div>
+        </dl>
+
+        <div className="store-band-actions">
+          <Link to="/work" className="btn btn-ghost">
+            {numberWord(TOTALS.projects - 1)} more, all real →
+          </Link>
+        </div>
       </section>
 
-      {/* ── The offer ───────────────────────────────────────────────── */}
-      <div className="chart-window is-short" data-frame="pricing" aria-hidden="true" />
+      {/* ── 3 · The demonstration ───────────────────────────────────── */}
+      {/* The one place the scrim lifts entirely: the chart, bare, with its
+          instruments. Phase 7 adds the plain-English helm. */}
+      <section className="demo-band" data-frame="catalog">
+        <div className="demo-head">
+          <p className="eyebrow">Live demonstration</p>
+          <h2 className="store-band-title">This is the engine.</h2>
+        </div>
 
-      <section className="store-band seam-y">
+        <div className="demo-helm surface-glass">
+          <TourControl />
+          <Conditions />
+        </div>
+
+        {/* The twelve marks, one swipe each — the phone's way to fly. */}
+        <MarkDeck />
+      </section>
+
+      {/* ── 4 · The offer ───────────────────────────────────────────── */}
+      <section className="store-band seam-y" data-frame="pricing">
         <header className="store-band-head">
           <p className="eyebrow">Packages</p>
           <h2 className="store-band-title">
@@ -280,14 +261,13 @@ export default function Coast() {
           <OfferGrid />
         </div>
 
+        {/* The whole catalog is one sentence here — 24 inline links was an
+            index, and /options already is one. */}
         <p className="modules-strip">
-          <span className="mono-label">Add to any build</span>
-          <Link to="/options#tools" className="modules-strip-link">
-            {numberWord(MODULES.length)} add-on modules from $
-            {Math.min(
-              ...MODULES.map((m) => m.priceFrom ?? Infinity)
-            ).toLocaleString("en-US")}{" "}
-            — search, market data, editor, client portal →
+          <span className="mono-label">The full range</span>
+          <Link to="/options" className="modules-strip-link">
+            {CATALOG_TOTALS.options} site types across five categories, from a
+            one-week agent page to a full 3D market platform →
           </Link>
         </p>
 
@@ -301,72 +281,10 @@ export default function Coast() {
         </div>
       </section>
 
-      {/* ── The catalog ─────────────────────────────────────────────── */}
-      <div className="chart-window" data-frame="catalog" aria-hidden="true" />
-
-      <section className="store-band seam-y">
-        <header className="store-band-head">
-          <p className="eyebrow">Everything I build</p>
-          <h2 className="store-band-title">
-            {CATALOG_TOTALS.options} options. {numberWord(TOTALS.projects)}{" "}
-            shipped proofs.
-          </h2>
-          <p className="store-band-lede">
-            Every site type a real estate business needs, as a catalog rather
-            than a sales call. {numberWord(CATALOG_TOTALS.shipped)} of these
-            patterns run today in shipped work; the rest are marked{" "}
-            <span className="badge badge-concept">Concept</span> and say so
-            everywhere they appear.
-          </p>
-        </header>
-
-        <div className="category-grid">
-          {CATEGORIES.map((cat) => {
-            const offerings = offeringsByCategory(cat.slug);
-            return (
-              <div key={cat.slug} className="category-card glass-card">
-                <h3 className="category-name">{cat.name}</h3>
-                <p className="category-blurb">{cat.blurb}</p>
-                <ul className="category-list">
-                  {offerings.map((o) => (
-                    <li key={o.slug}>
-                      <Link to={`/options/${o.slug}`}>
-                        <span>{o.name}</span>
-                        <span
-                          className={`badge ${o.status === "shipped" ? "badge-shipped" : "badge-concept"}`}
-                        >
-                          {o.status === "shipped" ? "Shipped" : "Concept"}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
-
-          <div className="category-card glass-card is-cta">
-            <h3 className="category-name">Not sure which?</h3>
-            <p className="category-blurb">
-              Describe what you sell and I will point at the closest thing I
-              have already built.
-            </p>
-            <div className="mt-4 flex flex-col gap-2">
-              <Link to="/options" className="btn btn-primary btn-sm">
-                Browse all {CATALOG_TOTALS.options} options
-              </Link>
-              <Link to="/contact" className="btn btn-ghost btn-sm">
-                Just ask →
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── The close ───────────────────────────────────────────────── */}
-      <div className="chart-window is-short" data-frame="contact" aria-hidden="true" />
-
-      <section className="store-band store-close surface-glass" ref={closeRef}>
+      {/* ── 5 · The close ───────────────────────────────────────────── */}
+      {/* The page's single inversion — in a monochrome system, the loudest
+          available signal, spent at the only moment that converts. */}
+      <section className="store-band store-close" data-frame="contact" ref={closeRef}>
         <h2 className="store-band-title">
           Your website should be <em>the reason they call you.</em>
         </h2>

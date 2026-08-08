@@ -40,24 +40,9 @@
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
-    <!-- The largest above-the-fold image, and therefore the largest
-         contentful paint. Preloaded per breakpoint so a phone fetches the
-         phone capture and never pays for the desktop one. Must stay in sync
-         with the featured <picture> in src/routes/Coast.tsx. -->
-    <link
-      rel="preload"
-      as="image"
-      href="/work/the-aerial/desktop.webp"
-      type="image/webp"
-      media="(min-width: 641px)"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="/work/the-aerial/mobile.webp"
-      type="image/webp"
-      media="(max-width: 640px)"
-    />
+    <!-- The hero is type on an opaque plate now — no image is above the
+         fold, so nothing is preloaded here. The featured capture in
+         src/routes/Coast.tsx sits a full viewport down and loads lazily. -->
 
     <script type="application/ld+json">
       {
