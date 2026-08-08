@@ -129,8 +129,8 @@ const list = (lines) =>
 function bodyFor(dest) {
   if (dest.path === "/") {
     return `
-      <header><h1>High-converting custom web systems and interactive real estate platforms.</h1></header>
-      <p>Built once, owned outright, no monthly platform fee. Static-fast pages that rank on their own, live map and market data wired in, and every lead routed straight into BoldTrail. ${esc(String(TOTALS.projects))} sites shipped along the Amelia Island coast, totalling ${TOTALS.loc.toLocaleString("en-US")} lines of production source.</p>
+      <header><h1>Built once. Owned outright.</h1></header>
+      <p>High-converting custom web systems and interactive real estate platforms for BHHS agents — no monthly platform fee. Static-fast pages that rank on their own, live map and market data wired in, and every lead routed straight into BoldTrail. ${esc(String(TOTALS.projects))} sites shipped along the Amelia Island coast, totalling ${TOTALS.loc.toLocaleString("en-US")} lines of production source.</p>
       <h2>Selected work</h2>
       <ul>${WORK.map((w) => `<li><a href="/work/${w.slug}"><strong>${esc(w.name)}</strong></a> — ${esc(w.kind)}. ${esc(w.summary)}</li>`).join("")}</ul>
       <h2>Everything I build</h2>

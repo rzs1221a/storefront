@@ -40,7 +40,7 @@ export default function BrowserFrame({
         <span className="browser-dot" aria-hidden="true" />
         <span className="browser-dot" aria-hidden="true" />
         {url && (
-          <span className="ml-3 truncate font-mono text-[11px] text-(--color-ink-faint)">
+          <span className="ml-3 truncate font-mono text-micro text-(--color-ink-faint)">
             {url}
           </span>
         )}

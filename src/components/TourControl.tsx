@@ -68,7 +68,7 @@ export default function TourControl() {
 
       {active && stop && (
         <div className="tour-caption" role="status" aria-live="polite">
-          <span className="font-mono text-[0.625rem] text-(--color-signal)">
+          <span className="font-mono text-micro text-(--color-signal)">
             {String(stop.index + 1).padStart(2, "0")} / {String(STOPS.length).padStart(2, "0")}
           </span>
           <span className="tour-caption-name">{stop.stop.name}</span>

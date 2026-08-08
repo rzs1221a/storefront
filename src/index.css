@@ -167,6 +167,9 @@
      clear/refractive (not frosted), heavy saturate + brightness + contrast
      for the vivid, lensy quality. */
   --glass-filter: blur(6px) saturate(220%) brightness(1.2) contrast(1.08);
+  /* The heavy frost — overlays that float free of the panel system (tour
+     caption, startup mark) and need blur for legibility, not refraction. */
+  --glass-filter-heavy: blur(14px) saturate(150%);
   --route-filter-start: blur(14px) saturate(0.68) brightness(0.5);
   --route-control-filter-start: blur(10px) saturate(0.72) brightness(0.58);
   --route-scrim-filter-start: blur(18px) brightness(0.7);
@@ -222,6 +225,8 @@ body {
   background-color: var(--color-plate);
   color: var(--color-ink);
   font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
   font-synthesis-weight: none;
   /* Geist ships no italic; a synthesized oblique would betray the register. */
   font-synthesis-style: none;
@@ -260,8 +265,8 @@ body {
 /*
  * Layout selectors below are scoped under `.shell-frame` deliberately.
  *
- * The header, footer, and map layers all wear `.panel` for its material, and
- * `.panel` sets `position: relative` to contain its own grain and rim
+ * The header, footer, and map layers all wear `.surface-glass` for its material, and
+ * `.surface-glass` sets `position: relative` to contain its own grain and rim
  * pseudo-elements. That rule is defined later in this file, so at equal
  * specificity it wins. Scoping layout to the frame both fixes the cascade
  * and states the truth: these are positioned children of the app frame, not
@@ -373,7 +378,7 @@ body {
   border-radius: 999px;
   border: 1px solid var(--line-strong);
   background: rgba(8, 8, 10, 0.82);
-  backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: var(--glass-filter-heavy);
   padding: 0.625rem 1.125rem;
   animation: captionIn 0.5s var(--ease-out-expo) both;
 }
@@ -618,9 +623,8 @@ body {
   gap: 0.5rem;
   padding: 0.3rem 0.6rem 0.3rem 0.35rem;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--tint-4);
   background: rgba(8, 8, 10, 0.6);
-  backdrop-filter: blur(8px) saturate(150%);
   color: var(--color-ink);
   font-size: 0.75rem;
   letter-spacing: -0.01em;
@@ -722,8 +726,8 @@ body {
   vertical-align: middle;
 }
 .badge-shipped {
-  border: 1px solid rgba(255, 255, 255, 0.405);
-  background: rgba(255, 255, 255, 0.108);
+  border: 1px solid var(--tint-7);
+  background: var(--tint-3);
   color: var(--color-signal);
 }
 .badge-concept {
@@ -777,50 +781,25 @@ body {
 
 /* ── The hero ─────────────────────────────────────────────────────────── */
 
-.hero {
-  padding: 1.5rem;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
-}
-
-@media (min-width: 900px) {
-  .hero {
-    padding: 1.75rem;
-    max-height: calc(100dvh - var(--gutter) * 2);
-  }
-}
-
-/*
- * Two columns once there is room for both to be legible: the argument on the
- * left, the running proof on the right. Below this the proof stacks under the
- * copy, because a 15rem-wide browser frame proves nothing.
- */
-@container (min-width: 34rem) {
-  .hero {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.75rem;
-    align-items: start;
-  }
-}
-
+/* The one display voice on the page. Everything else on the site is
+   smaller than this — that gap IS the hierarchy. */
 .hero-title {
   margin-top: 0.875rem;
-  font-size: clamp(1.5rem, 2.6vw, 2.125rem);
-  line-height: 1.08;
-  letter-spacing: -0.03em;
-  font-weight: 500;
+  font-size: var(--text-display);
+  line-height: var(--text-display--line-height);
+  letter-spacing: var(--text-display--letter-spacing);
+  font-weight: var(--text-display--font-weight);
   text-wrap: balance;
 }
 
 .hero-sub {
-  margin-top: 0.875rem;
-  font-size: 0.9375rem;
-  line-height: 1.6;
+  margin-top: 1.25rem;
+  max-width: var(--measure);
+  font-size: var(--text-lede);
+  line-height: var(--text-lede--line-height);
+  letter-spacing: var(--text-lede--letter-spacing);
   color: var(--color-ink-soft);
+  text-wrap: pretty;
 }
 
 .hero-actions {
@@ -844,15 +823,6 @@ body {
   font-family: var(--font-mono);
   font-size: 1.125rem;
   letter-spacing: -0.01em;
-}
-
-.hero-proof {
-  margin-top: 1.5rem;
-}
-@container (min-width: 34rem) {
-  .hero-proof {
-    margin-top: 0;
-  }
 }
 
 .hero-proof-caption {
@@ -916,7 +886,6 @@ body {
   border-radius: 1rem;
   border: 1px solid var(--line-strong);
   background: rgba(10, 10, 12, 0.72);
-  backdrop-filter: blur(10px) saturate(150%);
   color: var(--color-ink);
   cursor: pointer;
 }
@@ -1004,9 +973,10 @@ body {
 }
 
 .tier-name {
-  font-size: 1.125rem;
-  font-weight: 500;
-  letter-spacing: -0.018em;
+  font-size: var(--text-title);
+  font-weight: var(--text-title--font-weight);
+  line-height: var(--text-title--line-height);
+  letter-spacing: var(--text-title--letter-spacing);
 }
 .tier-system {
   margin-top: 0.25rem;
@@ -1123,9 +1093,10 @@ body {
   gap: 0.5rem;
 }
 .case-name {
-  font-size: 1.0625rem;
+  font-size: var(--text-title);
   font-weight: 480;
-  letter-spacing: -0.004em;
+  line-height: var(--text-title--line-height);
+  letter-spacing: var(--text-title--letter-spacing);
 }
 .case-kind {
   font-family: var(--font-mono);
@@ -1201,9 +1172,10 @@ body {
 }
 .showcase-title {
   margin-top: 0.625rem;
-  font-size: 1.25rem;
+  font-size: var(--text-title);
   font-weight: 480;
-  letter-spacing: -0.006em;
+  line-height: var(--text-title--line-height);
+  letter-spacing: var(--text-title--letter-spacing);
 }
 .showcase-body {
   margin-top: 0.625rem;
@@ -1341,7 +1313,7 @@ body {
     0 0 70px rgba(255, 255, 255, 0.07),
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
     inset 0 0 70px rgba(255, 255, 255, 0.055);
-  backdrop-filter: blur(14px) saturate(145%);
+  backdrop-filter: var(--glass-filter-heavy);
   text-align: center;
   animation: startupMarkBuild 1.05s var(--ease-out-expo) 0.18s both;
 }
@@ -1556,77 +1528,39 @@ summary,
 
 /* ── Layout ───────────────────────────────────────────────────────────── */
 
-.shell {
-  width: 100%;
-  max-width: 90rem;
-  margin-inline: auto;
-  padding-inline: var(--gutter);
-}
-
-.section {
-  padding-block: clamp(4.5rem, 11vw, 9.5rem);
-}
-
-/* Hairline section divider that fades at both ends. */
-.rule {
-  height: 1px;
-  border: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--line-strong) 18%,
-    var(--line-strong) 82%,
-    transparent
-  );
-}
-
 /* ── Type ─────────────────────────────────────────────────────────────── */
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-micro);
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--color-signal);
 }
 
-.display {
-  font-size: clamp(2.5rem, 7.5vw, 5.75rem);
-  line-height: 0.94;
-  letter-spacing: -0.038em;
-  font-weight: 500;
-  text-wrap: balance;
-}
-
-.headline {
-  font-size: clamp(1.875rem, 4.2vw, 3.25rem);
-  line-height: 1.04;
-  letter-spacing: -0.03em;
-  font-weight: 500;
-  text-wrap: balance;
-}
-
-/* Emphasis inside a display line is a lighter roman weight in softer ink —
-   Geist ships no italic and a synthesized slant would cheapen the register. */
-.display em,
-.headline em {
-  font-style: normal;
-  font-weight: 420;
-  color: var(--color-ink-soft);
-}
-
 .lede {
   max-width: var(--measure);
-  font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
-  line-height: 1.7;
+  font-size: var(--text-lede);
+  line-height: var(--text-lede--line-height);
+  letter-spacing: var(--text-lede--letter-spacing);
   color: var(--color-ink-soft);
   text-wrap: pretty;
 }
 
+/* Detail-route H1 — one class instead of raw utilities in Page.tsx. */
+.page-title {
+  margin-top: 0.5rem;
+  font-size: var(--text-section);
+  line-height: var(--text-section--line-height);
+  letter-spacing: var(--text-section--letter-spacing);
+  font-weight: var(--text-section--font-weight);
+  text-wrap: balance;
+}
+
 .mono-label {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-micro);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-ink-muted);
@@ -1643,11 +1577,9 @@ summary,
  * positions.
  *
  * Two tiers plus a card grade:
- *   .glass       — near-clear refractive pane. Chrome, buttons, big text.
- *   .glass-deep  — the legibility floor. Anything carrying body/small text.
- *   .glass-card  — fine single-layer glass for grids (many on screen).
- * `.panel` is a compatibility alias for .glass-deep — every serif-era call
- * site keeps working.
+ *   .glass          — near-clear refractive pane. Chrome, buttons, big text.
+ *   .surface-glass  — the legibility floor. Anything carrying body/small text.
+ *   .glass-card     — fine single-layer glass for grids (many on screen).
  *
  * Layer order per surface:
  *   1. base tint that reads as frosted material ON ITS OWN — some browsers
@@ -1665,9 +1597,8 @@ summary,
    competes with them on the property itself, so source order and
    specificity stop mattering. */
 .glass,
-.glass-deep,
 .glass-card,
-.panel {
+.surface-glass {
   position: relative;
   isolation: isolate;
   border-radius: var(--surface-radius, var(--radius-lg));
@@ -1676,9 +1607,8 @@ summary,
 
 /* Grain. A single inline SVG turbulence, no network request. */
 .glass::before,
-.glass-deep::before,
 .glass-card::before,
-.panel::before {
+.surface-glass::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -1692,9 +1622,8 @@ summary,
 
 /* The lit rim. */
 .glass::after,
-.glass-deep::after,
 .glass-card::after,
-.panel::after {
+.surface-glass::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -1710,9 +1639,8 @@ summary,
 
 /* Content must clear the decorative pseudo-elements. */
 .glass > *,
-.glass-deep > *,
 .glass-card > *,
-.panel > * {
+.surface-glass > * {
   position: relative;
   z-index: 1;
 }
@@ -1730,8 +1658,7 @@ summary,
   box-shadow: 0 22px 60px -16px rgba(0, 0, 0, 0.65);
 }
 
-.glass-deep,
-.panel {
+.surface-glass {
   background:
     linear-gradient(
       138deg,
@@ -1754,11 +1681,9 @@ summary,
  * A gradient hairline that fades to nothing at both ends, so adjacent
  * sections dissolve into one piece instead of meeting at a ruled border.
  * Use in place of border-t / border-y on full-bleed section breaks. */
-.seam-top,
 .seam-y {
   position: relative;
 }
-.seam-top::before,
 .seam-y::before,
 .seam-y::after {
   content: "";
@@ -1774,7 +1699,6 @@ summary,
   );
   filter: blur(2px);
 }
-.seam-top::before,
 .seam-y::before {
   top: -12px;
 }
@@ -1835,10 +1759,10 @@ summary,
   border: 1px solid var(--line-strong);
 }
 @media (hover: hover) and (pointer: fine) {
-  /* Hover answers in brass — the accent, not a brighter gray. */
+  /* Hover answers in light — the accent here is white, nothing else. */
   .btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.072);
-    border-color: rgba(255, 255, 255, 0.405);
+    background: var(--tint-2);
+    border-color: var(--tint-7);
   }
 }
 
@@ -1848,6 +1772,13 @@ summary,
 }
 
 /* ── Form ─────────────────────────────────────────────────────────────── */
+
+/* Form labels sit on the busiest glass on the site, and the verifier
+   measures them at live camera positions — they were landing at 4.49:1.
+   One ink step up buys real margin, not a rounding win. */
+.field-label {
+  color: var(--color-ink-soft);
+}
 
 .field {
   width: 100%;
@@ -1909,9 +1840,8 @@ select.field option {
   (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
 ) {
   .glass,
-  .glass-deep,
   .glass-card,
-  .panel,
+  .surface-glass,
   .btn-ghost,
   .field,
   .beacon,
@@ -1939,8 +1869,7 @@ select.field option {
   }
 
   /* The legibility floor — long-form and small text keep a real backing. */
-  .glass-deep,
-  .panel {
+  .surface-glass {
     background:
       linear-gradient(
         138deg,
@@ -1998,37 +1927,11 @@ select.field option {
 @keyframes pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.405);
+    box-shadow: 0 0 0 0 var(--tint-7);
   }
   50% {
     box-shadow: 0 0 0 5px rgba(255, 255, 255, 0);
   }
-}
-
-/* ── Reveal ───────────────────────────────────────────────────────────── */
-
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(18px);
-}
-/* Directional variants. Lateral drift is smaller than vertical rise — a big
-   sideways travel reads as a slide-in widget rather than as settling. */
-[data-reveal][data-reveal-dir="left"] {
-  transform: translateX(-22px);
-}
-[data-reveal][data-reveal-dir="right"] {
-  transform: translateX(22px);
-}
-[data-reveal][data-reveal-dir="none"] {
-  transform: none;
-}
-[data-reveal].is-visible {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity 0.75s var(--ease-out-expo),
-    transform 0.75s var(--ease-out-expo);
-  transition-delay: var(--reveal-delay, 0ms);
 }
 
 /* ── Screenshot frames ────────────────────────────────────────────────── */
@@ -2069,7 +1972,7 @@ select.field option {
  * ellipse; the store bands scrim in with a blur-fade. will-change is scoped
  * to the blooming window only, and the whole choreography is disabled under
  * reduced motion and the austere render tier. */
-body.route-blooming main :is(.glass, .glass-deep, .glass-card, .panel, .page-panel, .tier-card) {
+body.route-blooming main :is(.glass, .glass-card, .surface-glass, .page-panel, .tier-card) {
   animation: routePortraitBloomIn 0.42s var(--ease-out-expo) both;
   will-change: opacity, transform, filter, clip-path;
 }
@@ -2123,7 +2026,7 @@ body.route-blooming main .store-band {
 /* Phones/tablets: the ellipse clip + filter sweep repaints badly over the
    live map; a cheap transform/opacity push keeps the same felt rhythm. */
 @media (max-width: 1023px) {
-  body.route-blooming main :is(.glass, .glass-deep, .glass-card, .panel, .page-panel, .tier-card),
+  body.route-blooming main :is(.glass, .glass-card, .surface-glass, .page-panel, .tier-card),
   body.route-blooming main :is(.btn, .field, .beacon, .tour-button),
   body.route-blooming main .store-band {
     animation: routeMobilePush 0.34s var(--ease-out-expo) both;
@@ -2142,7 +2045,7 @@ body.route-blooming main .store-band {
 }
 
 /* The governor's austere tier keeps navigation instant. */
-html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-deep, .glass-card, .panel, .page-panel, .tier-card, .btn, .field, .beacon, .tour-button, .store-band) {
+html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-card, .surface-glass, .page-panel, .tier-card, .btn, .field, .beacon, .tour-button, .store-band) {
   animation: none !important;
 }
 
@@ -2176,11 +2079,6 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-dee
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
-  }
-  /* Content must never depend on animation to become visible. */
-  [data-reveal] {
-    opacity: 1 !important;
-    transform: none !important;
   }
 }
 
@@ -2426,10 +2324,11 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-dee
 }
 .store-band-title {
   margin-top: 0.6rem;
-  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
-  font-weight: 500;
-  letter-spacing: -0.028em;
-  line-height: 1.1;
+  font-size: var(--text-section);
+  font-weight: var(--text-section--font-weight);
+  letter-spacing: var(--text-section--letter-spacing);
+  line-height: var(--text-section--line-height);
+  text-wrap: balance;
 }
 /* Geist has no italic: emphasis inside a display line is a lighter roman
    weight in softer ink — a change of light, not of slant. */
@@ -2441,8 +2340,9 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-dee
 }
 .store-band-lede {
   margin-top: 1rem;
-  font-size: 1.0625rem;
-  line-height: 1.6;
+  font-size: var(--text-lede);
+  line-height: var(--text-lede--line-height);
+  letter-spacing: var(--text-lede--letter-spacing);
   color: var(--color-ink-soft);
   max-width: 58ch;
 }
@@ -2515,9 +2415,10 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-dee
   justify-content: center;
 }
 .category-name {
-  font-size: 1.0625rem;
+  font-size: var(--text-title);
   font-weight: 480;
-  letter-spacing: -0.004em;
+  line-height: var(--text-title--line-height);
+  letter-spacing: var(--text-title--letter-spacing);
 }
 .category-blurb {
   margin-top: 0.35rem;

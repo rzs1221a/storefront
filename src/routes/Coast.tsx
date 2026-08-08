@@ -60,7 +60,7 @@ function MobileCtaBar({ hideWhenVisible }: { hideWhenVisible: React.RefObject<HT
   }, [hideWhenVisible]);
 
   return (
-    <div className={`mobile-cta-bar panel${hidden ? " is-hidden" : ""}`}>
+    <div className={`mobile-cta-bar surface-glass${hidden ? " is-hidden" : ""}`}>
       <a href={`sms:${CONTACT.phone}`} className="btn btn-ghost btn-sm">
         Text {CONTACT.phoneDisplay}
       </a>
@@ -79,18 +79,20 @@ export default function Coast() {
     <div className="storefront-home" id="sheet">
       {/* ── The arrival ─────────────────────────────────────────────── */}
       <section className="hero-band" data-frame="top">
-        <div className="panel hero-panel">
+        <div className="surface-glass hero-panel">
           <p className="eyebrow">
             {BRAND.name} — {CONTACT.location}
           </p>
 
+          {/* Short enough to hold display size; the demoted sentence below
+              keeps the exact substring destinations.ts verifies. */}
           <h1 className="hero-title">
-            High-converting custom web systems and{" "}
-            <em>interactive real estate platforms.</em>
+            Built once. <em>Owned outright.</em>
           </h1>
 
           <p className="hero-sub">
-            Built once, owned outright, no monthly platform fee. Static-fast
+            High-converting custom web systems and interactive real estate
+            platforms for BHHS agents — no monthly platform fee. Static-fast
             pages that rank on their own, live map and market data wired in,
             and every lead routed straight into BoldTrail.
           </p>
@@ -158,7 +160,7 @@ export default function Coast() {
           </p>
         </header>
 
-        <div className="work-feature panel">
+        <div className="work-feature surface-glass">
           <BrowserFrame
             url={FEATURED.liveUrl?.replace(/^https:\/\//, "")}
             liveUrl={FEATURED.liveUrl}
@@ -186,7 +188,7 @@ export default function Coast() {
           </p>
         </div>
 
-        <ul className="work-rows panel">
+        <ul className="work-rows surface-glass">
           {WORK.map((item, i) => (
             <li key={item.slug}>
               <Link
@@ -203,7 +205,7 @@ export default function Coast() {
                   </span>
                   <span className="case-summary">{item.summary}</span>
                   <span className="case-meta">
-                    <span className="font-mono text-[0.6875rem] text-(--color-ink-faint)">
+                    <span className="font-mono text-micro text-(--color-ink-faint)">
                       {item.light.characteristic} ·{" "}
                       {item.loc.toLocaleString("en-US")} lines
                     </span>
@@ -322,7 +324,7 @@ export default function Coast() {
       {/* ── The close ───────────────────────────────────────────────── */}
       <div className="chart-window is-short" data-frame="contact" aria-hidden="true" />
 
-      <section className="store-band store-close panel" ref={closeRef}>
+      <section className="store-band store-close surface-glass" ref={closeRef}>
         <h2 className="store-band-title">
           Your website should be <em>the reason they call you.</em>
         </h2>

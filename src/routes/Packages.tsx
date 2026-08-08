@@ -33,7 +33,7 @@ export default function Packages() {
         <OfferGrid />
       </div>
 
-      <p className="mt-6 text-xs text-(--color-ink-faint)">
+      <p className="mt-6 text-caption text-(--color-ink-faint)">
         Hosting runs on Netlify's free tier in your own account. Your only
         ongoing cost is the domain — around $15 a year. Not sure which tier
         fits?{" "}
@@ -46,10 +46,10 @@ export default function Packages() {
       </p>
 
       {/* ── The second axis: modules ──────────────────────────────────── */}
-      <h2 className="mt-12 border-t border-(--line) pt-8 text-lg font-medium tracking-[-0.004em]">
+      <h2 className="mt-12 border-t border-(--line) pt-8 text-title font-medium">
         Add to any build
       </h2>
-      <p className="mt-3 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
+      <p className="mt-3 text-body-sm leading-relaxed text-(--color-ink-soft)">
         {numberWord(MODULES.length)} modules that attach to any build size —
         or retrofit into the site you already have. Each is priced on its own,
         and the larger builds include some outright.
@@ -84,10 +84,10 @@ export default function Packages() {
       </ul>
 
       {/* The ownership argument, which is the real objection-handler. */}
-      <h2 className="mt-12 border-t border-(--line) pt-8 text-lg font-medium tracking-[-0.004em]">
+      <h2 className="mt-12 border-t border-(--line) pt-8 text-title font-medium">
         {COMPARISON.headline}
       </h2>
-      <p className="mt-3 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
+      <p className="mt-3 text-body-sm leading-relaxed text-(--color-ink-soft)">
         Platform sites typically run a setup fee plus a few hundred dollars a
         month, for as long as you want the site to stay up. That is a reasonable
         business — it is just worth being clear about what you get and what you
@@ -97,12 +97,12 @@ export default function Packages() {
       <dl className="mt-6 space-y-4">
         {COMPARISON.rows.map((row) => (
           <div key={row.question} className="border-t border-(--line) pt-4">
-            <dt className="text-[0.9375rem] font-medium">{row.question}</dt>
-            <dd className="mt-2 text-[0.875rem] leading-relaxed text-(--color-ink-muted)">
+            <dt className="text-body-sm font-medium">{row.question}</dt>
+            <dd className="mt-2 text-body-sm leading-relaxed text-(--color-ink-muted)">
               <span className="mono-label">A platform</span> {row.platform}
             </dd>
-            <dd className="mt-1.5 text-[0.875rem] leading-relaxed text-(--color-ink-soft)">
-              <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-(--color-signal)">
+            <dd className="mt-1.5 text-body-sm leading-relaxed text-(--color-ink-soft)">
+              <span className="font-mono text-micro uppercase tracking-[0.1em] text-(--color-signal)">
                 Built by me
               </span>{" "}
               {row.us}

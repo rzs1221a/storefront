@@ -36,17 +36,17 @@ export default function Work() {
       <dl className="mt-6 flex items-baseline gap-8 border-y border-(--line) py-4">
         <div>
           <dt className="mono-label">Sites shipped</dt>
-          <dd className="mt-1 font-mono text-xl">{TOTALS.projects}</dd>
+          <dd className="mt-1 font-mono text-title">{TOTALS.projects}</dd>
         </div>
         <div>
           <dt className="mono-label">Lines of source</dt>
-          <dd className="mt-1 font-mono text-xl">
+          <dd className="mt-1 font-mono text-title">
             {TOTALS.loc.toLocaleString("en-US")}
           </dd>
         </div>
         <div>
           <dt className="mono-label">Monthly fee</dt>
-          <dd className="mt-1 font-mono text-xl">$0</dd>
+          <dd className="mt-1 font-mono text-title">$0</dd>
         </div>
       </dl>
 
@@ -67,7 +67,7 @@ export default function Work() {
                   <span className="case-summary">{item.summary}</span>
 
                   <span className="case-meta">
-                    <span className="font-mono text-[0.6875rem] text-(--color-ink-faint)">
+                    <span className="font-mono text-micro text-(--color-ink-faint)">
                       {item.loc.toLocaleString("en-US")} lines
                     </span>
                     {tier && (

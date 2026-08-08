@@ -72,7 +72,7 @@ export default function LeadForm({
 
   if (status === "sent") {
     return (
-      <div className="panel p-8 text-center sm:p-10" role="status">
+      <div className="surface-glass p-8 text-center sm:p-10" role="status">
         <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full border border-(--color-signal) text-(--color-signal)">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
             <path
@@ -84,8 +84,8 @@ export default function LeadForm({
             />
           </svg>
         </div>
-        <h3 className="mt-5 text-xl font-medium">That's through. Thank you.</h3>
-        <p className="lede mx-auto mt-3 text-[0.9375rem]">
+        <h3 className="mt-5 text-title font-medium">That's through. Thank you.</h3>
+        <p className="lede mx-auto mt-3 text-body-sm">
           I read every one of these myself and reply within one business day —
           usually the same evening. If it is urgent, call or text{" "}
           <a
@@ -107,7 +107,7 @@ export default function LeadForm({
       data-netlify="true"
       netlify-honeypot="company-website"
       onSubmit={handleSubmit}
-      className="panel p-6 sm:p-8"
+      className="surface-glass p-6 sm:p-8"
     >
       <input type="hidden" name="form-name" value={FORM_NAME} />
 
@@ -121,7 +121,7 @@ export default function LeadForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="lf-name" className="mono-label mb-2 block">
+          <label htmlFor="lf-name" className="mono-label field-label mb-2 block">
             Name
           </label>
           <input
@@ -135,7 +135,7 @@ export default function LeadForm({
         </div>
 
         <div>
-          <label htmlFor="lf-email" className="mono-label mb-2 block">
+          <label htmlFor="lf-email" className="mono-label field-label mb-2 block">
             Email
           </label>
           <input
@@ -150,7 +150,7 @@ export default function LeadForm({
         </div>
 
         <div>
-          <label htmlFor="lf-phone" className="mono-label mb-2 block">
+          <label htmlFor="lf-phone" className="mono-label field-label mb-2 block">
             Phone <span className="normal-case tracking-normal">(optional)</span>
           </label>
           <input
@@ -164,7 +164,7 @@ export default function LeadForm({
         </div>
 
         <div>
-          <label htmlFor="lf-interest" className="mono-label mb-2 block">
+          <label htmlFor="lf-interest" className="mono-label field-label mb-2 block">
             What are you after?
           </label>
           <select
@@ -207,7 +207,7 @@ export default function LeadForm({
       </div>
 
       <div className="mt-4">
-        <label htmlFor="lf-message" className="mono-label mb-2 block">
+        <label htmlFor="lf-message" className="mono-label field-label mb-2 block">
           What is not working about your current site?
         </label>
         <textarea
@@ -233,7 +233,7 @@ export default function LeadForm({
       </div>
 
       {status === "error" && (
-        <p role="alert" className="mt-4 text-sm text-red-400">
+        <p role="alert" className="mt-4 text-body-sm text-red-400">
           That did not send — something went wrong on the way out. Please email{" "}
           <a href={`mailto:${CONTACT.email}`} className="underline underline-offset-4">
             {CONTACT.email}
@@ -242,7 +242,7 @@ export default function LeadForm({
         </p>
       )}
 
-      <p className="mt-5 text-xs leading-relaxed text-(--color-ink-faint)">
+      <p className="mt-5 text-caption leading-relaxed text-(--color-ink-faint)">
         Goes straight to {BRAND.short}. No list, no newsletter, no third party.
       </p>
     </form>

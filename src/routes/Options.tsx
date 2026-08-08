@@ -59,10 +59,10 @@ export default function Options() {
         const offerings = offeringsByCategory(cat.slug);
         return (
           <section key={cat.slug} id={cat.slug} className="mt-10">
-            <h2 className="text-lg font-medium tracking-[-0.004em]">
+            <h2 className="text-title font-medium">
               {cat.name}
             </h2>
-            <p className="mt-1 text-[0.875rem] text-(--color-ink-muted)">
+            <p className="mt-1 text-body-sm text-(--color-ink-muted)">
               {cat.blurb}
             </p>
 
@@ -96,7 +96,7 @@ export default function Options() {
                             : `${TIER_NAME.get(o.tierSlug!)} build · ${o.timeline.toLowerCase()}`}
                         </span>
                         {o.proofSlug && (
-                          <span className="font-mono text-[0.6875rem] text-(--color-ink-faint)">
+                          <span className="font-mono text-micro text-(--color-ink-faint)">
                             Proof: {WORK_NAME.get(o.proofSlug)}
                           </span>
                         )}

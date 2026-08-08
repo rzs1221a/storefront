@@ -49,7 +49,7 @@ export default function Page({
         className={`chart-window${shortWindow ? " is-short" : ""}`}
         aria-hidden="true"
       />
-      <article className={`page-panel panel${wide ? " is-wide" : ""}`}>
+      <article className={`page-panel surface-glass${wide ? " is-wide" : ""}`}>
         <header className="page-head">
           {backTo && (
             <Link to={backTo} className="page-back mono-label">
@@ -57,11 +57,7 @@ export default function Page({
             </Link>
           )}
           {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-          <h1
-            ref={headingRef}
-            tabIndex={-1}
-            className="mt-2 text-3xl font-medium tracking-[-0.006em] outline-none sm:text-4xl"
-          >
+          <h1 ref={headingRef} tabIndex={-1} className="page-title outline-none">
             {title}
           </h1>
           {datum}

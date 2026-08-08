@@ -115,7 +115,7 @@ export default function Conditions({
     return (
       <p className={`flex items-center gap-2 ${className}`}>
         <span className="live-dot" />
-        <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-(--color-ink-muted)">
+        <span className="font-mono text-micro uppercase tracking-[0.1em] text-(--color-ink-muted)">
           {time}
           {tide && ` · ${tide.heightFt.toFixed(1)}ft ${tide.direction}`}
           {tide?.source === "observed" && " · obs"}
@@ -131,7 +131,7 @@ export default function Conditions({
 
   return (
     <div className={className}>
-      <p className="text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
+      <p className="text-body-sm leading-relaxed text-(--color-ink-soft)">
         <span className="live-dot mr-2 inline-block align-middle" />
         It is {time} on the coast — {sky.label}.
         {tide && (

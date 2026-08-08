@@ -105,7 +105,7 @@ export default function OptionDetail() {
         )}
       </div>
 
-      <p className="mt-6 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
+      <p className="mt-6 text-body-sm leading-relaxed text-(--color-ink-soft)">
         {item.detail}
       </p>
 
@@ -116,7 +116,7 @@ export default function OptionDetail() {
           {item.includes.map((line) => (
             <li
               key={line}
-              className="flex gap-2.5 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)"
+              className="flex gap-2.5 text-body-sm leading-relaxed text-(--color-ink-soft)"
             >
               <span
                 aria-hidden="true"
@@ -132,7 +132,7 @@ export default function OptionDetail() {
       {proof && (
         <Link
           to={`/work/${proof.slug}`}
-          className="mt-6 block rounded-md border border-(--line) bg-white/[0.02] p-4 text-sm transition-colors hover:border-(--line-strong)"
+          className="mt-6 block rounded-md border border-(--line) bg-white/[0.02] p-4 text-body-sm transition-colors hover:border-(--line-strong)"
         >
           <span className="mono-label">
             {concept ? "The parts are proven in" : "Running today in"}
@@ -187,7 +187,7 @@ export default function OptionDetail() {
 
       <Link
         to={next ? `/options/${next.slug}` : "/options"}
-        className="mt-8 flex items-center justify-between gap-4 border-t border-(--line) pt-6 text-sm transition-colors hover:text-(--color-ink)"
+        className="mt-8 flex items-center justify-between gap-4 border-t border-(--line) pt-6 text-body-sm transition-colors hover:text-(--color-ink)"
       >
         <span className="mono-label">
           {next ? `Next in ${category.name.toLowerCase()}` : "Back to the catalog"}

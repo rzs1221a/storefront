@@ -28,14 +28,14 @@ export function Process() {
             key={step.step}
             className={`flex gap-5 py-5 ${i === 0 ? "" : "border-t border-(--line)"}`}
           >
-            <span className="font-mono text-sm text-(--color-signal)">
+            <span className="font-mono text-body-sm text-(--color-signal)">
               {step.step}
             </span>
             <div>
-              <h2 className="text-[1.0625rem] font-medium tracking-[-0.004em]">
+              <h2 className="text-title font-medium">
                 {step.name}
               </h2>
-              <p className="mt-2 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
+              <p className="mt-2 text-body-sm leading-relaxed text-(--color-ink-soft)">
                 {step.detail}
               </p>
             </div>
@@ -69,7 +69,7 @@ export function Questions() {
             key={item.q}
             className={`group py-4 ${i === 0 ? "" : "border-t border-(--line)"}`}
           >
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[1.0625rem] font-medium tracking-[-0.004em] [&::-webkit-details-marker]:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-title font-medium [&::-webkit-details-marker]:hidden">
               {item.q}
               <svg
                 width="14"
@@ -87,7 +87,7 @@ export function Questions() {
                 />
               </svg>
             </summary>
-            <p className="mt-3 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
+            <p className="mt-3 text-body-sm leading-relaxed text-(--color-ink-soft)">
               {item.a}
             </p>
           </details>

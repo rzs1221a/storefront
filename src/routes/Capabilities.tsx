@@ -73,10 +73,10 @@ export default function Capabilities() {
       <ul className="mt-10 space-y-px overflow-hidden rounded-md border border-(--line) bg-(--line)">
         {CAPABILITIES.map((cap) => (
           <li key={cap.title} className="group bg-white/[0.02] p-5">
-            <h3 className="text-[1.0625rem] font-medium tracking-[-0.004em]">
+            <h3 className="text-title font-medium">
               {cap.title}
             </h3>
-            <p className="mt-2 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
+            <p className="mt-2 text-body-sm leading-relaxed text-(--color-ink-soft)">
               {cap.body}
             </p>
             <p className="cap-matters">

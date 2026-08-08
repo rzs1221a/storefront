@@ -91,7 +91,7 @@ export default function WorkDetail() {
 
       <p className="lede mt-6">{item.summary}</p>
 
-      <p className="mt-4 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
+      <p className="mt-4 text-body-sm leading-relaxed text-(--color-ink-soft)">
         {item.detail}
       </p>
 
@@ -102,12 +102,12 @@ export default function WorkDetail() {
           {item.stack.map((tech) => (
             <span
               key={tech}
-              className="rounded-full border border-(--line) bg-white/[0.03] px-2.5 py-1 font-mono text-[11px] text-(--color-ink-muted)"
+              className="rounded-full border border-(--line) bg-white/[0.03] px-2.5 py-1 font-mono text-micro text-(--color-ink-muted)"
             >
               {tech}
             </span>
           ))}
-          <span className="font-mono text-[11px] text-(--color-ink-faint)">
+          <span className="font-mono text-micro text-(--color-ink-faint)">
             {item.loc.toLocaleString("en-US")} lines of source
           </span>
         </div>
@@ -117,7 +117,7 @@ export default function WorkDetail() {
           {item.highlights.map((h) => (
             <li
               key={h}
-              className="flex gap-2.5 text-[0.9375rem] leading-relaxed text-(--color-ink-soft)"
+              className="flex gap-2.5 text-body-sm leading-relaxed text-(--color-ink-soft)"
             >
               <span
                 aria-hidden="true"
@@ -170,7 +170,7 @@ export default function WorkDetail() {
       {/* Somewhere to go next, so a sheet is never a dead end. */}
       <Link
         to={next.path}
-        className="mt-8 flex items-center justify-between gap-4 border-t border-(--line) pt-6 text-sm transition-colors hover:text-(--color-ink)"
+        className="mt-8 flex items-center justify-between gap-4 border-t border-(--line) pt-6 text-body-sm transition-colors hover:text-(--color-ink)"
       >
         <span className="mono-label">Next case study</span>
         <span className="text-(--color-ink-soft)">{next.label} →</span>

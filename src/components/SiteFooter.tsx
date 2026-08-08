@@ -44,14 +44,14 @@ function ChartLine() {
 
 export default function SiteFooter() {
   return (
-    <footer className="site-foot panel">
+    <footer className="site-foot surface-glass">
       <div className="site-foot-grid">
         <div>
           <p className="head-brand">
             <BrandMark size={16} className="text-(--color-signal)" />
             <span>{BRAND.name}</span>
           </p>
-          <p className="mt-3 max-w-[36ch] text-[0.875rem] leading-relaxed text-(--color-ink-muted)">
+          <p className="mt-3 max-w-[36ch] text-body-sm leading-relaxed text-(--color-ink-muted)">
             {BRAND.tagline} Based on {CONTACT.location}.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3">

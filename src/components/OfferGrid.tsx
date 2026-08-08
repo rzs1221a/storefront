@@ -128,7 +128,7 @@ function TierCard({ tier, order }: { tier: Tier; order: number }) {
       {covers.length > 0 && (
         <div className="tier-section">
           <p className="mono-label">Covers</p>
-          <p className="mt-2 text-[0.8125rem] leading-relaxed text-(--color-ink-muted)">
+          <p className="mt-2 text-caption leading-relaxed text-(--color-ink-muted)">
             {covers
               .slice(0, 4)
               .map((o) => o.name)

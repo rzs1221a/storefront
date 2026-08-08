@@ -65,11 +65,11 @@ export default function Contact() {
                 {offering.status === "shipped" ? "Shipped pattern" : "Concept"}
               </span>
             </p>
-            <p className="font-mono text-sm text-(--color-signal)">
+            <p className="font-mono text-body-sm text-(--color-signal)">
               {SHOW_PRICING ? priceLabelFor(offering) : "Fixed quote, in writing"}
             </p>
           </div>
-          <p className="mt-2 text-[0.875rem] leading-relaxed text-(--color-ink-soft)">
+          <p className="mt-2 text-body-sm leading-relaxed text-(--color-ink-soft)">
             {offering.pitch}
           </p>
           <p className="mono-label mt-3">
@@ -86,13 +86,13 @@ export default function Contact() {
               {tier.name}
               <span className="selected-package-system"> · {tier.system}</span>
             </p>
-            <p className="font-mono text-sm text-(--color-signal)">
+            <p className="font-mono text-body-sm text-(--color-signal)">
               {SHOW_PRICING && tier.price !== null
                 ? `$${tier.price.toLocaleString("en-US")} ${tier.priceNote}`
                 : "Fixed quote, in writing"}
             </p>
           </div>
-          <p className="mt-2 text-[0.875rem] leading-relaxed text-(--color-ink-soft)">
+          <p className="mt-2 text-body-sm leading-relaxed text-(--color-ink-soft)">
             {tier.summary}
           </p>
           <p className="mono-label mt-3">
@@ -113,7 +113,7 @@ export default function Contact() {
         />
       </div>
 
-      <p className="mt-4 text-[0.8125rem] leading-relaxed text-(--color-ink-faint)">
+      <p className="mt-4 text-caption leading-relaxed text-(--color-ink-faint)">
         A fixed quote in writing before anything starts —{" "}
         <Link
           to="/process"
@@ -130,32 +130,32 @@ export default function Contact() {
           className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-white/[0.04]"
         >
           <span className="mono-label">Call</span>
-          <span className="text-[0.9375rem]">{CONTACT.phoneDisplay}</span>
+          <span className="text-body-sm">{CONTACT.phoneDisplay}</span>
         </a>
         <a
           href={`sms:${CONTACT.phone}`}
           className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-white/[0.04]"
         >
           <span className="mono-label">Text</span>
-          <span className="text-[0.9375rem]">{CONTACT.phoneDisplay}</span>
+          <span className="text-body-sm">{CONTACT.phoneDisplay}</span>
         </a>
         <a
           href={`mailto:${CONTACT.email}`}
           className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-white/[0.04]"
         >
           <span className="mono-label">Email</span>
-          <span className="truncate text-[0.9375rem]">{CONTACT.email}</span>
+          <span className="truncate text-body-sm">{CONTACT.email}</span>
         </a>
       </div>
 
-      <p className="mt-6 flex items-center gap-2 text-sm text-(--color-ink-faint)">
+      <p className="mt-6 flex items-center gap-2 text-body-sm text-(--color-ink-faint)">
         <span className="live-dot" />
         Based in {CONTACT.location}. I reply within one business day.
       </p>
 
       {/* The non-affiliation notice has to live somewhere now that there is no
           footer; the close is where a visitor is most likely to read it. */}
-      <p className="mt-8 border-t border-(--line) pt-6 text-xs leading-relaxed text-(--color-ink-faint)">
+      <p className="mt-8 border-t border-(--line) pt-6 text-caption leading-relaxed text-(--color-ink-faint)">
         {/* BRAND.short, not BRAND.name — the full name ends in "Studio", and
             "Seamark Studio is an independent studio" stutters. */}
         {BRAND.short} is an independent studio — not affiliated with, endorsed
