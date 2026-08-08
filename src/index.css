@@ -32,65 +32,155 @@
  * white on black — the highest-contrast treatment available.
  */
 
-@theme {
-  /* Plate — pure depth, cool and colorless. */
+/* ONE registry. `static` is load-bearing: Tailwind v4 tree-shakes @theme
+   variables that only hand-written CSS references, and most of this file is
+   hand-written CSS. Without it, half these tokens silently vanish from the
+   build. */
+@theme static {
+  /* ---- Color: plate (depth) ---------------------------------------- */
   --color-plate: #050505;
   --color-plate-raised: #0a0a0c;
   --color-plate-high: #101014;
-  --color-graphite: #232328;
-  --color-graphite-light: #3a3a41;
 
   /* Ink — white light through silver to shadow. Each step sits at or above
      the luminance of the warm value it replaced, so the swap alone can never
-     regress the measured contrast. */
+     regress the measured contrast. --color-ink-muted was lifted twice under
+     the old ramps because measurement said so: small text needs 4.5:1 and the
+     background here is never a fixed colour — verify.mjs re-measures at four
+     live camera positions. */
   --color-ink: #f5f5f7;
   --color-ink-soft: #c9c9cf;
-  /* Lifted twice under the old ramps, both times because measurement said so.
-     Small text needs 4.5:1 and the background here is never a fixed colour —
-     verify.mjs re-measures at four live camera positions. */
   --color-ink-muted: #a7a7ae;
   --color-ink-faint: #55555c;
 
   /* The "accent" is white light. No hue anywhere in the chrome. */
   --color-signal: #f5f5f7;
-  --color-signal-dim: #9a9aa1;
   --color-signal-glow: rgba(255, 255, 255, 0.14);
+
+  /* ---- Semantic surfaces — the registers of the page ----------------
+     Components reference roles, not raw values. The reveal (hero solid →
+     map exposed) and the single inverse close are expressed by these. */
+  --surface-solid: var(--color-plate);
+  --surface-raised: var(--color-plate-raised);
+  --surface-inverse: var(--color-ink);
+  --content-primary: var(--color-ink);
+  --content-secondary: var(--color-ink-soft);
+  --content-muted: var(--color-ink-muted);
+  --content-inverse: var(--color-plate);
+
+  /* ---- Tint ladder — every white alpha in the file ------------------ */
+  --tint-1: rgba(255, 255, 255, 0.03);
+  --tint-2: rgba(255, 255, 255, 0.06);
+  --tint-3: rgba(255, 255, 255, 0.1);
+  --tint-4: rgba(255, 255, 255, 0.14);
+  --tint-5: rgba(255, 255, 255, 0.2);
+  --tint-6: rgba(255, 255, 255, 0.28);
+  --tint-7: rgba(255, 255, 255, 0.4);
+  --line: var(--tint-3);
+  --line-strong: var(--tint-5);
+
+  /* ---- Type — 9 steps, 11px → 88px, fluid 390→1440 ------------------
+     Range is the point: the old system peaked at 38px and the hero rendered
+     SMALLER than section heads. Sizes between steps are not available. */
+  --text-display: clamp(2.5rem, 1.39rem + 4.57vw, 5.5rem);
+  --text-display--line-height: 0.95;
+  --text-display--letter-spacing: -0.035em;
+  --text-display--font-weight: 500;
+  --text-section: clamp(2.125rem, 1.61rem + 2.1vw, 3.5rem);
+  --text-section--line-height: 1.04;
+  --text-section--letter-spacing: -0.03em;
+  --text-section--font-weight: 500;
+  --text-heading: clamp(1.625rem, 1.35rem + 1.14vw, 2.375rem);
+  --text-heading--line-height: 1.12;
+  --text-heading--letter-spacing: -0.022em;
+  --text-heading--font-weight: 500;
+  --text-title: clamp(1.25rem, 1.16rem + 0.38vw, 1.5rem);
+  --text-title--line-height: 1.25;
+  --text-title--letter-spacing: -0.012em;
+  --text-title--font-weight: 500;
+  --text-lede: clamp(1.125rem, 1.03rem + 0.38vw, 1.375rem);
+  --text-lede--line-height: 1.62;
+  --text-lede--letter-spacing: -0.005em;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.65;
+  --text-body-sm: 0.9375rem;
+  --text-body-sm--line-height: 1.6;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.5;
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 0.12em;
 
   --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
   --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, monospace;
 
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-:root {
-  --line: rgba(255, 255, 255, 0.1);
-  --line-strong: rgba(255, 255, 255, 0.2);
-  /* Surface Liquid Glass filters, ported from heymann-williams-coastal.
-     Low blur so surfaces read clear/refractive (not frosted), heavy
-     saturate + brightness + contrast for the vivid, lensy quality. */
-  --glass-filter: blur(6px) saturate(220%) brightness(1.2) contrast(1.08);
-  --glass-hover-filter: blur(16px) saturate(185%) brightness(1.08);
-  --route-filter-start: blur(14px) saturate(0.68) brightness(0.5);
-  --route-control-filter-start: blur(10px) saturate(0.72) brightness(0.58);
-  --route-scrim-filter-start: blur(18px) brightness(0.7);
-  --shadow-lift: 0 24px 70px -24px rgba(0, 0, 0, 0.9);
-  --shadow-deep: 0 40px 100px -30px rgba(0, 0, 0, 1);
+  /* ---- Space --------------------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+  --space-section: clamp(4rem, 1.77rem + 9.14vw, 10rem);
+  --space-section-tight: clamp(3rem, 1.6rem + 5.71vw, 6.5rem);
   /* Page gutter, shared by every section so nothing drifts out of alignment. */
   --gutter: clamp(1.25rem, 5vw, 5rem);
   --measure: 68ch;
+  /* Clearance under the sticky masthead for anchored/keyboard scrolls. */
+  --head-clearance: 5.5rem;
+
+  /* ---- Radius — six values, no in-betweens --------------------------- */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-pill: 999px;
+
+  /* ---- Elevation ------------------------------------------------------ */
+  --shadow-e1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+  --shadow-e2: 0 18px 50px -16px rgba(0, 0, 0, 0.55);
+  --shadow-e3: 0 32px 80px -24px rgba(0, 0, 0, 0.75);
+  --shadow-e4: 0 48px 120px -30px rgba(0, 0, 0, 0.9);
+  --shadow-deep: 0 40px 100px -30px rgba(0, 0, 0, 1);
+
+  /* ---- Motion ---------------------------------------------------------
+     Durations consume --render-motion-scale, which the governor
+     (src/lib/renderMotion.ts) writes on <html> but nothing previously read.
+     Under load the whole site's motion shortens together. */
+  --dur-1: calc(120ms * var(--render-motion-scale, 1));
+  --dur-2: calc(200ms * var(--render-motion-scale, 1));
+  --dur-3: calc(320ms * var(--render-motion-scale, 1));
+  --dur-4: calc(520ms * var(--render-motion-scale, 1));
+  --dur-5: calc(820ms * var(--render-motion-scale, 1));
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* ---- Surface Liquid Glass filters ----------------------------------
+     Ported from heymann-williams-coastal. Low blur so surfaces read
+     clear/refractive (not frosted), heavy saturate + brightness + contrast
+     for the vivid, lensy quality. */
+  --glass-filter: blur(6px) saturate(220%) brightness(1.2) contrast(1.08);
+  --route-filter-start: blur(14px) saturate(0.68) brightness(0.5);
+  --route-control-filter-start: blur(10px) saturate(0.72) brightness(0.58);
+  --route-scrim-filter-start: blur(18px) brightness(0.7);
 }
 
 /* The render-motion governor (src/lib/renderMotion.ts) steps these down when
-   real frame times slip — the glass gets lighter before the page gets slow. */
+   real frame times slip — the glass gets lighter before the page gets slow.
+   (Theme variables may be overridden in ordinary rules; they just cannot be
+   declared under a selector inside @theme.) */
 html[data-render-load="steady"] {
   --glass-filter: blur(5px) saturate(175%) brightness(1.12) contrast(1.03);
-  --glass-hover-filter: blur(8px) saturate(155%) brightness(1.03);
 }
 html[data-render-load="austere"] {
   --glass-filter: blur(3px) saturate(145%) brightness(1.06) contrast(1.01);
-  --glass-hover-filter: blur(4px) saturate(138%) brightness(1.01);
   --route-filter-start: none;
   --route-control-filter-start: none;
   --route-scrim-filter-start: none;
@@ -250,8 +340,8 @@ body {
   font-size: 0.8125rem;
   color: var(--color-ink);
   transition:
-    background-color 0.24s ease,
-    border-color 0.24s ease;
+    background-color 0.24s var(--ease-out-quart),
+    border-color 0.24s var(--ease-out-quart);
 }
 .tour-button:hover {
   background: rgba(255, 255, 255, 0.09);
@@ -316,8 +406,8 @@ body {
   background: rgba(255, 255, 255, 0.035);
   padding: 0.5rem 0.625rem;
   transition:
-    border-color 0.22s ease,
-    background-color 0.22s ease;
+    border-color 0.22s var(--ease-out-quart),
+    background-color 0.22s var(--ease-out-quart);
 }
 .command-field:focus-within {
   border-color: var(--color-signal);
@@ -372,9 +462,9 @@ body {
   font-size: 0.6875rem;
   color: var(--color-ink-soft);
   transition:
-    color 0.22s ease,
-    border-color 0.22s ease,
-    background-color 0.22s ease;
+    color 0.22s var(--ease-out-quart),
+    border-color 0.22s var(--ease-out-quart),
+    background-color 0.22s var(--ease-out-quart);
 }
 .browser-live:hover {
   color: var(--color-ink);
@@ -412,7 +502,7 @@ body {
   mix-blend-mode: soft-light;
   /* Engines that cannot interpolate gradients snap instead — acceptable;
      the state changes about six times a day. */
-  transition: background 3s ease;
+  transition: background 3s var(--ease-out-quart);
 }
 
 /* ── Light signatures ─────────────────────────────────────────────────── */
@@ -530,8 +620,8 @@ body {
   cursor: pointer;
   transition:
     transform 0.4s var(--ease-out-expo),
-    border-color 0.3s ease,
-    background-color 0.3s ease;
+    border-color 0.3s var(--ease-out-quart),
+    background-color 0.3s var(--ease-out-quart);
 }
 @media (hover: hover) and (pointer: fine) {
   .beacon:hover {
@@ -963,7 +1053,7 @@ body {
 }
 .tier-example {
   color: var(--color-signal);
-  transition: opacity 0.24s ease;
+  transition: opacity 0.24s var(--ease-out-quart);
 }
 .tier-example:hover {
   opacity: 0.78;
@@ -1003,7 +1093,7 @@ body {
   display: flex;
   gap: 1rem;
   padding: 1.125rem 0.25rem;
-  transition: background-color 0.24s ease;
+  transition: background-color 0.24s var(--ease-out-quart);
 }
 .case-row:hover {
   background: rgba(255, 255, 255, 0.025);
@@ -1431,7 +1521,7 @@ body {
     opacity: 0;
   }
   .startup-gate {
-    transition: opacity 0.6s ease;
+    transition: opacity 0.6s var(--ease-out-quart);
   }
   .startup-gate-exit {
     opacity: 0;
@@ -1706,10 +1796,10 @@ summary,
   cursor: pointer;
   transition:
     transform 0.28s var(--ease-out-expo),
-    background-color 0.24s ease,
-    border-color 0.24s ease,
-    color 0.24s ease,
-    opacity 0.24s ease;
+    background-color 0.24s var(--ease-out-quart),
+    border-color 0.24s var(--ease-out-quart),
+    color 0.24s var(--ease-out-quart),
+    opacity 0.24s var(--ease-out-quart);
 }
 .btn:active {
   transform: scale(0.975);
@@ -1760,8 +1850,8 @@ summary,
   font-size: 1rem; /* 16px minimum — anything less zooms the page on iOS. */
   font-family: inherit;
   transition:
-    border-color 0.22s ease,
-    background-color 0.22s ease;
+    border-color 0.22s var(--ease-out-quart),
+    background-color 0.22s var(--ease-out-quart);
 }
 .field::placeholder {
   color: var(--color-ink-faint);
@@ -2159,7 +2249,7 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-dee
     0 18px 50px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.16);
   transition:
-    opacity 0.3s ease,
+    opacity 0.3s var(--ease-out-quart),
     transform 0.3s var(--ease-out-expo);
 }
 .mobile-cta-bar .btn {
@@ -2273,7 +2363,7 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-dee
   color: var(--color-ink-soft);
   border-bottom: 2px solid transparent;
   white-space: nowrap;
-  transition: color 0.2s ease;
+  transition: color 0.2s var(--ease-out-quart);
 }
 .head-link.is-active {
   color: var(--color-ink);
@@ -2369,7 +2459,7 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-dee
 .modules-strip-link {
   font-size: 0.9375rem;
   color: var(--color-ink-soft);
-  transition: color 0.2s ease;
+  transition: color 0.2s var(--ease-out-quart);
 }
 @media (hover: hover) and (pointer: fine) {
   .modules-strip-link:hover {
@@ -2443,7 +2533,7 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-dee
   border-top: 1px solid var(--line);
   font-size: 0.875rem;
   color: var(--color-ink-soft);
-  transition: color 0.2s ease;
+  transition: color 0.2s var(--ease-out-quart);
 }
 @media (hover: hover) and (pointer: fine) {
   .category-list a:hover {
@@ -2459,7 +2549,7 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-dee
   justify-content: space-between;
   gap: 1.25rem;
   padding: 1rem 0;
-  transition: color 0.2s ease;
+  transition: color 0.2s var(--ease-out-quart);
 }
 .module-price {
   flex: none;
@@ -2578,7 +2668,7 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-dee
   min-height: 2.75rem;
   font-size: 0.875rem;
   color: var(--color-ink-muted);
-  transition: color 0.2s ease;
+  transition: color 0.2s var(--ease-out-quart);
 }
 @media (hover: hover) and (pointer: fine) {
   .site-foot-nav a:hover {

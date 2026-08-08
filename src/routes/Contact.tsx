@@ -124,7 +124,7 @@ export default function Contact() {
         .
       </p>
 
-      <div className="mt-6 divide-y divide-(--line) overflow-hidden rounded-lg border border-(--line)">
+      <div className="mt-6 divide-y divide-(--line) overflow-hidden rounded-sm border border-(--line)">
         <a
           href={`tel:${CONTACT.phone}`}
           className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-white/[0.04]"

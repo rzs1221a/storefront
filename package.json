@@ -12,6 +12,7 @@
     "capture": "node scripts/capture.mjs",
     "capture:self": "tsx scripts/capture-self.mjs",
     "prerender": "tsx scripts/prerender.mjs",
+    "tokens": "node scripts/tokens-check.mjs",
     "verify": "tsx scripts/verify.mjs"
   },
   "browserslist": [

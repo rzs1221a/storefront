@@ -70,7 +70,7 @@ export default function Capabilities() {
         </div>
       </section>
 
-      <ul className="mt-10 space-y-px overflow-hidden rounded-xl border border-(--line) bg-(--line)">
+      <ul className="mt-10 space-y-px overflow-hidden rounded-md border border-(--line) bg-(--line)">
         {CAPABILITIES.map((cap) => (
           <li key={cap.title} className="group bg-white/[0.02] p-5">
             <h3 className="text-[1.0625rem] font-medium tracking-[-0.004em]">
