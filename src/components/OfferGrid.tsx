@@ -1,8 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TIERS, type Tier } from "../lib/offer";
 import { SHOW_PRICING } from "../lib/brand";
 import { WORK } from "../lib/work";
 import { CATALOG } from "../lib/catalog";
+import { flyToFrame, FRAMES } from "../lib/cameraFrames";
 
 /**
  * The offer matrix — four productized build sizes, side by side.
@@ -49,6 +50,21 @@ function TierCard({
   const covers = CATALOG.filter(
     (o) => o.kind === "build" && o.tierSlug === tier.slug
   );
+  const navigate = useNavigate();
+
+  /* The $12,000 tier stops being an abstraction the moment you can watch
+     what it buys. On home, fly the chart to The Aerial inside the demo
+     band; anywhere without one, go to the case study, which flies its own
+     camera. */
+  const seeItFly = () => {
+    const demo = document.querySelector(".demo-band");
+    if (demo) {
+      demo.scrollIntoView({ behavior: "smooth", block: "start" });
+      flyToFrame(FRAMES["work-the-aerial"]);
+    } else {
+      navigate("/work/the-aerial");
+    }
+  };
 
   return (
     <article
@@ -108,6 +124,16 @@ function TierCard({
               <Link to={`/work/${example.slug}`} className="tier-example">
                 {example.name} →
               </Link>
+            </dd>
+          </div>
+        )}
+        {tier.slug === "flagship" && (
+          <div>
+            <dt className="mono-label">Watch it</dt>
+            <dd>
+              <button type="button" className="tier-example" onClick={seeItFly}>
+                See it fly →
+              </button>
             </dd>
           </div>
         )}

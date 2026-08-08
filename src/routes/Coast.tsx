@@ -4,7 +4,9 @@ import { WORK, TOTALS } from "../lib/work";
 import { CATALOG_TOTALS } from "../lib/catalog";
 import { TIERS } from "../lib/offer";
 import { BRAND, CONTACT } from "../lib/brand";
-import { observeFrames } from "../lib/cameraFrames";
+import { observeFrames, flyToFrame } from "../lib/cameraFrames";
+import { frameFor } from "../lib/destinations";
+import CommandBar from "../components/CommandBar";
 import { numberWord } from "../lib/format";
 import BrowserFrame from "../components/BrowserFrame";
 import MagneticButton from "../components/MagneticButton";
@@ -109,11 +111,50 @@ function useMapReveal(heroRef: React.RefObject<HTMLElement | null>) {
   }, [heroRef]);
 }
 
+/**
+ * While the demonstration owns the viewport, the global legibility tint
+ * thins out and the chart is as close to bare as this site ever shows it.
+ * Runs under reduced motion too — the tint change is a state, not a
+ * flourish, and the demo must work either way.
+ */
+function useDemoStage(demoRef: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const demo = demoRef.current;
+    if (!demo || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          document.body.dataset.demoActive = "true";
+        } else {
+          delete document.body.dataset.demoActive;
+        }
+      },
+      { threshold: 0.45 }
+    );
+    observer.observe(demo);
+    return () => {
+      observer.disconnect();
+      delete document.body.dataset.demoActive;
+    };
+  }, [demoRef]);
+}
+
+/** Phrases the helm suggests — every one resolves; the shrug is reserved
+    for genuinely unknown input, never for our own examples. */
+const HELM_EXAMPLES = [
+  "show me the brokerage site",
+  "where's the flagship",
+  "crane island",
+  "I sell waterfront",
+];
+
 export default function Coast() {
   useEffect(() => observeFrames(), []);
   const closeRef = useRef<HTMLElement | null>(null);
   const heroRef = useRef<HTMLElement | null>(null);
+  const demoRef = useRef<HTMLElement | null>(null);
   useMapReveal(heroRef);
+  useDemoStage(demoRef);
 
   return (
     <div className="storefront-home" id="sheet">
@@ -226,15 +267,27 @@ export default function Coast() {
       </section>
 
       {/* ── 3 · The demonstration ───────────────────────────────────── */}
-      {/* The one place the scrim lifts entirely: the chart, bare, with its
-          instruments. Phase 7 adds the plain-English helm. */}
-      <section className="demo-band" data-frame="catalog">
-        <div className="demo-head">
+      {/* The one place the tint thins and the chart is nearly bare. The
+          visitor drives the product they are being sold: type plain
+          English and the world moves. */}
+      <section className="demo-band" data-frame="catalog" ref={demoRef}>
+        <div className="demo-head surface-glass">
           <p className="eyebrow">Live demonstration</p>
           <h2 className="store-band-title">This is the engine.</h2>
+          <p className="demo-lede">
+            The chart behind this page is the same engine an agent buys.
+            Type where you want to go — it answers in plain English.
+          </p>
         </div>
 
         <div className="demo-helm surface-glass">
+          <CommandBar
+            examples={HELM_EXAMPLES}
+            onResolve={(hit) => {
+              flyToFrame(frameFor(hit.destination.path));
+              return true;
+            }}
+          />
           <TourControl />
           <Conditions />
         </div>

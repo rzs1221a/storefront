@@ -175,10 +175,30 @@ async function main() {
     await skipOpening(page);
 
     // Several camera positions: the background is whatever the map is framing,
-    // so one sample proves nothing.
-    for (const route of ["/", "/work/crane-island-bhhs", "/packages", "/contact"]) {
+    // so one sample proves nothing. Scrolled passes cover the states the top
+    // of a page never shows — the demonstration band with its thinned tint,
+    // and the inverted close.
+    const CONTRAST_PASSES = [
+      { route: "/" },
+      { route: "/", scrollTo: ".demo-band" },
+      { route: "/", scrollTo: ".store-close" },
+      { route: "/work/crane-island-bhhs" },
+      { route: "/packages" },
+      { route: "/contact" },
+    ];
+    for (const pass of CONTRAST_PASSES) {
+      const route = pass.route;
       await page.goto(`${ORIGIN}${route}`, { waitUntil: "domcontentloaded" });
       await page.waitForTimeout(4500);
+      if (pass.scrollTo) {
+        await page.evaluate((sel) => {
+          document
+            .querySelector(sel)
+            ?.scrollIntoView({ behavior: "instant", block: "start" });
+        }, pass.scrollTo);
+        // Let the tint transition and any stage observers settle.
+        await page.waitForTimeout(1600);
+      }
 
       const samples = await page.evaluate(() => {
         const srgb = (c) => {
@@ -210,12 +230,17 @@ async function main() {
 
         const out = [];
         for (const el of document.querySelectorAll(
-          "p.lede, .mono-label, .head-link, .store-band-lede, h1, h2, .category-name"
+          "p.lede, .mono-label, .head-link, .store-band-lede, h1, h2, .category-name, .demo-lede, .tier-name, .hero-cue, .hero-sub"
         )) {
           const r = el.getBoundingClientRect();
           if (r.width < 8 || r.height < 8) continue;
           if (r.bottom < 0 || r.top > window.innerHeight) continue;
           if (clippedByScroller(el, r)) continue;
+          // Closed <details> content keeps geometry under Chrome's
+          // content-visibility implementation but is never painted —
+          // checkVisibility is the only honest test.
+          if (typeof el.checkVisibility === "function" && !el.checkVisibility())
+            continue;
           const fg = parse(getComputedStyle(el).color);
           if (fg === null) continue;
           out.push({
@@ -275,7 +300,7 @@ async function main() {
         const cr = (Math.max(s.fg, bg) + 0.05) / (Math.min(s.fg, bg) + 0.05);
         if (cr < 4.5) {
           note(
-            `contrast ${route}`,
+            `contrast ${route}${pass.scrollTo ? ` @ ${pass.scrollTo}` : ""}`,
             `${cr.toFixed(2)}:1 (needs 4.5) — "${s.text}"`
           );
         }
