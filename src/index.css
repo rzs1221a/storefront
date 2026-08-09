@@ -2193,6 +2193,18 @@ select.field option {
 .act-claim-copy {
   max-width: 68rem;
 }
+/* Transform-only arrival: paints at t=0 (never delays LCP), settles like
+   a title card. */
+@media (prefers-reduced-motion: no-preference) {
+  .act-claim-copy {
+    animation: claim-settle 0.9s var(--ease-out-expo);
+  }
+  @keyframes claim-settle {
+    from {
+      transform: translateY(16px);
+    }
+  }
+}
 
 /* ── Act II: the stages — the work gets the light ── */
 .stage {

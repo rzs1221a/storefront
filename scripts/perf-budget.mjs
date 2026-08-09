@@ -29,8 +29,9 @@ const entry = assets.find((f) => /^index-.*\.js$/.test(f));
 const css = assets.find((f) => /^index-.*\.css$/.test(f));
 const maplibre = assets.find((f) => /^maplibre/.test(f));
 
-/* 1 — the entry bundle. Measured 114.9 kB gz after route splitting. */
-const ENTRY_CEILING = 125;
+/* 1 — the entry bundle. Measured 94.5 kB gz after the cinematic redesign
+   moved the map machinery into the exhibit's lazy graph. */
+const ENTRY_CEILING = 105;
 const entryKB = gzKB(join(ASSETS, entry));
 if (entryKB > ENTRY_CEILING) {
   failures.push(
@@ -38,8 +39,8 @@ if (entryKB > ENTRY_CEILING) {
   );
 }
 
-/* 2 — the stylesheet. Measured 13.96 kB gz. */
-const CSS_CEILING = 16;
+/* 2 — the stylesheet. Measured 11.8 kB gz after the great deletion. */
+const CSS_CEILING = 13;
 const cssKB = gzKB(join(ASSETS, css));
 if (cssKB > CSS_CEILING) {
   failures.push(`css ${css}: ${cssKB.toFixed(1)} kB gz > ${CSS_CEILING} kB ceiling`);
@@ -65,12 +66,14 @@ if (/maplibre-gl\/dist|new\s+Map\(\{container/.test(entrySource)) {
 }
 
 /* 4 — route chunks stay small; a route that grows past this has probably
-   swallowed a shared module that belongs in the entry graph. */
+   swallowed a shared module that belongs in the entry graph. LiveMap is
+   exempt: it is the exhibit's deliberately-lazy machinery (camera system,
+   star field, deck), not a route. */
 const ROUTE_CEILING = 15;
 for (const f of assets.filter(
   (f) =>
     /\.js$/.test(f) &&
-    !/^index-|^maplibre|^rolldown-runtime|^catalog-/.test(f)
+    !/^index-|^maplibre|^rolldown-runtime|^catalog-|^LiveMap-/.test(f)
 )) {
   const kb = gzKB(join(ASSETS, f));
   if (kb > ROUTE_CEILING) {

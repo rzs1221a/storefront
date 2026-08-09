@@ -69,14 +69,18 @@ export default function Coast() {
     <div className="storefront-home" id="sheet" ref={revealRoot}>
       {/* ── Act I · The claim ───────────────────────────────────────── */}
       <section className="act act-claim" data-act="claim" data-act-theme="dark">
-        <div className="act-claim-copy" data-reveal>
-          <p className="eyebrow" data-reveal-child>
+        {/* No opacity entrance here, on purpose: this copy is the page's
+            LCP element, and a fade-in makes the browser wait for it (it
+            measured 1.26s of pure render delay). The claim is simply there;
+            a transform-only settle carries the arrival. */}
+        <div className="act-claim-copy">
+          <p className="eyebrow">
             {BRAND.name} — {CONTACT.location}
           </p>
-          <h1 className="hero-title" data-reveal-child>
+          <h1 className="hero-title">
             Built once. <em>Owned outright.</em>
           </h1>
-          <p className="hero-sub" data-reveal-child>
+          <p className="hero-sub">
             High-converting custom web systems and interactive real estate
             platforms for BHHS agents — no monthly platform fee. Static-fast
             pages that rank on their own, live map and market data wired in,
