@@ -21,7 +21,7 @@ import { CAPABILITIES } from "../lib/capabilities";
 
 export default function Capabilities() {
   return (
-    <Page wide shortWindow eyebrow="Capabilities demo" title="Things a template cannot do for you">
+    <Page wide eyebrow="Capabilities demo" title="Things a template cannot do for you">
       <p className="lede">
         Not a longer feature list — a different category of thing. Every item
         below is running in a site you can open, and two of them are running

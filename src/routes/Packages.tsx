@@ -19,7 +19,7 @@ export default function Packages() {
   return (
     <Page
       wide
-      shortWindow
+
       eyebrow="Packages"
       title={`${numberWord(TIERS.length)} build sizes. Pay once, own it forever`}
     >

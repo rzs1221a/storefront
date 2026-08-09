@@ -31,7 +31,7 @@ export default function Contact() {
 
   return (
     <Page
-      shortWindow
+
       eyebrow={
         offering
           ? `Everything I build — ${offering.name}`

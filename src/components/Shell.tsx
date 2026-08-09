@@ -16,7 +16,7 @@ import SiteFooter from "./SiteFooter";
  * drama.
  */
 export default function Shell() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
 
   /* Keep the document title honest — these are real pages. */
   useEffect(() => {
@@ -27,10 +27,16 @@ export default function Shell() {
         : `${dest.title} — ${BRAND.name}`;
   }, [pathname]);
 
-  /* New page, top of page. The browser handles history restoration. */
+  /* New page, top of page — unless the link named a place on it (SPA
+     routers do not honour hashes on their own). scroll-margin-top keeps
+     the target clear of the masthead. */
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (hash) {
+      document.querySelector(hash)?.scrollIntoView();
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
 
   return (
     <div className="shell-frame">

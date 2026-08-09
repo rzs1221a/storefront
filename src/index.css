@@ -2349,9 +2349,11 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-car
   (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
 ) {
   .site-head {
-    /* 0.82, not 0.55: the masthead floats over every register on the site
-       including the white inverted close, and its light ink must clear
-       4.5:1 on all of them. Below ~0.8 the links fail over paper. */
+    /* Opaque, deliberately: there is no longer a moving map beneath the
+       chrome for glass to refract, and the masthead floats over both the
+       dark and the paper registers — translucency was costing the nav
+       links their 4.5:1 over paper (measured 4.40) for a refraction
+       effect with nothing left to refract. */
     background:
       linear-gradient(
         138deg,
@@ -2359,7 +2361,8 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-car
         rgba(110, 110, 130, 0.08) 55%,
         rgba(140, 140, 160, 0.12)
       ),
-      rgba(8, 8, 10, 0.82);
+      var(--color-plate-raised);
+    backdrop-filter: none;
   }
 }
 .site-head-row {
@@ -2802,17 +2805,21 @@ body[data-demo-active] .map-tint {
 
 /* ── Pages (routes other than home) ── */
 
+/* The reading room: paper register, one measured column, generous head.
+   The panel is no longer a glass card floating over anything — it is the
+   page. Clearance at the top keeps the first line out from under the
+   floating masthead. */
 .page {
-  pointer-events: none;
-}
-.page .page-panel {
-  pointer-events: auto;
+  background: var(--color-plate);
+  color: var(--color-ink);
+  min-height: 100svh;
+  margin-top: calc(-1 * var(--head-clearance));
+  padding-top: var(--head-clearance);
 }
 .page-panel {
   margin: 0 auto;
   width: min(46rem, calc(100vw - 2 * var(--gutter)));
-  border-radius: 0.625rem 0.625rem 0 0;
-  padding: clamp(1.5rem, 3vw, 2.75rem);
+  padding-block: var(--space-section-tight) var(--space-8);
 }
 .page-panel.is-wide {
   width: min(64rem, calc(100vw - 2 * var(--gutter)));

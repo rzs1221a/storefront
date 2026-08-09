@@ -16,7 +16,7 @@ import Page from "../components/Page";
 
 export function Process() {
   return (
-    <Page shortWindow eyebrow="How it goes" title="No surprises">
+    <Page eyebrow="How it goes" title="No surprises">
       <p className="lede">
         You will know the price, the timeline, and what the site looks like
         before any real money changes hands.
@@ -57,7 +57,7 @@ export function Process() {
 
 export function Questions() {
   return (
-    <Page shortWindow eyebrow="Questions" title="The things people ask">
+    <Page eyebrow="Questions" title="The things people ask">
       <p className="lede">
         If yours is not here, ask it directly — I would rather answer than have
         you guess.

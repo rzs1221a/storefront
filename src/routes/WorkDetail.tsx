@@ -49,7 +49,16 @@ export default function WorkDetail() {
         beacon && (
           <p className="page-datum">
             {item.light.characteristic} · {formatLatLon(beacon.center)}
-            {item.slug === "seamark-storefront" && " — the mark you are standing on"}
+            {item.slug === "seamark-storefront" ? (
+              " — the mark you are standing on"
+            ) : (
+              <>
+                {" · "}
+                <Link to="/#exhibit" className="hover:text-(--color-ink)">
+                  see it on the chart →
+                </Link>
+              </>
+            )}
           </p>
         )
       }

@@ -2,14 +2,14 @@ import { type ReactNode, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
 /**
- * A storefront page: an opaque glass article over the living map.
+ * A detail page, in daylight.
  *
- * This replaced the Sheet when the site inverted from "a map with a
- * storefront on it" to "a storefront with a map behind it." The document
- * scrolls now — the article is simply content in flow — and each page opens
- * with a chart window: a tall transparent band above the panel where the map
- * shows through, already flown to this destination's mark by the route
- * effect in Shell. You see the place, then you read about it.
+ * The home page is the film — dark theatre, one exhibit. Detail routes are
+ * the reading room: paper register by default ([data-act-theme="light"]),
+ * a generous head, one measured column. No chart window, no glass — the
+ * drama budget was spent on the home page on purpose, so that a visitor
+ * who has arrived at a case study or the pricing table gets stillness and
+ * legibility instead of another performance.
  */
 export default function Page({
   title,
@@ -21,8 +21,6 @@ export default function Page({
   backLabel,
   /** Wide article for side-by-side content (packages grid, capabilities). */
   wide = false,
-  /** Shrink the chart window for pages that are argument, not place. */
-  shortWindow = false,
 }: {
   title: string;
   eyebrow?: string;
@@ -31,25 +29,18 @@ export default function Page({
   backTo?: string;
   backLabel?: string;
   wide?: boolean;
-  shortWindow?: boolean;
 }) {
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
-    // A new page starts at its top — the browser keeps scroll position on
-    // SPA navigations otherwise — and the heading takes focus so a screen
-    // reader announces what opened.
-    window.scrollTo({ top: 0, behavior: "auto" });
+    // The heading takes focus so a screen reader announces what opened.
+    // (Shell resets scroll position on navigation.)
     headingRef.current?.focus();
   }, []);
 
   return (
-    <div className="page" id="sheet">
-      <div
-        className={`chart-window${shortWindow ? " is-short" : ""}`}
-        aria-hidden="true"
-      />
-      <article className={`page-panel surface-glass${wide ? " is-wide" : ""}`}>
+    <div className="page" id="sheet" data-act-theme="light">
+      <article className={`page-panel${wide ? " is-wide" : ""}`}>
         <header className="page-head">
           {backTo && (
             <Link to={backTo} className="page-back mono-label">
