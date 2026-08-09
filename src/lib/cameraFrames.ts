@@ -134,10 +134,15 @@ for (const o of FLAGSHIP_CONCEPTS) {
  * `top` frame. Ported in spirit from the-aerial's APPROACH_VIEW.
  */
 export const APPROACH: CameraFrame = {
-  center: [-81.2, 30.15],
-  zoom: 7.6,
-  pitch: 0,
-  bearing: 0,
+  /* Close enough that the descent crosses two tile zoom levels, not five.
+     The old zoom-7.6 approach pulled ~180 tiles across the whole pyramid —
+     and since the reveal, the arrival plays behind an opaque curtain, so
+     most of that spectacle was fetched for nobody. This keeps the feel of
+     a descent for whoever scrolls fast, at a fraction of the bandwidth. */
+  center: [-81.35, 30.5],
+  zoom: 10.2,
+  pitch: 12,
+  bearing: -6,
 };
 
 /**

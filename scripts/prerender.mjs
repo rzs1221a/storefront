@@ -20,7 +20,7 @@
  * every camera frame resolvable, every beacon coordinate finite.
  */
 
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -274,7 +274,26 @@ const pages = DESTINATIONS.map((dest) => ({
   body: `${bodyFor(dest)}${navHtml(dest.path)}`,
 }));
 
-const template = await readFile(path.join(dist, "index.html"), "utf8");
+let template = await readFile(path.join(dist, "index.html"), "utf8");
+
+/*
+ * The hero is type on an opaque plate, which puts the display font on the
+ * LCP path. The woff2 name is hashed per build, so the preload cannot live
+ * in index.html — find the built latin Geist file and inject it here, where
+ * the hash is knowable. font-display: swap still guards the failure case.
+ */
+{
+  const assets = await readdir(path.join(dist, "assets"));
+  const geist = assets.find(
+    (f) => /^geist-latin-wght-normal.*\.woff2$/.test(f)
+  );
+  if (geist) {
+    template = template.replace(
+      "</head>",
+      `  <link rel="preload" as="font" type="font/woff2" href="/assets/${geist}" crossorigin />\n  </head>`
+    );
+  }
+}
 
 for (const page of pages) {
   const url = `${ORIGIN}${page.route === "/" ? "/" : page.route}`;

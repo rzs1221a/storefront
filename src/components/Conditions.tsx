@@ -41,6 +41,57 @@ const TIDE_MS = 6 * 60_000;
 const WEATHER_MS = 15 * 60_000;
 const CLOCK_MS = 30_000;
 
+/**
+ * One fetch loop per feed, module-owned — not one per mount. This component
+ * renders in the footer, the demo helm, and /capabilities at once, and each
+ * instance used to run its own loop: four identical requests inside 7 ms on
+ * every load. Now the first subscriber starts the loop, the last one stops
+ * it, and a remount inside the refresh window replays the cached reading
+ * instead of re-asking the gauge.
+ */
+function createFeed<T>(url: string, periodMs: number) {
+  let value: T | null = null;
+  let fetchedAt = 0;
+  let timer = 0;
+  let inflight = false;
+  const subs = new Set<(v: T) => void>();
+
+  const pull = async () => {
+    if (inflight) return;
+    inflight = true;
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        value = (await res.json()) as T;
+        fetchedAt = Date.now();
+        for (const fn of subs) fn(value);
+      }
+    } catch {
+      /* Silence is the designed outcome. */
+    } finally {
+      inflight = false;
+    }
+  };
+
+  return {
+    subscribe(fn: (v: T) => void): () => void {
+      subs.add(fn);
+      if (value !== null) fn(value);
+      if (subs.size === 1) {
+        if (value === null || Date.now() - fetchedAt > periodMs) void pull();
+        timer = window.setInterval(() => void pull(), periodMs);
+      }
+      return () => {
+        subs.delete(fn);
+        if (subs.size === 0) window.clearInterval(timer);
+      };
+    },
+  };
+}
+
+const tideFeed = createFeed<Tide>("/api/tide", TIDE_MS);
+const weatherFeed = createFeed<Weather>("/api/conditions", WEATHER_MS);
+
 /** Island-local clock. The light phrase comes from real solar geometry. */
 function islandTime(now: Date) {
   return new Intl.DateTimeFormat("en-US", {
@@ -73,34 +124,16 @@ export default function Conditions({
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
-    let cancelled = false;
-
-    // Both are independent: a tide reading is worth showing without wind, and
-    // the reverse. Neither failure blocks the other.
-    const load = async <T,>(url: string, set: (v: T) => void) => {
-      try {
-        const res = await fetch(url);
-        if (!res.ok) return;
-        const data = (await res.json()) as T;
-        if (!cancelled) set(data);
-      } catch {
-        /* Silence is the designed outcome. */
-      }
-    };
-
-    const pullTide = () => void load<Tide>("/api/tide", setTide);
-    const pullWeather = () => void load<Weather>("/api/conditions", setWeather);
-
-    pullTide();
-    pullWeather();
-    const tideTimer = window.setInterval(pullTide, TIDE_MS);
-    const weatherTimer = window.setInterval(pullWeather, WEATHER_MS);
+    // Both feeds are independent: a tide reading is worth showing without
+    // wind, and the reverse. Neither failure blocks the other — and both
+    // are shared across every mounted instrument (see createFeed above).
+    const unsubTide = tideFeed.subscribe(setTide);
+    const unsubWeather = weatherFeed.subscribe(setWeather);
     const clockTimer = window.setInterval(() => setNow(new Date()), CLOCK_MS);
 
     return () => {
-      cancelled = true;
-      window.clearInterval(tideTimer);
-      window.clearInterval(weatherTimer);
+      unsubTide();
+      unsubWeather();
       window.clearInterval(clockTimer);
     };
   }, []);

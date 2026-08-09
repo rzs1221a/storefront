@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { frameFor, destinationFor } from "../lib/destinations";
 import { flyToFrame, type CameraPadding } from "../lib/cameraFrames";
@@ -150,7 +150,11 @@ export default function Shell() {
       <SiteHeader />
 
       <main className="storefront">
-        <Outlet />
+        {/* Null fallback on purpose: routes are tiny split chunks and the
+            map holds the frame — a spinner would be louder than the wait. */}
+        <Suspense fallback={null}>
+          <Outlet />
+        </Suspense>
       </main>
 
       <SiteFooter />

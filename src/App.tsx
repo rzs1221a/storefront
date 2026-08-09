@@ -1,15 +1,8 @@
+import { lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LEGACY_REDIRECTS } from "./lib/destinations";
 import Shell from "./components/Shell";
 import Coast from "./routes/Coast";
-import Work from "./routes/Work";
-import WorkDetail from "./routes/WorkDetail";
-import Options from "./routes/Options";
-import OptionDetail from "./routes/OptionDetail";
-import Packages from "./routes/Packages";
-import Capabilities from "./routes/Capabilities";
-import Contact from "./routes/Contact";
-import { Process, Questions } from "./routes/Studio";
 
 /**
  * Real routes, because a destination you cannot link to or share is not a
@@ -21,7 +14,25 @@ import { Process, Questions } from "./routes/Studio";
  * are what the rail and the tab bar lead with. Process and Questions are real
  * pages too, linked from inside the sheets that raise those questions, because
  * a navigation that lists everything ranks nothing.
+ *
+ * Home stays eager — it is the entry and must never wait on a second chunk.
+ * Every other route is split: a visitor reading the contact form should not
+ * download the catalog. Suspense lives in Shell, around the Outlet.
  */
+const Work = lazy(() => import("./routes/Work"));
+const WorkDetail = lazy(() => import("./routes/WorkDetail"));
+const Options = lazy(() => import("./routes/Options"));
+const OptionDetail = lazy(() => import("./routes/OptionDetail"));
+const Packages = lazy(() => import("./routes/Packages"));
+const Capabilities = lazy(() => import("./routes/Capabilities"));
+const Contact = lazy(() => import("./routes/Contact"));
+const Process = lazy(() =>
+  import("./routes/Studio").then((m) => ({ default: m.Process }))
+);
+const Questions = lazy(() =>
+  import("./routes/Studio").then((m) => ({ default: m.Questions }))
+);
+
 export default function App() {
   return (
     <BrowserRouter>
