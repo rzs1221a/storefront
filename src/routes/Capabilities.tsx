@@ -72,7 +72,7 @@ export default function Capabilities() {
 
       <ul className="mt-10 space-y-px overflow-hidden rounded-md border border-(--line) bg-(--line)">
         {CAPABILITIES.map((cap) => (
-          <li key={cap.title} className="group bg-white/[0.02] p-5">
+          <li key={cap.title} className="group bg-(--tint-1) p-5">
             <h3 className="text-title font-medium">
               {cap.title}
             </h3>

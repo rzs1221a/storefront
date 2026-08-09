@@ -253,7 +253,16 @@ async function main() {
         return out.slice(0, 26);
       });
 
-      if (!samples.length) continue;
+      // A sampler that silently finds nothing is worse than no sampler: a
+      // renamed class would pass every pass forever. Each pass must land a
+      // real minimum of measurements or the run fails.
+      if (samples.length < 5) {
+        note(
+          `contrast ${route}${pass.scrollTo ? ` @ ${pass.scrollTo}` : ""}`,
+          `only ${samples.length} sample(s) — selectors have drifted from the markup`
+        );
+        continue;
+      }
 
       // Mask every glyph, so the sample reads the true surface behind the text
       // rather than a neighbouring letterform.

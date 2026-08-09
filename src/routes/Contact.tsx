@@ -127,21 +127,21 @@ export default function Contact() {
       <div className="mt-6 divide-y divide-(--line) overflow-hidden rounded-sm border border-(--line)">
         <a
           href={`tel:${CONTACT.phone}`}
-          className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-white/[0.04]"
+          className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-(--tint-2)"
         >
           <span className="mono-label">Call</span>
           <span className="text-body-sm">{CONTACT.phoneDisplay}</span>
         </a>
         <a
           href={`sms:${CONTACT.phone}`}
-          className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-white/[0.04]"
+          className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-(--tint-2)"
         >
           <span className="mono-label">Text</span>
           <span className="text-body-sm">{CONTACT.phoneDisplay}</span>
         </a>
         <a
           href={`mailto:${CONTACT.email}`}
-          className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-white/[0.04]"
+          className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-(--tint-2)"
         >
           <span className="mono-label">Email</span>
           <span className="truncate text-body-sm">{CONTACT.email}</span>

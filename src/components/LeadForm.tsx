@@ -233,7 +233,7 @@ export default function LeadForm({
       </div>
 
       {status === "error" && (
-        <p role="alert" className="mt-4 text-body-sm text-red-400">
+        <p role="alert" className="mt-4 text-body-sm text-(--color-alert)">
           That did not send — something went wrong on the way out. Please email{" "}
           <a href={`mailto:${CONTACT.email}`} className="underline underline-offset-4">
             {CONTACT.email}

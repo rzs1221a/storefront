@@ -102,7 +102,7 @@ export default function WorkDetail() {
           {item.stack.map((tech) => (
             <span
               key={tech}
-              className="rounded-full border border-(--line) bg-white/[0.03] px-2.5 py-1 font-mono text-micro text-(--color-ink-muted)"
+              className="rounded-full border border-(--line) bg-(--tint-1) px-2.5 py-1 font-mono text-micro text-(--color-ink-muted)"
             >
               {tech}
             </span>

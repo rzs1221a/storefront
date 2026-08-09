@@ -132,7 +132,7 @@ export default function OptionDetail() {
       {proof && (
         <Link
           to={`/work/${proof.slug}`}
-          className="mt-6 block rounded-md border border-(--line) bg-white/[0.02] p-4 text-body-sm transition-colors hover:border-(--line-strong)"
+          className="mt-6 block rounded-md border border-(--line) bg-(--tint-1) p-4 text-body-sm transition-colors hover:border-(--line-strong)"
         >
           <span className="mono-label">
             {concept ? "The parts are proven in" : "Running today in"}

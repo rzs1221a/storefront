@@ -56,6 +56,8 @@
   /* The "accent" is white light. No hue anywhere in the chrome. */
   --color-signal: #f5f5f7;
   --color-signal-glow: rgba(255, 255, 255, 0.14);
+  /* The one permitted hue: errors. Everything else stays achromatic. */
+  --color-alert: #f87171;
 
   /* ---- Semantic surfaces — the registers of the page ----------------
      Components reference roles, not raw values. The reveal (hero solid →
@@ -82,7 +84,7 @@
   /* ---- Type — 9 steps, 11px → 88px, fluid 390→1440 ------------------
      Range is the point: the old system peaked at 38px and the hero rendered
      SMALLER than section heads. Sizes between steps are not available. */
-  --text-display: clamp(2.5rem, 1.39rem + 4.57vw, 5.5rem);
+  --text-display: clamp(2.75rem, 1.6rem + 6.1vw, 7.5rem);
   --text-display--line-height: 0.95;
   --text-display--letter-spacing: -0.035em;
   --text-display--font-weight: 500;
@@ -173,6 +175,91 @@
   --route-filter-start: blur(14px) saturate(0.68) brightness(0.5);
   --route-control-filter-start: blur(10px) saturate(0.72) brightness(0.58);
   --route-scrim-filter-start: blur(18px) brightness(0.7);
+}
+
+/* ── Act theming ─────────────────────────────────────────────────────────
+ * The cinematic page alternates dark and light acts. One attribute remaps
+ * the RAW ramps — not just semantic roles — because the components read
+ * `--color-ink-muted`, `--line`, `--tint-*` directly. Anything that renders
+ * correctly on the dark register therefore renders correctly on paper with
+ * zero forks: same markup, same classes, inverted world.
+ *
+ * The ladders mirror: white alphas become black alphas at the same steps,
+ * shadows soften (paper carries less depth than night), and `--color-signal`
+ * flips to ink so "accent" stays "the strongest available contrast".
+ */
+[data-act-theme="light"] {
+  --color-plate: #f4f4f6;
+  --color-plate-raised: #ffffff;
+  --color-plate-high: #e9e9ee;
+  --color-ink: #0c0c0e;
+  --color-ink-soft: #3c3c42;
+  --color-ink-muted: #5c5c64;
+  --color-ink-faint: #a2a2aa;
+  --color-signal: #0c0c0e;
+  --color-signal-glow: rgba(0, 0, 0, 0.12);
+  --color-alert: #b91c1c;
+  --surface-solid: var(--color-plate);
+  --surface-raised: var(--color-plate-raised);
+  --surface-inverse: var(--color-ink);
+  --content-primary: var(--color-ink);
+  --content-secondary: var(--color-ink-soft);
+  --content-muted: var(--color-ink-muted);
+  --content-inverse: var(--color-plate);
+  --tint-1: rgba(0, 0, 0, 0.03);
+  --tint-2: rgba(0, 0, 0, 0.06);
+  --tint-3: rgba(0, 0, 0, 0.1);
+  --tint-4: rgba(0, 0, 0, 0.14);
+  --tint-5: rgba(0, 0, 0, 0.2);
+  --tint-6: rgba(0, 0, 0, 0.28);
+  --tint-7: rgba(0, 0, 0, 0.4);
+  --line: var(--tint-3);
+  --line-strong: var(--tint-5);
+  --shadow-e1: 0 1px 2px rgba(12, 12, 14, 0.06), 0 8px 24px -12px rgba(12, 12, 14, 0.12);
+  --shadow-e2: 0 18px 50px -16px rgba(12, 12, 14, 0.18);
+  --shadow-e3: 0 32px 80px -24px rgba(12, 12, 14, 0.24);
+  --shadow-e4: 0 48px 120px -30px rgba(12, 12, 14, 0.32);
+  color: var(--color-ink);
+  background-color: var(--color-plate);
+}
+
+/* ── Reveals ─────────────────────────────────────────────────────────────
+ * The one entrance pattern (src/lib/useReveal.ts adds .is-revealed once).
+ * Reduced-motion is structural, not an override: the offset exists ONLY
+ * inside the no-preference media query, so with animations off the base
+ * state is the final state and content is never hidden. Budget: transform
+ * and opacity only, ≤24px travel, ≥0.97 scale.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal]:not(.is-revealed) {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  [data-reveal="scale"]:not(.is-revealed) {
+    transform: scale(0.97);
+  }
+  [data-reveal] {
+    transition:
+      opacity var(--dur-5) var(--ease-out-quart),
+      transform var(--dur-5) var(--ease-out-expo);
+  }
+  /* Optional stagger: mark up to three children. The parent carries no
+     offset of its own when its children do the entering. */
+  [data-reveal]:not(.is-revealed) [data-reveal-child] {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  [data-reveal] [data-reveal-child] {
+    transition:
+      opacity var(--dur-5) var(--ease-out-quart),
+      transform var(--dur-5) var(--ease-out-expo);
+  }
+  [data-reveal] [data-reveal-child]:nth-of-type(2) {
+    transition-delay: 90ms;
+  }
+  [data-reveal] [data-reveal-child]:nth-of-type(3) {
+    transition-delay: 180ms;
+  }
 }
 
 /* The render-motion governor (src/lib/renderMotion.ts) steps these down when
@@ -1850,7 +1937,7 @@ summary,
   box-shadow: 0 0 0 3px var(--color-signal-glow);
 }
 .field:user-invalid {
-  border-color: #f87171;
+  border-color: var(--color-alert);
 }
 
 select.field {
