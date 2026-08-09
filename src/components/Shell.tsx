@@ -1,123 +1,22 @@
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { frameFor, destinationFor } from "../lib/destinations";
-import { flyToFrame, type CameraPadding } from "../lib/cameraFrames";
-import { getSky } from "../lib/sky";
-import { recordVisit } from "../lib/wake";
+import { destinationFor } from "../lib/destinations";
 import { BRAND } from "../lib/brand";
-import { prefersReducedMotion, setRenderMotionIntent } from "../lib/renderMotion";
-import LiveMap from "./LiveMap";
 import SiteHeader from "./SiteHeader";
 import SiteFooter from "./SiteFooter";
-import Opening from "./Opening";
 
 /**
- * The app frame, inverted: a storefront that has a map, not a map that has a
- * storefront. The document scrolls now — content flows over a fixed living
- * chart, showing it through full-height windows between sections — and the
- * map still mounts exactly once, still flies on every navigation, still
- * carries the light signatures and the wake. The chart stopped being the
- * frame and became the sky.
+ * The app frame, third act: chrome only.
+ *
+ * The first era was a map that had a storefront; the second, a storefront
+ * over a fixed living chart. Now the chart lives in exactly one place — the
+ * exhibit on the home page (components/MapExhibit.tsx) — and the shell is
+ * what a shell should be: header, outlet, footer. No global WebGL, no
+ * camera choreography on navigation, no startup gate. Pages own their own
+ * drama.
  */
-
-/** The real sky, sampled every thirty seconds. */
-function useSky() {
-  const [sky, setSky] = useState(() => getSky());
-  useEffect(() => {
-    const timer = window.setInterval(() => setSky(getSky()), 30_000);
-    return () => window.clearInterval(timer);
-  }, []);
-  return sky;
-}
-
-/**
- * Routes that open with no map in view. A visitor landing here never pays
- * for the WebGL engine — the chunk is fetched only if they later navigate
- * somewhere the chart shows. The sky gradient (the designed no-WebGL
- * fallback) holds the chart windows in the meantime.
- */
-const MAP_FREE = new Set(["/contact", "/packages", "/options", "/questions"]);
-
-/**
- * The map mounts AFTER first paint, never on the critical path. The home
- * hero is an opaque curtain occupying the first viewport, so the engine and
- * its tiles load during the seconds the visitor spends reading — and the
- * chart is warm before the scroll reveals it. Once mounted it stays mounted
- * for the session (the single-instance invariant): flyToFrame already queues
- * a pending frame for navigations that land before the camera is ready.
- */
-function useDeferredMap(pathname: string) {
-  const [mountMap, setMountMap] = useState(false);
-  useEffect(() => {
-    if (mountMap || MAP_FREE.has(pathname)) return;
-    type IdleWindow = Window & {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-      cancelIdleCallback?: (handle: number) => void;
-    };
-    const w = window as IdleWindow;
-    if (w.requestIdleCallback) {
-      const handle = w.requestIdleCallback(() => setMountMap(true), {
-        timeout: 1200,
-      });
-      return () => w.cancelIdleCallback?.(handle);
-    }
-    const handle = window.setTimeout(() => setMountMap(true), 300);
-    return () => window.clearTimeout(handle);
-  }, [pathname, mountMap]);
-  return mountMap;
-}
-
-/**
- * Detail pages open with a chart window above the article, so the camera
- * frames its subject in that upper band rather than centered behind the
- * panel. The home page manages its own camera through observeFrames.
- */
-function paddingFor(pathname: string): CameraPadding {
-  if (pathname === "/") return { top: 0, right: 0, bottom: 0, left: 0 };
-  return {
-    top: 0,
-    right: 0,
-    bottom: Math.round(window.innerHeight * 0.35),
-    left: 0,
-  };
-}
-
 export default function Shell() {
   const { pathname } = useLocation();
-  const sky = useSky();
-  const mountMap = useDeferredMap(pathname);
-
-  /* Fly to the destination's frame on every navigation, framed into the
-     page's chart window — and log the mark into the session's wake. */
-  useEffect(() => {
-    flyToFrame(frameFor(pathname), paddingFor(pathname));
-    recordVisit(pathname);
-  }, [pathname]);
-
-  /* Route bloom, ported from heymann-williams-coastal's Layout: each
-     client-side navigation re-arms `body.route-blooming` (remove → forced
-     reflow → add) so the incoming page's glass blooms in over the flying
-     chart. Skipped on first mount — the arrival gate owns that moment — and
-     under reduced motion. */
-  const firstRoute = useRef(true);
-  useEffect(() => {
-    if (firstRoute.current) {
-      firstRoute.current = false;
-      return;
-    }
-    if (prefersReducedMotion()) return;
-    setRenderMotionIntent("route", 760);
-    document.body.classList.remove("route-blooming");
-    void document.body.offsetWidth;
-    document.body.classList.add("route-blooming");
-    const timer = window.setTimeout(() => {
-      document.body.classList.remove("route-blooming");
-    }, 620);
-    return () => {
-      window.clearTimeout(timer);
-      document.body.classList.remove("route-blooming");
-    };
-  }, [pathname]);
 
   /* Keep the document title honest — these are real pages. */
   useEffect(() => {
@@ -128,38 +27,28 @@ export default function Shell() {
         : `${dest.title} — ${BRAND.name}`;
   }, [pathname]);
 
+  /* New page, top of page. The browser handles history restoration. */
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <div className="shell-frame">
       <a href="#sheet" className="skip-link btn btn-primary btn-sm">
         Skip to content
       </a>
 
-      {/* The sky: map, sun grade, and legibility tint, all fixed behind the
-          scrolling storefront. The map itself arrives off the critical
-          path — see useDeferredMap. */}
-      <div className="map-fix" aria-hidden="false">
-        {mountMap && <LiveMap dimmed={false} />}
-        <div
-          className="sky-grade"
-          style={{ background: sky.gradient }}
-          aria-hidden="true"
-        />
-        <div className="map-tint" aria-hidden="true" />
-      </div>
-
       <SiteHeader />
 
       <main className="storefront">
-        {/* Null fallback on purpose: routes are tiny split chunks and the
-            map holds the frame — a spinner would be louder than the wait. */}
+        {/* Null fallback on purpose: routes are tiny split chunks — a
+            spinner would be louder than the wait. */}
         <Suspense fallback={null}>
           <Outlet />
         </Suspense>
       </main>
 
       <SiteFooter />
-
-      <Opening />
     </div>
   );
 }

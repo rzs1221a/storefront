@@ -4,46 +4,35 @@ import { WORK, TOTALS } from "../lib/work";
 import { CATALOG_TOTALS } from "../lib/catalog";
 import { TIERS } from "../lib/offer";
 import { BRAND, CONTACT } from "../lib/brand";
-import { observeFrames, flyToFrame } from "../lib/cameraFrames";
-import { frameFor } from "../lib/destinations";
-import CommandBar from "../components/CommandBar";
 import { numberWord } from "../lib/format";
+import { useReveals } from "../lib/useReveal";
 import BrowserFrame from "../components/BrowserFrame";
-import MagneticButton from "../components/MagneticButton";
 import CountUp from "../components/CountUp";
-import MarkDeck from "../components/MarkDeck";
-import TourControl from "../components/TourControl";
-import Conditions from "../components/Conditions";
+import MapExhibit from "../components/MapExhibit";
 import OfferGrid from "../components/OfferGrid";
 import LeadForm from "../components/LeadForm";
 
 /**
- * The storefront — five sections, each with one job, in the order that
- * convinces:
+ * The storefront as a film — five acts, alternating dark and light:
  *
- *   1. The claim         — the offer in one breath, on an opaque curtain
- *      ⟶ the reveal: the curtain lifts and the live coast arrives ⟵
- *   2. The proof         — one artifact ends "can he actually build?"
- *   3. The demonstration — the visitor drives the product (the map, bare)
- *   4. The offer         — four tiers, comparable, one click to buy
- *   5. The close         — the form itself; the page's single inversion
+ *   I   The claim   (dark)  one statement, display type, nothing else
+ *   II  The proof   (light) the shipped work goes full-bleed on paper
+ *   III The engine  (dark)  the framed chart exhibit — the product, driven
+ *   IV  The offer   (light) four tiers, comparable, one click to buy
+ *   V   The close   (dark)  the form itself; the film ends where it began
  *
- * Nothing renders here that has a detail route, unless it is the single
- * best instance of that thing: the proof shows one site and links to five
- * more; the catalog is one sentence pointing at /options. The old page was
- * an index of the whole site — 9.4 screens; this is an argument.
- *
- * The scroll-synced camera is observeFrames in lib/cameraFrames.ts — it
- * observes every [data-frame] and flies to whichever owns the most viewport.
+ * The alternation is the design: the merchandise gets daylight, the
+ * theatre gets the dark. Every act reads from the same token ramps — the
+ * light acts simply remap them via [data-act-theme] — so nothing renders
+ * in two versions.
  */
 
 const FEATURED = WORK[0];
+const SUPPORTING = WORK.slice(1, 3);
 
 /**
- * Phone-only sticky contact bar. The header CTA scrolls away in the long
- * hero, and on a phone the close band is several windows down — this keeps
- * the two actions that make money one thumb away, and hides itself once the
- * real close (with the full form) is on screen.
+ * Phone-only sticky contact bar: the two actions that make money stay one
+ * thumb away, and it hides itself once the real close is on screen.
  */
 function MobileCtaBar({ hideWhenVisible }: { hideWhenVisible: React.RefObject<HTMLElement | null> }) {
   const [hidden, setHidden] = useState(false);
@@ -71,147 +60,55 @@ function MobileCtaBar({ hideWhenVisible }: { hideWhenVisible: React.RefObject<HT
   );
 }
 
-/**
- * The reveal. The hero is an opaque curtain over the live chart: while the
- * visitor reads it, the map engine loads behind it (Shell defers the mount
- * past first paint). As the curtain begins to lift, `data-map-stage` flips
- * from "veiled" to "revealed" and the chart settles from an over-dimmed
- * grade to its resting one — the world opening, not a texture switching on.
- *
- * Driven by the hero's own scroll position through an IntersectionObserver;
- * the page never hijacks input. Under reduced motion the stage is never set
- * and the chart is simply present, already at rest, when the visitor gets
- * there — the reveal is a reward, not a gate.
- */
-function useMapReveal(heroRef: React.RefObject<HTMLElement | null>) {
-  useEffect(() => {
-    const hero = heroRef.current;
-    if (
-      !hero ||
-      typeof IntersectionObserver === "undefined" ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      return;
-    }
-    document.body.dataset.mapStage = "veiled";
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.intersectionRatio < 0.85) {
-          document.body.dataset.mapStage = "revealed";
-          observer.disconnect();
-        }
-      },
-      { threshold: [0.85] }
-    );
-    observer.observe(hero);
-    return () => {
-      observer.disconnect();
-      delete document.body.dataset.mapStage;
-    };
-  }, [heroRef]);
-}
-
-/**
- * While the demonstration owns the viewport, the global legibility tint
- * thins out and the chart is as close to bare as this site ever shows it.
- * Runs under reduced motion too — the tint change is a state, not a
- * flourish, and the demo must work either way.
- */
-function useDemoStage(demoRef: React.RefObject<HTMLElement | null>) {
-  useEffect(() => {
-    const demo = demoRef.current;
-    if (!demo || typeof IntersectionObserver === "undefined") return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          document.body.dataset.demoActive = "true";
-        } else {
-          delete document.body.dataset.demoActive;
-        }
-      },
-      { threshold: 0.45 }
-    );
-    observer.observe(demo);
-    return () => {
-      observer.disconnect();
-      delete document.body.dataset.demoActive;
-    };
-  }, [demoRef]);
-}
-
-/** Phrases the helm suggests — every one resolves; the shrug is reserved
-    for genuinely unknown input, never for our own examples. */
-const HELM_EXAMPLES = [
-  "show me the brokerage site",
-  "where's the flagship",
-  "crane island",
-  "I sell waterfront",
-];
-
 export default function Coast() {
-  useEffect(() => observeFrames(), []);
   const closeRef = useRef<HTMLElement | null>(null);
-  const heroRef = useRef<HTMLElement | null>(null);
-  const demoRef = useRef<HTMLElement | null>(null);
-  useMapReveal(heroRef);
-  useDemoStage(demoRef);
+  // One observer for every [data-reveal] on the page.
+  const revealRoot = useReveals<HTMLDivElement>();
 
   return (
-    <div className="storefront-home" id="sheet">
-      {/* ── 1 · The claim ───────────────────────────────────────────── */}
-      <section className="hero-band" data-frame="top" ref={heroRef}>
-        <div className="hero-panel">
-          <p className="eyebrow">
+    <div className="storefront-home" id="sheet" ref={revealRoot}>
+      {/* ── Act I · The claim ───────────────────────────────────────── */}
+      <section className="act act-claim" data-act="claim" data-act-theme="dark">
+        <div className="act-claim-copy" data-reveal>
+          <p className="eyebrow" data-reveal-child>
             {BRAND.name} — {CONTACT.location}
           </p>
-
-          {/* Short enough to hold display size; the demoted sentence below
-              keeps the exact substring destinations.ts verifies. */}
-          <h1 className="hero-title">
+          <h1 className="hero-title" data-reveal-child>
             Built once. <em>Owned outright.</em>
           </h1>
-
-          <p className="hero-sub">
+          <p className="hero-sub" data-reveal-child>
             High-converting custom web systems and interactive real estate
             platforms for BHHS agents — no monthly platform fee. Static-fast
             pages that rank on their own, live map and market data wired in,
             and every lead routed straight into BoldTrail.
           </p>
-
-          <div className="hero-actions">
-            <MagneticButton>
-              <Link to="/packages" className="btn btn-primary">
-                See packages &amp; pricing
-              </Link>
-            </MagneticButton>
+          <div className="act-actions">
+            <Link to="/packages" className="btn btn-primary">
+              See packages &amp; pricing
+            </Link>
             <Link to="/work" className="btn btn-ghost">
               See the shipped work
             </Link>
           </div>
         </div>
-
-        <p className="hero-cue mono-label" aria-hidden="true">
-          The coast is loading behind this page ↓
-        </p>
       </section>
 
-      {/* ⟶ the reveal happens here: the curtain lifts off the live chart ⟵ */}
-
-      {/* ── 2 · The proof ───────────────────────────────────────────── */}
-      <section className="store-band seam-y" data-frame="work-sold-on-amelia-island">
-        <header className="store-band-head">
-          <p className="eyebrow">Selected work</p>
-          <h2 className="store-band-title">
-            {numberWord(TOTALS.projects)} sites. <em>All of them real.</em>
-          </h2>
-          <p className="store-band-lede">
-            Every one is the actual site, captured from the live deployment or
-            a production build — no mockups and no concepts. This is the
-            flagship; the chart behind you is it, running.
+      {/* ── Act II · The proof ──────────────────────────────────────── */}
+      <section className="act act-proof" data-act="proof" data-act-theme="light">
+        <header className="act-head" data-reveal>
+          <p className="eyebrow">The work</p>
+          <h2 className="act-title">The work is the pitch.</h2>
+          <p className="act-lede">
+            {numberWord(TOTALS.projects)} real sites, captured from live
+            deployments and production builds — no mockups, no concepts
+            dressed as clients. If the craft here does not sell it, the words
+            should not either.
           </p>
         </header>
 
-        <div className="work-feature is-wide surface-glass">
+        {/* The flagship, full-bleed: the single best thing gets the most
+            light. Click-to-run keeps it evidence rather than a picture. */}
+        <figure className="stage is-feature" data-reveal="scale">
           <BrowserFrame
             url={FEATURED.liveUrl?.replace(/^https:\/\//, "")}
             liveUrl={FEATURED.liveUrl}
@@ -229,19 +126,37 @@ export default function Coast() {
               />
             </picture>
           </BrowserFrame>
-          <p className="hero-proof-caption">
+          <figcaption className="stage-caption">
             <Link to={`/work/${FEATURED.slug}`} className="hover:text-(--color-ink)">
               {FEATURED.name} — {FEATURED.kind.toLowerCase()}
             </Link>
-            <span className="text-(--color-ink-faint)">
-              {" "}
-              · flagship, running live
-            </span>
-          </p>
+            <span className="text-(--color-ink-faint)"> · running live</span>
+          </figcaption>
+        </figure>
+
+        <div className="stage-pair">
+          {SUPPORTING.map((item) => (
+            <figure key={item.slug} className="stage" data-reveal="scale">
+              <Link to={`/work/${item.slug}`} className="stage-media">
+                <img
+                  src={item.desktop}
+                  alt={`The ${item.name} website — ${item.kind.toLowerCase()}`}
+                  width={1440}
+                  height={900}
+                  loading="lazy"
+                  decoding="async"
+                  className="block w-full"
+                />
+              </Link>
+              <figcaption className="stage-caption">
+                <Link to={`/work/${item.slug}`} className="hover:text-(--color-ink)">
+                  {item.name} — {item.kind.toLowerCase()}
+                </Link>
+              </figcaption>
+            </figure>
+          ))}
         </div>
 
-        {/* The stats moved here from the hero: they are captions on
-            evidence, not claims before it. */}
         <dl className="proof-rail">
           <div>
             <dt className="mono-label">Sites shipped</dt>
@@ -259,63 +174,51 @@ export default function Coast() {
           </div>
         </dl>
 
-        <div className="store-band-actions">
+        <div className="act-actions">
           <Link to="/work" className="btn btn-ghost">
-            {numberWord(TOTALS.projects - 1)} more, all real →
+            All {numberWord(TOTALS.projects)}, with case studies →
           </Link>
         </div>
       </section>
 
-      {/* ── 3 · The demonstration ───────────────────────────────────── */}
-      {/* The one place the tint thins and the chart is nearly bare. The
-          visitor drives the product they are being sold: type plain
-          English and the world moves. */}
-      <section className="demo-band" data-frame="catalog" ref={demoRef}>
-        <div className="demo-head surface-glass">
+      {/* ── Act III · The engine ────────────────────────────────────── */}
+      <section
+        className="act act-engine"
+        data-act="engine"
+        data-act-theme="dark"
+        id="exhibit"
+      >
+        <header className="act-head" data-reveal>
           <p className="eyebrow">Live demonstration</p>
-          <h2 className="store-band-title">This is the engine.</h2>
-          <p className="demo-lede">
-            The chart behind this page is the same engine an agent buys.
-            Type where you want to go — it answers in plain English.
+          <h2 className="act-title">This is the engine.</h2>
+          <p className="act-lede">
+            The same mapping engine an agent buys, running here. Type where
+            you want to go — it answers in plain English. Every mark is a
+            site I shipped, at its true coordinate.
           </p>
-        </div>
+        </header>
 
-        <div className="demo-helm surface-glass">
-          <CommandBar
-            examples={HELM_EXAMPLES}
-            onResolve={(hit) => {
-              flyToFrame(frameFor(hit.destination.path));
-              return true;
-            }}
-          />
-          <TourControl />
-          <Conditions />
-        </div>
-
-        {/* The twelve marks, one swipe each — the phone's way to fly. */}
-        <MarkDeck />
+        <MapExhibit />
       </section>
 
-      {/* ── 4 · The offer ───────────────────────────────────────────── */}
-      <section className="store-band seam-y" data-frame="pricing">
-        <header className="store-band-head">
+      {/* ── Act IV · The offer ──────────────────────────────────────── */}
+      <section className="act act-offer" data-act="offer" data-act-theme="light">
+        <header className="act-head" data-reveal>
           <p className="eyebrow">Packages</p>
-          <h2 className="store-band-title">
+          <h2 className="act-title">
             Pay once. <em>Own it forever.</em>
           </h2>
-          <p className="store-band-lede">
+          <p className="act-lede">
             {numberWord(TIERS.length)} build sizes, one fee agreed in writing
             before anything starts. After launch you owe nothing — hosting is
             free at the traffic these sites see, and the code is yours.
           </p>
         </header>
 
-        <div className="store-band-grid">
+        <div className="act-grid">
           <OfferGrid />
         </div>
 
-        {/* The whole catalog is one sentence here — 24 inline links was an
-            index, and /options already is one. */}
         <p className="modules-strip">
           <span className="mono-label">The full range</span>
           <Link to="/options" className="modules-strip-link">
@@ -324,35 +227,38 @@ export default function Coast() {
           </Link>
         </p>
 
-        <div className="store-band-actions">
+        <div className="act-actions">
           <Link to="/packages" className="btn btn-ghost">
             Compare in detail →
           </Link>
           <Link to="/capabilities" className="btn btn-ghost">
-            See the live demo →
+            What a template cannot do →
           </Link>
         </div>
       </section>
 
-      {/* ── 5 · The close ───────────────────────────────────────────── */}
-      {/* The page's single inversion — in a monochrome system, the loudest
-          available signal, spent at the only moment that converts. */}
-      <section className="store-band store-close" data-frame="contact" ref={closeRef}>
-        <h2 className="store-band-title">
-          Your website should be <em>the reason they call you.</em>
-        </h2>
-        <p className="store-band-lede">
-          Twenty minutes on the phone and you will know whether this is worth
-          doing. Or skip the call — tell me what you need right here.
-        </p>
+      {/* ── Act V · The close ───────────────────────────────────────── */}
+      <section
+        className="act act-close"
+        data-act="close"
+        data-act-theme="dark"
+        ref={closeRef}
+      >
+        <div className="act-head" data-reveal>
+          <h2 className="act-title">
+            Your website should be <em>the reason they call you.</em>
+          </h2>
+          <p className="act-lede">
+            Twenty minutes on the phone and you will know whether this is
+            worth doing. Or skip the call — tell me what you need right here.
+          </p>
+        </div>
 
-        {/* The form itself, not a link to it: every navigation removed from
-            the conversion path is a lead that did not leak. */}
-        <div className="store-close-form">
+        <div className="act-close-form">
           <LeadForm />
         </div>
 
-        <div className="store-band-actions">
+        <div className="act-actions">
           <a href={`sms:${CONTACT.phone}`} className="btn btn-ghost">
             Text {CONTACT.phoneDisplay}
           </a>

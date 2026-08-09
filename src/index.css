@@ -223,6 +223,37 @@
   background-color: var(--color-plate);
 }
 
+/* Glass is a dark-register material — its backings are authored near-blacks
+   and its rims are literal white light. On paper the same components become
+   flat raised cards: white surface, hairline, soft shadow. The grain and
+   rim pseudo-layers make no sense in daylight and are simply off. */
+[data-act-theme="light"] .glass,
+[data-act-theme="light"] .glass-card,
+[data-act-theme="light"] .surface-glass {
+  background: var(--color-plate-raised);
+  border-color: var(--line);
+  box-shadow: var(--shadow-e1);
+  backdrop-filter: none;
+}
+[data-act-theme="light"] .glass::before,
+[data-act-theme="light"] .glass::after,
+[data-act-theme="light"] .glass-card::before,
+[data-act-theme="light"] .glass-card::after,
+[data-act-theme="light"] .surface-glass::before,
+[data-act-theme="light"] .surface-glass::after {
+  display: none;
+}
+[data-act-theme="light"] .tier-card.is-featured {
+  border-color: var(--color-ink);
+  box-shadow: var(--shadow-e2);
+}
+[data-act-theme="light"] .btn-ghost,
+[data-act-theme="light"] .field {
+  background: var(--tint-1);
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
 /* ── Reveals ─────────────────────────────────────────────────────────────
  * The one entrance pattern (src/lib/useReveal.ts adds .is-revealed once).
  * Reduced-motion is structural, not an override: the offset exists ONLY
@@ -2869,4 +2900,153 @@ body[data-demo-active] .map-tint {
   line-height: 1.6;
   color: var(--color-ink-faint);
   max-width: 72ch;
+}
+
+/* ═══ The acts ═══════════════════════════════════════════════════════════
+ * The cinematic layer. Five full-width acts alternate dark and light;
+ * [data-act-theme="light"] (declared beside the token registry) remaps the
+ * ramps, so everything below styles ONE way and renders on both registers.
+ */
+
+.act {
+  padding: var(--space-section) var(--gutter);
+  background: var(--color-plate);
+  color: var(--color-ink);
+}
+
+.act-head {
+  max-width: 52rem;
+}
+.act-title {
+  margin-top: 0.6rem;
+  font-size: var(--text-section);
+  font-weight: var(--text-section--font-weight);
+  letter-spacing: var(--text-section--letter-spacing);
+  line-height: var(--text-section--line-height);
+  text-wrap: balance;
+}
+.act-title em,
+.act-title em {
+  font-style: normal;
+  font-weight: 420;
+  color: var(--color-ink-soft);
+}
+.act-lede {
+  margin-top: 1rem;
+  font-size: var(--text-lede);
+  line-height: var(--text-lede--line-height);
+  letter-spacing: var(--text-lede--letter-spacing);
+  color: var(--color-ink-soft);
+  max-width: 58ch;
+  text-wrap: pretty;
+}
+.act-actions {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+.act-head + * {
+  margin-top: var(--space-7);
+}
+
+/* ── Act I: the claim — one statement, centered in a full viewport ── */
+.act-claim {
+  min-height: 100svh;
+  display: grid;
+  align-content: center;
+  /* Tuck under the floating masthead so the first frame is all statement. */
+  margin-top: calc(-1 * var(--head-clearance));
+  padding-top: var(--head-clearance);
+}
+.act-claim-copy {
+  max-width: 68rem;
+}
+
+/* ── Act II: the stages — the work gets the light ── */
+.stage {
+  margin-top: var(--space-7);
+}
+.stage-media {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-e2);
+}
+.stage-caption {
+  margin-top: 0.75rem;
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  color: var(--color-ink-muted);
+}
+/* The flagship goes full-bleed: the act's gutters fall away and the work
+   touches the edges of the screen. */
+.stage.is-feature {
+  margin-inline: calc(-1 * var(--gutter));
+}
+.stage.is-feature .stage-caption {
+  padding-inline: var(--gutter);
+}
+.stage-pair {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-7);
+}
+@media (min-width: 900px) {
+  .stage-pair {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Act III: the exhibit — a lit instrument in a dark room ── */
+.exhibit {
+  margin-top: var(--space-7);
+}
+.exhibit-frame {
+  position: relative;
+  height: min(72svh, 46rem);
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--line-strong);
+  box-shadow: var(--shadow-e4);
+  /* The inline sky gradient backs the loading moment and the no-WebGL
+     case; the map fades in over it when it arrives. */
+}
+.exhibit-deck {
+  margin-top: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 40rem;
+}
+.exhibit-deck .command {
+  margin-top: 0;
+}
+.exhibit-deck-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+/* The swipe deck is the phone's control row; the typed deck is the
+   desktop's. */
+@media (min-width: 640px) {
+  .exhibit .mark-deck {
+    display: none;
+  }
+}
+
+/* ── Act V: the close ── */
+.act-close-form {
+  margin-top: var(--space-7);
+  max-width: 40rem;
+}
+
+/* R1→R2 shim: detail routes still render the map-era chart window above
+   their panels; with no global chart it is a hole. Hidden here, rebuilt as
+   a paper-first article layout in the next phase. */
+.chart-window {
+  display: none;
 }

@@ -192,17 +192,17 @@ export const WORK: WorkItem[] = [
     kind: "The site you are on",
     client: "Seamark Studio — in-house",
     outcome:
-      "A map you navigate rather than a page you scroll, selling a 24-option catalog — with the honesty contract enforced by the build itself, which fails if any option claims shipped work without a named proof.",
+      "A storefront told as a film — five acts alternating dark and light, the live mapping engine framed as a single interactive exhibit — with the honesty contract enforced by the build itself, which fails if any option claims shipped work without a named proof.",
     summary:
-      "The studio's own storefront: the coast as the interface, every destination a real coordinate, every route prerendered — a case study you are reading from inside its subject.",
+      "The studio's own storefront: five cinematic acts where the shipped work carries the imagery, the live chart appears once as an exhibit you can drive, and every route is prerendered — a case study you are reading from inside its subject.",
     detail:
-      "One MapLibre instance mounts once and never remounts; navigation flies the camera between real coordinates instead of loading pages, and the document itself never scrolls — a verifier asserts that on every route at four breakpoints rather than trusting it. Every destination is stamped out as static HTML at build time from the same imported modules the React app renders, so the crawler's copy and the visitor's copy cannot drift. Shipped work draws solid beacons at true coordinates; build-ready concepts draw hollow dashed ones down the corridor, labeled Concept everywhere they appear. The tide reading in the rail is a live NOAA gauge, fetched when you arrived.",
+      "The page alternates dark and light acts from one token registry — a single attribute remaps the color ramps, so every component renders on both registers with no forks. The live MapLibre chart appears exactly once, as a framed exhibit: type where you want to go in plain English and the camera answers; the engine and its tiles are fetched only when you approach the frame, never on the routes that don't show it — a performance budget asserts that against every build. Every destination is stamped out as static HTML at build time from the same imported modules the React app renders, so the crawler's copy and the visitor's copy cannot drift. A verifier measures text contrast at 4.5:1 on both registers, on every route, at four breakpoints. The tide reading in the exhibit is a live NOAA gauge, fetched when you arrived.",
     highlights: [
+      "Five acts, two registers, one token system — no component forks",
+      "The mapping engine as a single framed exhibit, driven in plain English",
+      "A perf budget that fails the build if the map chunk leaks onto map-free routes",
       "Every route prerendered from one imported route table — nothing duplicated",
-      "The build fails if a catalog option claims shipped without a proof project",
-      "The document never scrolls, and a verifier asserts it per route per breakpoint",
-      "Solid beacons for shipped work, hollow for concepts — honesty drawn on the map",
-      "Live NOAA tide and NWS conditions in the chrome, not a widget",
+      "Contrast verified at 4.5:1 on both registers, per route, per breakpoint",
     ],
     stack: ["Vite", "React 19", "TypeScript", "Tailwind v4", "MapLibre GL"],
     loc: 9945,

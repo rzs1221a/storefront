@@ -44,3 +44,41 @@ export function useReveal<T extends HTMLElement>(
 
   return ref;
 }
+
+/**
+ * Container form: put one ref on a page root and every `[data-reveal]`
+ * inside it is observed individually — no ref plumbing per element, and a
+ * page cannot ship an element that waits forever for a class no observer
+ * will add.
+ */
+export function useReveals<T extends HTMLElement>(
+  options: { rootMargin?: string } = {}
+) {
+  const ref = useRef<T | null>(null);
+  const { rootMargin = "0px 0px -12% 0px" } = options;
+
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+    const targets = root.querySelectorAll<HTMLElement>("[data-reveal]");
+    if (typeof IntersectionObserver === "undefined") {
+      targets.forEach((el) => el.classList.add("is-revealed"));
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-revealed");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { rootMargin }
+    );
+    targets.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [rootMargin]);
+
+  return ref;
+}

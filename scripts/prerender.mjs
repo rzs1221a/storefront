@@ -131,9 +131,11 @@ function bodyFor(dest) {
     return `
       <header><h1>Built once. Owned outright.</h1></header>
       <p>High-converting custom web systems and interactive real estate platforms for BHHS agents — no monthly platform fee. Static-fast pages that rank on their own, live map and market data wired in, and every lead routed straight into BoldTrail. ${esc(String(TOTALS.projects))} sites shipped along the Amelia Island coast, totalling ${TOTALS.loc.toLocaleString("en-US")} lines of production source.</p>
-      <h2>Selected work</h2>
+      <h2>The work is the pitch.</h2>
       <ul>${WORK.map((w) => `<li><a href="/work/${w.slug}"><strong>${esc(w.name)}</strong></a> — ${esc(w.kind)}. ${esc(w.summary)}</li>`).join("")}</ul>
-      <h2>Everything I build</h2>
+      <h2>This is the engine.</h2>
+      <p>The same mapping engine an agent buys, running on this page as a live exhibit — type where you want to go in plain English and the camera answers. Every mark is a shipped site at its true coordinate.</p>
+      <h2>Pay once. Own it forever.</h2>
       <p>${CATALOG_TOTALS.options} site types across ${CATEGORIES.length} categories — from a one-week agent page to a full 3D market platform. ${CATALOG_TOTALS.shipped} are patterns running today in the shipped work above; the rest are build-ready concepts and say so. <a href="/options">See the full catalog</a>.</p>
     `;
   }
