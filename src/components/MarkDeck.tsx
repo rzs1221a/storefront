@@ -1,9 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSyncExternalStore } from "react";
 import { BEACONS } from "../lib/destinations";
 import { FRAMES, flyToFrame } from "../lib/cameraFrames";
-import { subscribe, getSnapshot, TOTAL_MARKS } from "../lib/wake";
 import QuickText from "./QuickText";
 
 /**
@@ -35,7 +33,6 @@ const ITEMS = BEACONS.map((dest) => ({
 
 export default function MarkDeck() {
   const navigate = useNavigate();
-  const wake = useSyncExternalStore(subscribe, getSnapshot);
 
   const rowRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef(0);
@@ -75,9 +72,7 @@ export default function MarkDeck() {
   return (
     <div className="mark-deck" aria-label="The marks on this chart">
       <div className="mark-deck-context">
-        <p className="mono-label">
-          {TOTAL_MARKS} marks{wake.charted > 0 && ` · ${wake.charted} charted`}
-        </p>
+        <p className="mono-label">{BEACONS.length} marks</p>
         <QuickText className="mark-deck-text btn btn-primary btn-sm" />
       </div>
 

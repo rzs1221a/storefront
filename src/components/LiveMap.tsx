@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerCamera, registerTourMap, FRAMES, APPROACH } from "../lib/cameraFrames";
 import { BEACONS } from "../lib/destinations";
-import { registerWakeSink, wakeCoords } from "../lib/wake";
 import StarSky from "./StarSky";
 
 /**
@@ -171,40 +170,6 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
            * stay named from much higher — which matters, because the catalog
            * frame sits at zoom ~8.9 and that is exactly where they need names.
            */
-          /*
-           * The wake — the visitor's own track, drawn as a hairline between
-           * the marks they have actually visited this session. Source and
-           * layer are created once here (the map mounts once); every later
-           * navigation reaches it through the registered sink as a setData,
-           * never a rebuild. No glow, no dash: a chart records a track, it
-           * does not celebrate one.
-           */
-          const wakeLine = (coords: [number, number][]) =>
-            coords.length >= 2
-              ? {
-                  type: "Feature" as const,
-                  properties: {},
-                  geometry: { type: "LineString" as const, coordinates: coords },
-                }
-              : { type: "FeatureCollection" as const, features: [] };
-
-          map.addSource("wake", { type: "geojson", data: wakeLine(wakeCoords()) });
-          map.addLayer({
-            id: "wake",
-            type: "line",
-            source: "wake",
-            paint: {
-              "line-color": "rgba(255, 255, 255, 0.16)",
-              "line-width": 1,
-            },
-          });
-          registerWakeSink((coords) => {
-            const source = map?.getSource("wake") as
-              | import("maplibre-gl").GeoJSONSource
-              | undefined;
-            source?.setData(wakeLine(coords));
-          });
-
           const WORK_LABEL_MIN_ZOOM = 10.6;
           const CONCEPT_LABEL_MIN_ZOOM = 8.6;
           const syncLabels = () => {
@@ -295,7 +260,6 @@ export default function LiveMap({ dimmed }: { dimmed: boolean }) {
     return () => {
       cancelled = true;
       registerCamera(null);
-      registerWakeSink(null);
       cancelAnimationFrame(raf);
       delete (window as unknown as { __seamarkMap?: unknown }).__seamarkMap;
       map?.remove();

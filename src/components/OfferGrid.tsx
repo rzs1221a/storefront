@@ -57,7 +57,7 @@ function TierCard({
      band; anywhere without one, go to the case study, which flies its own
      camera. */
   const seeItFly = () => {
-    const demo = document.querySelector(".demo-band");
+    const demo = document.querySelector("#exhibit");
     if (demo) {
       demo.scrollIntoView({ behavior: "smooth", block: "start" });
       flyToFrame(FRAMES["work-the-aerial"]);

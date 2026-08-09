@@ -51,6 +51,24 @@ const css = join(ROOT, "src", "index.css");
 check(css, /transition[^;]*\s+ease\s*[,;]/, "bare `ease`; use an --ease-* token");
 check(css, /transition:\s*[^;]*\s+ease$/, "bare `ease`; use an --ease-* token");
 
+// Backdrop blur exists for exactly one reason: overlays floating over the
+// live chart inside the exhibit (--glass-filter-heavy). Any other
+// backdrop-filter is decoration with nothing to refract, at GPU cost.
+{
+  const text = readFileSync(css, "utf8");
+  const lines = text.split("\n");
+  lines.forEach((line, i) => {
+    // Declarations only — @supports feature-query conditions also contain
+    // the property name but never end in a semicolon.
+    if (!/backdrop-filter:[^;]*;/.test(line)) return;
+    if (/var\(--glass-filter-heavy\)|backdrop-filter:\s*none/.test(line)) return;
+    if (/^\s*\*/.test(line) || /^\s*\/\*/.test(line)) return; // comments
+    failures.push(
+      `src/index.css:${i + 1} — backdrop-filter outside the exhibit; use --glass-filter-heavy or none\n    ${line.trim()}`
+    );
+  });
+}
+
 if (failures.length) {
   console.error(`tokens-check: ${failures.length} violation(s)\n`);
   for (const f of failures) console.error(`  ${f}\n`);

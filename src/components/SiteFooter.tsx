@@ -1,10 +1,7 @@
-import { useSyncExternalStore } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { BRAND, CONTACT } from "../lib/brand";
-import { PRIMARY_NAV, WORK_DESTINATIONS, destinationFor } from "../lib/destinations";
+import { PRIMARY_NAV, WORK_DESTINATIONS } from "../lib/destinations";
 import { CATEGORIES } from "../lib/catalog";
-import { subscribe, getSnapshot, previousMark, TOTAL_MARKS } from "../lib/wake";
-import { legBetween } from "../lib/chart";
 import Conditions from "./Conditions";
 import BrandMark from "./BrandMark";
 import QuickText from "./QuickText";
@@ -14,33 +11,6 @@ import QuickText from "./QuickText";
  * full directory, and the disclaimers. The instruments moved here from the
  * old rail — a footer is where a chart keeps its legend.
  */
-
-function ChartLine() {
-  const { pathname } = useLocation();
-  const wake = useSyncExternalStore(subscribe, getSnapshot);
-
-  const here = destinationFor(pathname);
-  const prev = previousMark();
-  const leg =
-    here.beacon && prev && prev.path !== here.path
-      ? legBetween(prev.beacon.center, here.beacon.center)
-      : null;
-
-  if (wake.charted === 0) return null;
-
-  return (
-    <div className="foot-chart">
-      <p className="mono-label">
-        {wake.charted} of {TOTAL_MARKS} marks charted
-      </p>
-      {leg && leg.nm > 0 && (
-        <p className="mono-label">
-          {leg.nm} nm {leg.compass} from {prev!.beacon.name}
-        </p>
-      )}
-    </div>
-  );
-}
 
 export default function SiteFooter() {
   return (
@@ -61,7 +31,6 @@ export default function SiteFooter() {
             </a>
           </div>
           <div className="mt-6">
-            <ChartLine />
             <Conditions />
           </div>
         </div>

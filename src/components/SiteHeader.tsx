@@ -20,7 +20,7 @@ export default function SiteHeader() {
   return (
     <header className="site-head glass">
       <div className="site-head-row">
-        <NavLink to="/" className="head-brand chromatic-text">
+        <NavLink to="/" className="head-brand">
           <BrandMark size={18} className="text-(--color-signal)" />
           <span>{BRAND.name}</span>
         </NavLink>

@@ -152,29 +152,21 @@
   --shadow-deep: 0 40px 100px -30px rgba(0, 0, 0, 1);
 
   /* ---- Motion ---------------------------------------------------------
-     Durations consume --render-motion-scale, which the governor
-     (src/lib/renderMotion.ts) writes on <html> but nothing previously read.
-     Under load the whole site's motion shortens together. */
-  --dur-1: calc(120ms * var(--render-motion-scale, 1));
-  --dur-2: calc(200ms * var(--render-motion-scale, 1));
-  --dur-3: calc(320ms * var(--render-motion-scale, 1));
-  --dur-4: calc(520ms * var(--render-motion-scale, 1));
-  --dur-5: calc(820ms * var(--render-motion-scale, 1));
+     Plain milliseconds: the governor that once scaled these died with the
+     global map — restrained IO entrances need no throttle. */
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+  --dur-4: 520ms;
+  --dur-5: 820ms;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* ---- Surface Liquid Glass filters ----------------------------------
-     Ported from heymann-williams-coastal. Low blur so surfaces read
-     clear/refractive (not frosted), heavy saturate + brightness + contrast
-     for the vivid, lensy quality. */
-  --glass-filter: blur(6px) saturate(220%) brightness(1.2) contrast(1.08);
-  /* The heavy frost — overlays that float free of the panel system (tour
-     caption, startup mark) and need blur for legibility, not refraction. */
+  /* The one surviving blur: overlays that float over the live chart inside
+     the exhibit (tour caption, beacons, mark cards) and need frost for
+     legibility over moving imagery. */
   --glass-filter-heavy: blur(14px) saturate(150%);
-  --route-filter-start: blur(14px) saturate(0.68) brightness(0.5);
-  --route-control-filter-start: blur(10px) saturate(0.72) brightness(0.58);
-  --route-scrim-filter-start: blur(18px) brightness(0.7);
 }
 
 /* ── Act theming ─────────────────────────────────────────────────────────
@@ -293,19 +285,6 @@
   }
 }
 
-/* The render-motion governor (src/lib/renderMotion.ts) steps these down when
-   real frame times slip — the glass gets lighter before the page gets slow.
-   (Theme variables may be overridden in ordinary rules; they just cannot be
-   declared under a selector inside @theme.) */
-html[data-render-load="steady"] {
-  --glass-filter: blur(5px) saturate(175%) brightness(1.12) contrast(1.03);
-}
-html[data-render-load="austere"] {
-  --glass-filter: blur(3px) saturate(145%) brightness(1.06) contrast(1.01);
-  --route-filter-start: none;
-  --route-control-filter-start: none;
-  --route-scrim-filter-start: none;
-}
 
 /*
  * The document scrolls. This inverted when the site became a storefront that
@@ -399,11 +378,6 @@ body {
 }
 
 /* The sky: map, sun grade, and tint, fixed behind the scrolling storefront. */
-.map-fix {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-}
 
 /* The map fills the frame and sits under everything. */
 .live-map {
@@ -436,20 +410,6 @@ body {
 /* A tint over the imagery so chrome and panels always hold contrast. It
    deepens while a destination is open, pushing the coast back a step without
    hiding it. */
-.map-tint {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(72% 52% at 50% 0%, rgba(255, 255, 255, 0.045), transparent 66%),
-    linear-gradient(
-      180deg,
-      rgba(5, 5, 6, 0.55),
-      rgba(5, 5, 6, 0.22) 32%,
-      rgba(5, 5, 6, 0.4)
-    );
-  transition: opacity 0.9s var(--ease-out-expo);
-}
 
 /* ── The reveal ──────────────────────────────────────────────────────────
  * While the opaque hero holds the first screen, the chart behind it wears
@@ -458,27 +418,9 @@ body {
  * veil dissolves over a long beat and the coast settles to its resting
  * grade. Arriving, not switching on. Under reduced motion the stage is
  * never set, so none of this runs and the chart is simply at rest. */
-.map-fix::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: var(--color-plate);
-  opacity: 0;
-  transition: opacity calc(var(--dur-5) * 2.2) var(--ease-out-quart);
-}
-body[data-map-stage="veiled"] .map-fix::after {
-  opacity: 0.62;
-  transition: none;
-}
 
 /* The chrome acknowledges the world opening behind it: solid masthead over
    the curtain, glass again once the chart is out. */
-body[data-map-stage="veiled"] .site-head {
-  background: var(--color-plate);
-  backdrop-filter: none;
-  box-shadow: none;
-}
 .site-head {
   transition:
     background-color var(--dur-5) var(--ease-out-quart),
@@ -660,15 +602,6 @@ body[data-map-stage="veiled"] .site-head {
  * composited div, no shader, no style repaint. Golden hour on the site is
  * golden hour on the coast.
  */
-.sky-grade {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  mix-blend-mode: soft-light;
-  /* Engines that cannot interpolate gradients snap instead — acceptable;
-     the state changes about six times a day. */
-  transition: background 3s var(--ease-out-quart);
-}
 
 /* ── Light signatures ─────────────────────────────────────────────────── */
 
@@ -954,20 +887,7 @@ body[data-map-stage="veiled"] .site-head {
   text-wrap: pretty;
 }
 
-.hero-actions {
-  margin-top: 1.25rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.625rem;
-}
 
-.hero-proof-caption {
-  margin-top: 0.625rem;
-  font-size: 0.75rem;
-  line-height: 1.5;
-  color: var(--color-ink-muted);
-}
 
 /* ── The deck ─────────────────────────────────────────────────────────── */
 
@@ -1407,273 +1327,6 @@ body[data-map-stage="veiled"] .site-head {
   border-color: color-mix(in srgb, var(--color-signal) 40%, transparent);
 }
 
-/* ── The arrival ──────────────────────────────────────────────────────────
- * Ported from heymann-williams-coastal's startup gate, recolored to white
- * light on black. Black → the mark's frame draws itself in → logo, line,
- * caption, progress sweep → the gate parts (the card collapses to a sliver
- * of light and dissolves) while the hero glass blooms in behind it.
- * Opening.tsx owns the timing; any input exits instantly. */
-
-.startup-gate {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  display: grid;
-  place-items: center;
-  background: #000;
-  color: var(--color-ink);
-  overflow: hidden;
-  pointer-events: auto;
-  opacity: 1;
-}
-
-.startup-gate-exit {
-  animation: startupGateClear 1.05s var(--ease-out-expo) forwards;
-}
-.startup-gate-exit .startup-blackout {
-  animation: startupExitBlackout 1.05s var(--ease-out-expo) forwards;
-}
-.startup-gate-exit .startup-mark {
-  animation: startupExitCard 1.05s var(--ease-out-expo) forwards !important;
-}
-.startup-gate-exit .startup-field {
-  animation: startupExitPulse 1.05s var(--ease-out-expo) forwards !important;
-}
-.startup-gate-exit .startup-build-top {
-  animation: startupExitFrame 1.05s var(--ease-out-expo) forwards !important;
-}
-.startup-gate-exit .startup-logo,
-.startup-gate-exit .startup-name,
-.startup-gate-exit .startup-line,
-.startup-gate-exit .startup-caption,
-.startup-gate-exit .startup-progress {
-  animation: startupExitContent 0.52s var(--ease-out-expo) forwards !important;
-}
-
-.startup-blackout {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  background: #000;
-  pointer-events: none;
-  animation: startupBlackout 1.08s var(--ease-out-expo) forwards;
-}
-
-.startup-mark {
-  position: relative;
-  z-index: 1;
-  width: min(480px, calc(100vw - 2rem));
-  padding: clamp(1.5rem, 4vw, 2.5rem);
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: clamp(1rem, 3vw, 1.8rem);
-  background:
-    radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.07), transparent 52%),
-    rgba(255, 255, 255, 0.045);
-  box-shadow:
-    0 42px 120px rgba(0, 0, 0, 0.86),
-    0 0 70px rgba(255, 255, 255, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    inset 0 0 70px rgba(255, 255, 255, 0.055);
-  backdrop-filter: var(--glass-filter-heavy);
-  text-align: center;
-  animation: startupMarkBuild 1.05s var(--ease-out-expo) 0.18s both;
-}
-
-.startup-build-top,
-.startup-field {
-  position: absolute;
-  pointer-events: none;
-}
-
-/* The frame, drawing itself in light around the card. */
-.startup-build-top {
-  inset: 0;
-  z-index: 2;
-  opacity: 0.9;
-  border: 1.5px solid rgba(255, 255, 255, 0.75);
-  border-radius: inherit;
-  box-shadow:
-    0 0 24px rgba(255, 255, 255, 0.35),
-    inset 0 0 18px rgba(255, 255, 255, 0.08);
-  clip-path: inset(0 100% 0 0 round clamp(1rem, 3vw, 1.8rem));
-  animation: startupFrameReveal 1.05s var(--ease-out-expo) 0.12s both;
-}
-
-/* The field — a breathing pool of white light behind the mark. */
-.startup-field {
-  inset: -26%;
-  z-index: 0;
-  border-radius: 9999px;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.2) 0%,
-    rgba(255, 255, 255, 0.1) 30%,
-    rgba(255, 255, 255, 0.04) 48%,
-    transparent 68%
-  );
-  opacity: 0.8;
-  mix-blend-mode: screen;
-  animation: startupFieldPulse 3.8s var(--ease-in-out-soft) infinite;
-}
-
-.startup-logo,
-.startup-name,
-.startup-line,
-.startup-caption,
-.startup-progress {
-  position: relative;
-  z-index: 3;
-}
-
-.startup-logo {
-  display: inline-flex;
-  animation: startupLogoBuild 0.8s var(--ease-out-expo) 0.58s both;
-}
-
-.startup-name {
-  margin-top: 0.9rem;
-  font-size: 1.0625rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  animation: startupTextClip 0.7s var(--ease-out-expo) 1.1s both;
-}
-
-.startup-line {
-  display: block;
-  height: 1px;
-  width: min(220px, 42vw);
-  margin: clamp(0.75rem, 2vw, 1rem) auto 0;
-  transform-origin: center;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
-  box-shadow: 0 0 24px rgba(255, 255, 255, 0.45);
-  animation: startupBuildX 0.9s var(--ease-out-expo) 1.16s both;
-}
-
-.startup-caption {
-  display: block;
-  margin-top: 1rem;
-  font-family: var(--font-mono);
-  font-size: 0.625rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--color-ink-muted);
-  animation: startupTextClip 0.7s var(--ease-out-expo) 1.28s both;
-}
-
-/* A light sweep — gives the wait a satisfying, alive payoff. */
-.startup-progress {
-  display: block;
-  width: min(200px, 42vw);
-  height: 2px;
-  margin: 1.1rem auto 0;
-  border-radius: 999px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.09);
-  animation: startupTextClip 0.7s var(--ease-out-expo) 1.42s both;
-}
-
-.startup-progress-fill {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -45%;
-  width: 42%;
-  border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.65),
-    rgba(255, 255, 255, 0.95),
-    rgba(255, 255, 255, 0.65),
-    transparent
-  );
-  box-shadow: 0 0 16px rgba(255, 255, 255, 0.45);
-  animation: startupProgressSweep 1.45s var(--ease-in-out-soft) 1.5s infinite;
-}
-
-@keyframes startupProgressSweep {
-  0% { left: -45%; }
-  100% { left: 100%; }
-}
-@keyframes startupBlackout {
-  0%, 34% { opacity: 1; }
-  100% { opacity: 0; visibility: hidden; }
-}
-@keyframes startupGateClear {
-  0%, 82% { opacity: 1; }
-  100% { opacity: 0; visibility: hidden; }
-}
-@keyframes startupExitBlackout {
-  0%, 54% { opacity: 0; visibility: hidden; }
-  78% { opacity: 0.92; visibility: visible; }
-  100% { opacity: 0; visibility: hidden; }
-}
-@keyframes startupExitCard {
-  0% { opacity: 1; transform: scale(1); filter: blur(0); }
-  28% { opacity: 1; transform: scale(1.025); filter: blur(0); }
-  64% { opacity: 1; transform: scaleX(0.82) scaleY(0.055); filter: blur(0); }
-  100% { opacity: 0; transform: scaleX(0.18) scaleY(0.01); filter: blur(10px); }
-}
-@keyframes startupExitContent {
-  from { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-  to { opacity: 0; transform: translateY(-8px) scale(0.96); filter: blur(8px); }
-}
-@keyframes startupExitPulse {
-  0% { opacity: 0.6; transform: scale(0.82); filter: blur(4px); }
-  48% { opacity: 1; transform: scale(1.55); filter: blur(14px); }
-  100% { opacity: 0; transform: scale(2.1); filter: blur(22px); }
-}
-@keyframes startupExitFrame {
-  0% { opacity: 0.9; clip-path: inset(0 round clamp(1rem, 3vw, 1.8rem)); }
-  62% { opacity: 1; clip-path: inset(48% 4% 48% 4% round 9999px); }
-  100% { opacity: 0; clip-path: inset(49% 44% 49% 44% round 9999px); }
-}
-@keyframes startupMarkBuild {
-  from { opacity: 0; transform: scaleX(0.82) scaleY(0.04); filter: blur(14px); }
-  48% { opacity: 1; transform: scaleX(1) scaleY(0.04); filter: blur(0); }
-  to { opacity: 1; transform: scale(1); filter: blur(0); }
-}
-@keyframes startupBuildX {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-@keyframes startupFrameReveal {
-  from { clip-path: inset(0 100% 0 0 round clamp(1rem, 3vw, 1.8rem)); }
-  to { clip-path: inset(0 round clamp(1rem, 3vw, 1.8rem)); }
-}
-@keyframes startupFieldPulse {
-  0%, 100% { opacity: 0.38; transform: scale(0.72); filter: blur(0); }
-  50% { opacity: 0.9; transform: scale(1.18); filter: blur(8px); }
-}
-@keyframes startupLogoBuild {
-  from { opacity: 0; transform: translateY(6px) scale(0.9); filter: blur(6px); }
-  to { opacity: 1; transform: none; filter: blur(0); }
-}
-@keyframes startupTextClip {
-  from { opacity: 0; clip-path: inset(0 0 100% 0); transform: translateY(4px); }
-  to { opacity: 1; clip-path: inset(0); transform: none; }
-}
-
-/* Reduced motion: the gate is a brief still card that simply fades — the
-   component holds 400 ms then removes it after a 600 ms fade. */
-@media (prefers-reduced-motion: reduce) {
-  .startup-gate,
-  .startup-gate * {
-    animation: none !important;
-  }
-  .startup-blackout {
-    opacity: 0;
-  }
-  .startup-gate {
-    transition: opacity 0.6s var(--ease-out-quart);
-  }
-  .startup-gate-exit {
-    opacity: 0;
-    pointer-events: none;
-  }
-}
-
 /* ── Focus ────────────────────────────────────────────────────────────── */
 
 :where(a,
@@ -1843,38 +1496,9 @@ summary,
  * A gradient hairline that fades to nothing at both ends, so adjacent
  * sections dissolve into one piece instead of meeting at a ruled border.
  * Use in place of border-t / border-y on full-bleed section breaks. */
-.seam-y {
-  position: relative;
-}
-.seam-y::before,
-.seam-y::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 24px;
-  pointer-events: none;
-  background: radial-gradient(
-    60% 100% at 50% 50%,
-    rgba(255, 255, 255, 0.05),
-    transparent 72%
-  );
-  filter: blur(2px);
-}
-.seam-y::before {
-  top: -12px;
-}
-.seam-y::after {
-  bottom: -12px;
-}
 
 /* Chromatic-aberration text — a faint red/blue fringe that makes labels read
  * as if seen through the glass lens. Subtle by design; clear glass only. */
-.chromatic-text {
-  text-shadow:
-    -0.5px 0 0.5px rgba(255, 0, 0, 0.35),
-    0.5px 0 0.5px rgba(0, 0, 255, 0.35);
-}
 
 /* ── Buttons ──────────────────────────────────────────────────────────── */
 
@@ -2015,7 +1639,8 @@ select.field option {
       inset 0 0 0 1px var(--card-rim-inner, var(--tint-3)),
       inset 0 0 18px var(--tint-4),
       inset 0 0 42px -10px var(--tint-3);
-    backdrop-filter: var(--glass-filter);
+    /* No backdrop-filter: these surfaces sit on solid acts now — the only
+       refracting overlays live inside the exhibit (--glass-filter-heavy). */
   }
 
   /* The clear tier — chrome, buttons, display text. */
@@ -2060,17 +1685,6 @@ select.field option {
     box-shadow:
       0 0 0 2px rgba(255, 255, 255, 0.35),
       inset 0 2px 4px rgba(255, 255, 255, 0.2);
-  }
-}
-
-/* Mobile / tablet: the refractive lens and heavy blur repaint badly over the
- * live map (visible flicker when the camera flies under the glass). Lighten
- * the filter itself rather than fighting the recipe — the governor's
- * data-render-load overrides (higher specificity) still win where they
- * should. */
-@media (max-width: 1023px) {
-  :root {
-    --glass-filter: blur(4px) saturate(150%) brightness(1.08);
   }
 }
 
@@ -2125,109 +1739,6 @@ select.field option {
   flex: none;
 }
 
-
-/* ── Route bloom ──────────────────────────────────────────────────────────
- * Ported from heymann-williams-coastal: on each client-side navigation
- * Shell re-arms body.route-blooming for 620 ms and the incoming page's
- * glass blooms in from the center of the chart — an ellipse clip sweep with
- * the surface arriving out of the route filter. Controls bloom on a tighter
- * ellipse; the store bands scrim in with a blur-fade. will-change is scoped
- * to the blooming window only, and the whole choreography is disabled under
- * reduced motion and the austere render tier. */
-body.route-blooming main :is(.glass, .glass-card, .surface-glass, .page-panel, .tier-card) {
-  animation: routePortraitBloomIn 0.42s var(--ease-out-expo) both;
-  will-change: opacity, transform, filter, clip-path;
-}
-body.route-blooming main :is(.btn, .field, .beacon, .tour-button) {
-  animation: routePortraitControlIn 0.38s var(--ease-out-expo) both;
-}
-body.route-blooming main .store-band {
-  animation: routePortraitScrimIn 0.48s var(--ease-out-expo) both;
-  will-change: opacity, filter;
-}
-
-@keyframes routePortraitBloomIn {
-  0% {
-    opacity: 0;
-    clip-path: ellipse(2% 2% at 52% 46%);
-    filter: var(--route-filter-start);
-    transform: translate3d(0, 0, -120px) scale(0.94);
-  }
-  100% {
-    opacity: 1;
-    clip-path: ellipse(145% 115% at 52% 46%);
-    filter: none;
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-}
-
-@keyframes routePortraitControlIn {
-  0% {
-    opacity: 0;
-    clip-path: ellipse(8% 48% at 52% 50%);
-    filter: var(--route-control-filter-start);
-  }
-  100% {
-    opacity: 1;
-    clip-path: ellipse(140% 140% at 52% 50%);
-    filter: none;
-  }
-}
-
-@keyframes routePortraitScrimIn {
-  0% {
-    opacity: 0;
-    filter: var(--route-scrim-filter-start);
-  }
-  100% {
-    opacity: 1;
-    filter: none;
-  }
-}
-
-/* Phones/tablets: the ellipse clip + filter sweep repaints badly over the
-   live map; a cheap transform/opacity push keeps the same felt rhythm. */
-@media (max-width: 1023px) {
-  body.route-blooming main :is(.glass, .glass-card, .surface-glass, .page-panel, .tier-card),
-  body.route-blooming main :is(.btn, .field, .beacon, .tour-button),
-  body.route-blooming main .store-band {
-    animation: routeMobilePush 0.34s var(--ease-out-expo) both;
-    will-change: opacity, transform;
-  }
-}
-@keyframes routeMobilePush {
-  0% {
-    opacity: 0;
-    transform: translate3d(0, 10px, 0) scale(0.992);
-  }
-  100% {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-}
-
-/* The governor's austere tier keeps navigation instant. */
-html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-card, .surface-glass, .page-panel, .tier-card, .btn, .field, .beacon, .tour-button, .store-band) {
-  animation: none !important;
-}
-
-/* The ?motionHud=1 diagnostics readout. */
-.render-motion-hud {
-  position: fixed;
-  right: 0.75rem;
-  bottom: calc(5.25rem + env(safe-area-inset-bottom));
-  z-index: 99998;
-  padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  border: 1px solid var(--line-strong);
-  background: rgba(5, 5, 6, 0.85);
-  font-family: var(--font-mono);
-  font-size: 0.625rem;
-  letter-spacing: 0.08em;
-  color: var(--color-ink-soft);
-  pointer-events: none;
-}
-
 /* ── Motion preference ────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
@@ -2247,42 +1758,10 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-car
 
 /* ── The storefront layer ─────────────────────────────────────────────── */
 
-/*
- * Content flows over the fixed chart. The column itself is hit-transparent so
- * clicks in the chart windows reach the beacons beneath; every visible child
- * re-enables its own pointer events.
- */
+/* Ordinary content flow — there is nothing beneath the page to click
+   through to anymore. */
 .storefront {
-  position: relative;
-  z-index: 1;
-  pointer-events: none;
   flex: 1;
-}
-.storefront > * > * {
-  pointer-events: auto;
-}
-.storefront .chart-window {
-  pointer-events: none;
-}
-
-/* A window onto the chart: nothing but height. The camera has already flown
-   wherever the neighboring section pointed it. */
-.chart-window {
-  height: 58vh;
-  pointer-events: none;
-}
-.chart-window.is-short {
-  height: 30vh;
-}
-/* On a phone the chart reads at a glance and 58vh is pure scroll cost —
-   the windows narrow so the argument keeps moving. */
-@media (max-width: 640px) {
-  .chart-window {
-    height: 38vh;
-  }
-  .chart-window.is-short {
-    height: 22vh;
-  }
 }
 
 /* Phone-only sticky contact bar — see MobileCtaBar in routes/Coast.tsx. It
@@ -2448,31 +1927,7 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-car
    curtain's bottom edge at the precise moment it must read as seamless.
    The negative top margin tucks it under the floating masthead so no map
    sliver shows above the curtain. */
-.hero-band {
-  min-height: 100svh;
-  margin-top: calc(-1 * var(--head-clearance));
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 2rem;
-  padding: clamp(6rem, 16vh, 9.5rem) var(--gutter) 1.25rem;
-  background: var(--surface-solid);
-  pointer-events: none;
-}
-.hero-band > * {
-  pointer-events: auto;
-}
 /* Type directly on the plate — no card. The claim IS the surface. */
-.hero-panel {
-  max-width: 62rem;
-}
-
-/* A quiet promise at the curtain's hem. Muted, not faint — it is still
-   text, and the verifier measures it like any other. */
-.hero-cue {
-  align-self: center;
-  color: var(--color-ink-muted);
-}
 
 /* ── The proof rail ── */
 .proof-rail {
@@ -2488,131 +1943,7 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-car
   font-size: var(--text-title);
   letter-spacing: -0.01em;
 }
-.work-feature.is-wide {
-  max-width: min(76rem, 100%);
-}
 
-/* ── The demonstration band ──────────────────────────────────────────────
- * The one section where the scrim lifts entirely and the chart is bare.
- * Everything inside floats as an instrument; the map is the surface. */
-.demo-band {
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 2rem;
-  padding: clamp(3rem, 8vh, 5rem) var(--gutter) 1.25rem;
-  pointer-events: none;
-}
-.demo-band > * {
-  pointer-events: auto;
-}
-.demo-head {
-  max-width: 46rem;
-  padding: 1.25rem 1.5rem;
-}
-.demo-lede {
-  margin-top: 0.75rem;
-  font-size: var(--text-lede);
-  line-height: var(--text-lede--line-height);
-  color: var(--color-ink-soft);
-  text-wrap: pretty;
-}
-.demo-helm {
-  align-self: flex-start;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
-  width: min(34rem, 100%);
-}
-.demo-helm .command-field {
-  width: 100%;
-}
-.demo-helm .tour-button {
-  align-self: flex-start;
-}
-
-/* While the demonstration owns the viewport, the legibility veil thins —
-   the chart is as bare as this site ever shows it. */
-body[data-demo-active] .map-tint {
-  opacity: 0.3;
-}
-
-/* On desktop the helm IS the demo; the swipe deck is the phone's way in. */
-@media (min-width: 640px) {
-  .demo-band .mark-deck {
-    display: none;
-  }
-}
-
-/* ── The close: the page's one inversion ─────────────────────────────────
- * White plate, dark ink. Everything inside that was built for the dark
- * system is re-grounded here — the glass recipe's white rims and grain
- * make no sense on paper, so the surfaces go flat. */
-/* Compound selector on purpose: .store-band declares its scrim later in
-   the file, and the inversion must beat it on specificity, not on source
-   order. */
-.store-band.store-close {
-  background: var(--color-ink);
-  color: var(--color-plate);
-}
-.store-close .store-band-title,
-.store-close .store-band-title em {
-  color: var(--color-plate);
-}
-.store-close .store-band-title em {
-  color: rgba(5, 5, 5, 0.66);
-}
-.store-close .store-band-lede {
-  color: rgba(5, 5, 5, 0.72);
-}
-.store-close .surface-glass {
-  background: rgba(0, 0, 0, 0.045);
-  border-color: rgba(0, 0, 0, 0.16);
-  backdrop-filter: none;
-  box-shadow: none;
-}
-.store-close .surface-glass::before,
-.store-close .surface-glass::after {
-  display: none;
-}
-.store-close .field {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.28);
-  color: var(--color-plate);
-}
-.store-close .field::placeholder {
-  color: rgba(5, 5, 5, 0.45);
-}
-.store-close .field:focus {
-  border-color: rgba(0, 0, 0, 0.75);
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
-}
-.store-close .field-label,
-.store-close .mono-label {
-  color: rgba(5, 5, 5, 0.66);
-}
-.store-close .btn-primary {
-  background: var(--color-plate);
-  color: var(--color-ink);
-  border-color: var(--color-plate);
-}
-.store-close .btn-ghost {
-  color: var(--color-plate);
-  border-color: rgba(0, 0, 0, 0.32);
-  background: rgba(0, 0, 0, 0.04);
-  backdrop-filter: none;
-  box-shadow: none;
-}
-.store-close a {
-  color: inherit;
-}
-.hero-actions .tour-button {
-  width: auto;
-  padding-inline: 1.1rem;
-}
 
 /* ── Store bands ── */
 
@@ -2623,48 +1954,10 @@ body[data-demo-active] .map-tint {
   flex-direction: column;
 }
 
-.store-band {
-  position: relative;
-  /* A scrim, not a plate: the chart reads through every band now. No
-     backdrop-filter here — a full-width blur repaints the whole viewport on
-     every camera frame. The scrim alpha is the contrast knob for the h2 and
-     lede sampled directly on it. */
-  background: linear-gradient(180deg, rgba(6, 6, 8, 0.7), rgba(6, 6, 8, 0.6));
-  padding: clamp(3rem, 7vh, 5.5rem) var(--gutter);
-}
-.store-band-head {
-  max-width: 46rem;
-}
-.store-band-title {
-  margin-top: 0.6rem;
-  font-size: var(--text-section);
-  font-weight: var(--text-section--font-weight);
-  letter-spacing: var(--text-section--letter-spacing);
-  line-height: var(--text-section--line-height);
-  text-wrap: balance;
-}
 /* Geist has no italic: emphasis inside a display line is a lighter roman
    weight in softer ink — a change of light, not of slant. */
-.store-band-title em,
-.hero-title em {
-  font-style: normal;
-  font-weight: 420;
-  color: var(--color-ink-soft);
-}
-.store-band-lede {
-  margin-top: 1rem;
-  font-size: var(--text-lede);
-  line-height: var(--text-lede--line-height);
-  letter-spacing: var(--text-lede--letter-spacing);
-  color: var(--color-ink-soft);
-  max-width: 58ch;
-}
 /* The offer grid renders inline on the home band; its container queries need
    a containment context here exactly as they do inside a page panel. */
-.store-band-grid {
-  margin-top: 2.5rem;
-  container-type: inline-size;
-}
 /* One line under the tier cards: the second axis of the offer. */
 .modules-strip {
   margin-top: 1.5rem;
@@ -2686,81 +1979,6 @@ body[data-demo-active] .map-tint {
   }
 }
 /* The embedded close form: page-panel width, left-aligned inside the
-   centered band, because forms read left-to-right even when framed. */
-.store-close-form {
-  margin: 2.25rem auto 0;
-  max-width: 40rem;
-  text-align: left;
-}
-.store-band-actions {
-  margin-top: 1.75rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-.store-close {
-  text-align: center;
-  border-radius: 0;
-}
-.store-close .store-band-title,
-.store-close .store-band-lede {
-  margin-inline: auto;
-}
-.store-close .store-band-actions {
-  justify-content: center;
-}
-
-/* ── Category grid ── */
-
-.category-grid {
-  margin-top: 2.5rem;
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-}
-.category-card {
-  border-radius: 1rem;
-  padding: 1.25rem 1.35rem;
-}
-.category-card.is-cta {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.category-name {
-  font-size: var(--text-title);
-  font-weight: 480;
-  line-height: var(--text-title--line-height);
-  letter-spacing: var(--text-title--letter-spacing);
-}
-.category-blurb {
-  margin-top: 0.35rem;
-  font-size: 0.8125rem;
-  color: var(--color-ink-muted);
-}
-.category-list {
-  margin-top: 0.9rem;
-  display: grid;
-}
-.category-list a {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-  /* 44px minimum touch target — these rows are the phone's main catalog. */
-  min-height: 2.75rem;
-  padding: 0.45rem 0;
-  border-top: 1px solid var(--line);
-  font-size: 0.875rem;
-  color: var(--color-ink-soft);
-  transition: color 0.2s var(--ease-out-quart);
-}
-@media (hover: hover) and (pointer: fine) {
-  .category-list a:hover {
-    color: var(--color-ink);
-  }
-}
-
 /* ── Module rows (Packages page) ── */
 
 .module-row {
@@ -2957,6 +2175,11 @@ body[data-demo-active] .map-tint {
 .act-head + * {
   margin-top: var(--space-7);
 }
+/* The offer grid's container queries size against this, exactly as they do
+   inside a page panel. */
+.act-grid {
+  container-type: inline-size;
+}
 
 /* ── Act I: the claim — one statement, centered in a full viewport ── */
 .act-claim {
@@ -3054,6 +2277,3 @@ body[data-demo-active] .map-tint {
 /* R1→R2 shim: detail routes still render the map-era chart window above
    their panels; with no global chart it is a hole. Hidden here, rebuilt as
    a paper-first article layout in the next phase. */
-.chart-window {
-  display: none;
-}
