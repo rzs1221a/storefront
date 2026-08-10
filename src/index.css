@@ -2897,3 +2897,153 @@ html[data-sky="dusk"] {
   font-size: 0.75rem;
   color: var(--color-ink-muted);
 }
+
+/* ═══ The chart beneath the page ═════════════════════════════════════════
+ * One non-interactive map, fixed behind everything on the home page. The
+ * layer seals pointer events — the coast is scenery and camera subject,
+ * never a control. Light tiles are opaque and cover it; dark tiles open
+ * APERTURES: soft holes in their shade anchored to different screen
+ * edges, so the chart burns through somewhere new in every section. */
+.chart-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.storefront-home {
+  position: relative;
+  z-index: 1;
+}
+
+/* An aperture tile paints its own shade instead of a flat plate: opaque
+   where the copy lives, open where the coast shows. Content rides above
+   the shade. The tile MUST be the containing block — an unpositioned tile
+   let the pseudo sheets resolve inset:0 against the whole page and black
+   out sections thousands of pixels away. The verifier caught it three
+   times; the bug was here, not in the verifier. */
+.tile {
+  position: relative;
+}
+.tile[data-aperture] {
+  background-color: transparent;
+}
+.tile[data-aperture] > * {
+  position: relative;
+  z-index: 1;
+}
+.tile[data-aperture]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* The stage: open water low and wide — stats sit on solid, the coast
+   breathes beneath them. */
+.tile[data-aperture="stage"]::before {
+  background: radial-gradient(
+    75rem 40rem at 50% 100%,
+    rgba(0, 0, 0, 0.08),
+    rgba(0, 0, 0, 0.5) 52%,
+    var(--color-plate) 74%
+  );
+}
+.aperture-stage {
+  min-height: 46svh;
+  display: flex;
+  align-items: flex-end;
+  width: min(88rem, 100%);
+  padding-bottom: 1.5rem;
+}
+.aperture-deck {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+
+/* The lean: the bento keeps its copy right of a coast that glows along
+   the left edge. */
+.tile[data-aperture="left"]::before {
+  background: radial-gradient(
+    50rem 60rem at -12% 55%,
+    rgba(0, 0, 0, 0.12),
+    rgba(0, 0, 0, 0.55) 48%,
+    var(--color-plate) 72%
+  );
+}
+
+/* The ignition: the claim opens PURE black. The doubt types itself out,
+   and then the coast ignites along the bottom edge — the moment the page
+   turns out to be alive. Reduced motion: already lit. */
+.tile[data-aperture="ignite"]::before {
+  background: radial-gradient(
+    70rem 26rem at 50% 108%,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.55) 46%,
+    var(--color-plate) 70%
+  );
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tile[data-aperture="ignite"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: var(--color-plate);
+    animation: coast-ignite 1.6s var(--ease-out-quart) 2.3s forwards;
+  }
+  @keyframes coast-ignite {
+    to {
+      opacity: 0;
+    }
+  }
+}
+
+/* ── Work showcases ── every project a product: screenshot, signature,
+   the three ways forward (study it, visit it, order one like it). */
+.work-showcase {
+  display: grid;
+  gap: 1rem;
+}
+.work-showcase-stage {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-e1);
+}
+.work-showcase-stage img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform var(--dur-4) var(--ease-out-quart);
+}
+@media (hover: hover) and (pointer: fine) {
+  .work-showcase-stage:hover img {
+    transform: scale(1.015);
+  }
+}
+.work-showcase-name {
+  margin-top: 0.3rem;
+  font-size: var(--text-title);
+  font-weight: 600;
+  letter-spacing: var(--text-title--letter-spacing);
+}
+
+/* ── The order action on catalog rows ── found it, order it. */
+.case-order {
+  display: inline-flex;
+  align-items: center;
+  margin: 0.25rem 0 0.75rem 2.6rem;
+  font-size: var(--text-body-sm);
+  color: var(--color-accent);
+}
+@media (hover: hover) and (pointer: fine) {
+  .case-order:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}

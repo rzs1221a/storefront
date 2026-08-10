@@ -50,50 +50,51 @@ export default function Work() {
         </div>
       </dl>
 
-      <ul className="mt-2 divide-y divide-(--line)">
-        {WORK.map((item, i) => {
+      <ul className="mt-6 grid gap-8">
+        {WORK.map((item) => {
           const tier = TIER_FOR.get(item.slug);
           return (
-            <li key={item.slug}>
-              <Link to={`/work/${item.slug}`} className="case-row">
-                <span className="case-index">{String(i + 1).padStart(2, "0")}</span>
-
-                <span className="min-w-0 flex-1">
-                  <span className="case-head">
-                    <span className="case-name">{item.name}</span>
-                    <span className="case-kind">{item.kind}</span>
-                  </span>
-
-                  <span className="case-summary">{item.summary}</span>
-
-                  <span className="case-meta">
-                    <span className="font-mono text-micro text-(--color-ink-faint)">
-                      {item.loc.toLocaleString("en-US")} lines
-                    </span>
-                    {tier && (
-                      <span className="case-tier">Example of: {tier.name}</span>
-                    )}
-                    {item.liveUrl && <span className="case-live">Public</span>}
-                  </span>
-                </span>
-
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  aria-hidden="true"
-                  className="mt-1.5 flex-none text-(--color-ink-faint)"
-                >
-                  <path
-                    d="M5 3L9.5 7L5 11"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+            <li key={item.slug} className="work-showcase">
+              <Link to={`/work/${item.slug}`} className="work-showcase-stage">
+                <img
+                  src={item.desktop}
+                  alt={`The ${item.name} website — ${item.kind.toLowerCase()}`}
+                  width={1440}
+                  height={900}
+                  loading="lazy"
+                  decoding="async"
+                />
               </Link>
+              <div className="work-showcase-copy">
+                <p className="eyebrow">
+                  {item.light.anim && (
+                    <span className={`sig-dot ${item.light.anim}`} aria-hidden="true" />
+                  )}
+                  {item.kind}
+                </p>
+                <h2 className="work-showcase-name">{item.name}</h2>
+                <p className="mt-1 text-body-sm leading-relaxed text-(--color-ink-soft)">
+                  {item.summary}
+                </p>
+                <p className="mono-label mt-2">
+                  {item.loc.toLocaleString("en-US")} lines
+                  {tier && ` · a ${tier.name} build`}
+                  {item.liveUrl && " · public"}
+                </p>
+                <p className="tile-links mt-3 !justify-start">
+                  <Link to={`/work/${item.slug}`}>Case study ›</Link>
+                  {item.liveUrl && (
+                    <a href={item.liveUrl} target="_blank" rel="noreferrer">
+                      Visit live ›
+                    </a>
+                  )}
+                  {tier && (
+                    <Link to={`/contact?package=${tier.slug}`}>
+                      Order one like it ›
+                    </Link>
+                  )}
+                </p>
+              </div>
             </li>
           );
         })}

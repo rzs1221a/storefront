@@ -10,6 +10,17 @@ import { TIERS } from "../lib/offer";
 import { TOTALS, WORK } from "../lib/work";
 import { numberWord } from "../lib/format";
 import Page from "../components/Page";
+import { PromptChip } from "../components/Prompt";
+
+/** Each category opens in the buyer's voice — questions chosen to land in
+    the resolver's vocabulary, so clicking one gets a real answer. */
+const CATEGORY_QUESTIONS: Record<string, string> = {
+  "individual-agents": "I'm one agent — what do I need?",
+  "teams-brokerages": "we're a team — can you handle a roster?",
+  "communities-developments": "can one community get its own site?",
+  "listings-campaigns": "can a single listing have its own address?",
+  "tools-modules": "can you add search to the site I have?",
+};
 
 /**
  * The catalog index — the store shelf.
@@ -59,7 +70,10 @@ export default function Options() {
         const offerings = offeringsByCategory(cat.slug);
         return (
           <section key={cat.slug} id={cat.slug} className="mt-10">
-            <h2 className="text-title font-medium">
+            {CATEGORY_QUESTIONS[cat.slug] && (
+              <PromptChip question={CATEGORY_QUESTIONS[cat.slug]} />
+            )}
+            <h2 className="mt-2 text-title font-medium">
               {cat.name}
             </h2>
             <p className="mt-1 text-body-sm text-(--color-ink-muted)">
@@ -119,6 +133,14 @@ export default function Options() {
                         strokeLinejoin="round"
                       />
                     </svg>
+                  </Link>
+                  {/* Found it? Order it — the slug rides into the lead form
+                      so nobody re-selects the thing they just chose. */}
+                  <Link
+                    to={`/contact?option=${o.slug}`}
+                    className="case-order"
+                  >
+                    {o.status === "shipped" ? "Order this ›" : "Be first ›"}
                   </Link>
                 </li>
               ))}

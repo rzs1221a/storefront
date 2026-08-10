@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { WORK, TOTALS } from "../lib/work";
 import { CATALOG_TOTALS, CATEGORIES, offeringsByCategory } from "../lib/catalog";
@@ -7,64 +7,49 @@ import { CAPABILITIES } from "../lib/capabilities";
 import { CONTACT } from "../lib/brand";
 import { numberWord } from "../lib/format";
 import { useReveals } from "../lib/useReveal";
+import { flyToFrame } from "../lib/cameraFrames";
+import { frameFor } from "../lib/destinations";
+import { getSky } from "../lib/sky";
+import { ask } from "../lib/ask";
+import { PromptChip, TileLinks } from "../components/Prompt";
 import CountUp from "../components/CountUp";
 import Conditions from "../components/Conditions";
-import MapExhibit from "../components/MapExhibit";
+import TourControl from "../components/TourControl";
 import OfferGrid from "../components/OfferGrid";
 import LeadForm from "../components/LeadForm";
 
+const LiveMap = lazy(() => import("../components/LiveMap"));
+
 /**
- * Asked & Answered — the storefront as a session of buyer questions.
+ * Asked & Answered, over the living chart.
  *
- * Every section opens with the question an agent actually asks, typed into
- * the site's own slash-prompt, and the section is the answer. Clicking any
- * question opens the real search sheet with it prefilled — the presentation
- * device IS the product demo, because the product's whole claim is "type
- * plain English and it answers."
+ * The coast returns as scenery, never as a control: one non-interactive
+ * map fixed behind the page (the layer seals pointer events, so nothing
+ * on it can be clicked), and each section flies the camera to its own
+ * area of the coast. The dark tiles open APERTURES — soft holes in their
+ * shade anchored to different screen edges — so the chart burns through
+ * in a different place as you scroll. The shadow itself moves.
  *
- * The copy sells outcomes, not features: leads, listings, ownership,
- * money. Every number is measured, derived, or arithmetic the reader can
- * check on the spot — the template-cost figure states its own assumptions
- * in the caption.
+ * The page opens pure black. The visitor's doubt types itself out, and
+ * then the coast ignites beneath it — the reveal is the moment the site
+ * turns out to be alive. Reduced motion: the coast is simply present.
  */
 
 const byWorkSlug = (slug: string) => WORK.find((w) => w.slug === slug)!;
 const HEYMANN = byWorkSlug("heymann-williams-coastal");
 const PAIR = [byWorkSlug("sold-on-amelia-island"), byWorkSlug("crane-island-bhhs")];
 
-/** A typical template subscription, five years out — the caption states
-    the assumption so the arithmetic is checkable, not asserted. */
 const TEMPLATE_MO = 79;
 const TEMPLATE_5YR = TEMPLATE_MO * 60;
 
-/** The doubts an agent brings to this page. Each resolves in the command
-    bar — clicking one is the demo. */
 const DOUBTS = [
   "why am I paying $99 a month for a template?",
   "can my site answer buyers in plain English?",
   "what does a site I own outright cost?",
 ];
 
-function ask(question: string) {
-  window.dispatchEvent(new CustomEvent("seamark:ask", { detail: question }));
-}
-
-/** A section opener: the buyer's question, typed into the slash prompt.
-    Click it and the site actually answers. */
-function PromptChip({ question }: { question: string }) {
-  return (
-    <button type="button" className="prompt-chip" onClick={() => ask(question)}>
-      <span className="prompt-chip-key" aria-hidden="true">
-        /
-      </span>
-      <span className="prompt-chip-q">{question}</span>
-    </button>
-  );
-}
-
-/** One doubt, typed character by character. Remounted per doubt (key in
-    the parent), so the character count INITIALIZES at zero — no reset
-    call, no cascading render. */
+/** One doubt, typed character by character; remounted per doubt so the
+    count initializes at zero. */
 function TypedDoubt({ text, reduced }: { text: string; reduced: boolean }) {
   const [chars, setChars] = useState(reduced ? text.length : 0);
 
@@ -90,9 +75,7 @@ function TypedDoubt({ text, reduced }: { text: string; reduced: boolean }) {
   );
 }
 
-/** The hero's prompt: the visitor's own doubts, typed with a live caret —
-    the site thinking the buyer's thoughts aloud. Under reduced motion the
-    current doubt is simply present. */
+/** The hero's prompt: the buyer's doubts, thought aloud. */
 function HeroPrompt() {
   const [i, setI] = useState(0);
   const reduced =
@@ -127,9 +110,86 @@ function HeroPrompt() {
 }
 
 /**
- * Phone-only sticky contact bar: the two actions that make money stay one
- * thumb away, and it hides itself once the real close is on screen.
+ * The chart backdrop: the one LiveMap mount, fixed behind the page,
+ * pointer-events sealed at the layer so the map is scenery. Deferred past
+ * first paint (the claim tile is opaque; LCP owes it nothing); the real
+ * sky gradient holds the frame until tiles arrive.
  */
+function ChartBackdrop() {
+  const [mountMap, setMountMap] = useState(false);
+  const [poster] = useState(() => getSky());
+
+  useEffect(() => {
+    if (mountMap) return;
+    type IdleWindow = Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    const w = window as IdleWindow;
+    if (w.requestIdleCallback) {
+      const handle = w.requestIdleCallback(() => setMountMap(true), {
+        timeout: 1500,
+      });
+      return () => w.cancelIdleCallback?.(handle);
+    }
+    const handle = window.setTimeout(() => setMountMap(true), 400);
+    return () => window.clearTimeout(handle);
+  }, [mountMap]);
+
+  return (
+    <div className="chart-bg" aria-hidden="true" style={{ background: poster.gradient }}>
+      {mountMap && (
+        <Suspense fallback={null}>
+          <LiveMap dimmed={false} />
+        </Suspense>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Section camera: each tile declares the destination whose area it shows
+ * (data-frame = a route path), and whichever tile owns the viewport flies
+ * the camera there. Reduced motion holds the opening frame.
+ */
+function useSectionCamera(root: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const el = root.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const ratios = new Map<string, number>();
+    let active: string | null = null;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const key = (entry.target as HTMLElement).dataset.frame;
+          if (!key) continue;
+          ratios.set(key, entry.isIntersecting ? entry.intersectionRatio : 0);
+        }
+        let best: string | null = null;
+        let bestRatio = 0;
+        for (const [key, ratio] of ratios) {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            best = key;
+          }
+        }
+        if (best && best !== active) {
+          active = best;
+          flyToFrame(frameFor(best));
+        }
+      },
+      { threshold: [0, 0.2, 0.4, 0.6, 0.8] }
+    );
+
+    el.querySelectorAll<HTMLElement>("[data-frame]").forEach((t) => observer.observe(t));
+    return () => observer.disconnect();
+  }, [root]);
+}
+
+/** Phone-only sticky contact bar. */
 function MobileCtaBar({ hideWhenVisible }: { hideWhenVisible: React.RefObject<HTMLElement | null> }) {
   const [hidden, setHidden] = useState(false);
 
@@ -156,12 +216,7 @@ function MobileCtaBar({ hideWhenVisible }: { hideWhenVisible: React.RefObject<HT
   );
 }
 
-/** The link pair: accent text links with the › that means "go". */
-function TileLinks({ children }: { children: ReactNode }) {
-  return <p className="tile-links">{children}</p>;
-}
-
-/** The range ribbon: one card per catalog category plus a CTA card. */
+/** The range ribbon. */
 function Ribbon() {
   const rowRef = useRef<HTMLDivElement | null>(null);
 
@@ -209,11 +264,21 @@ function Ribbon() {
 export default function Coast() {
   const closeRef = useRef<HTMLElement | null>(null);
   const revealRoot = useReveals<HTMLDivElement>();
+  useSectionCamera(revealRoot);
 
   return (
     <div className="storefront-home" id="sheet" ref={revealRoot}>
-      {/* ── 1 · The claim ───────────────────────────────────────────── */}
-      <section className="tile is-claim" data-tile="claim" data-act-theme="dark">
+      <ChartBackdrop />
+
+      {/* ── 1 · The claim ── opens pure black; the coast ignites beneath
+          the typed doubt. */}
+      <section
+        className="tile is-claim"
+        data-tile="claim"
+        data-frame="/"
+        data-aperture="ignite"
+        data-act-theme="dark"
+      >
         <div className="tile-copy">
           <HeroPrompt />
           <h1 className="hero-title">Stop renting your website.</h1>
@@ -230,8 +295,16 @@ export default function Coast() {
         </div>
       </section>
 
-      {/* ── 2 · The flagship ────────────────────────────────────────── */}
-      <section className="tile is-aerial" data-tile="aerial" data-act-theme="dark" id="exhibit">
+      {/* ── 2 · The flagship ── the camera is already over The Aerial's
+          water; the aperture opens wide beneath the stats. */}
+      <section
+        className="tile is-aerial"
+        data-tile="aerial"
+        data-frame="/work/the-aerial"
+        data-aperture="stage"
+        data-act-theme="dark"
+        id="exhibit"
+      >
         <div className="tile-copy" data-reveal>
           <PromptChip question="what am I actually buying?" />
           <h2 className="tile-title">
@@ -239,15 +312,15 @@ export default function Coast() {
           </h2>
           <p className="tile-sub">
             The Aerial — a living 3D map of this coast that IS the website.
-            Fly it right here. Then imagine your name on it.
+            It is flying beneath this page right now. Imagine your name on
+            it.
           </p>
           <TileLinks>
             <Link to="/work/the-aerial">Case study ›</Link>
-            <Link to="/packages">Get one like it ›</Link>
+            <Link to="/contact?package=flagship">Order the flagship ›</Link>
           </TileLinks>
         </div>
 
-        {/* Money the reader can check, not claims they have to trust. */}
         <dl className="stat-strip" data-reveal>
           <div data-reveal-child>
             <dd className="stat-figure">
@@ -276,13 +349,23 @@ export default function Coast() {
           </div>
         </dl>
 
-        <div className="tile-stage" data-reveal="scale">
-          <MapExhibit />
+        {/* The open water: the aperture region — nothing here but the
+            coast, and the controls that fly it. */}
+        <div className="aperture-stage" aria-hidden="false">
+          <div className="aperture-deck">
+            <TourControl />
+            <Conditions />
+          </div>
         </div>
       </section>
 
-      {/* ── 3 · The brokerage site ──────────────────────────────────── */}
-      <section className="tile is-work" data-tile="work" data-act-theme="light">
+      {/* ── 3 · The brokerage site ── */}
+      <section
+        className="tile is-work"
+        data-tile="work"
+        data-frame="/work/heymann-williams-coastal"
+        data-act-theme="light"
+      >
         <div className="tile-copy" data-reveal>
           <PromptChip question="will it actually win me listings?" />
           <h2 className="tile-title">
@@ -301,13 +384,11 @@ export default function Coast() {
             )}
             <Link to={`/work/${HEYMANN.slug}`}>Case study ›</Link>
           </TileLinks>
-          {/* The mark's real light characteristic, blinking its actual
-              pattern — the same signature its beacon runs on the chart. */}
           <p className="mono-label mt-3">
             {HEYMANN.light.anim && (
               <span className={`sig-dot ${HEYMANN.light.anim}`} aria-hidden="true" />
             )}
-            {HEYMANN.light.characteristic} · live on the chart
+            {HEYMANN.light.characteristic} · its beacon is on the chart below
           </p>
         </div>
         <div className="tile-stage is-bleed" data-reveal="scale">
@@ -322,8 +403,13 @@ export default function Coast() {
         </div>
       </section>
 
-      {/* ── 4 · Two more, side by side ──────────────────────────────── */}
-      <section className="tile is-grid is-gray" data-tile="pair" data-act-theme="light">
+      {/* ── 4 · Two more ── */}
+      <section
+        className="tile is-grid is-gray"
+        data-tile="pair"
+        data-frame="/work/sold-on-amelia-island"
+        data-act-theme="light"
+      >
         <div className="tile-copy" data-reveal>
           <PromptChip question="what if I'm a solo agent?" />
           <h2 className="tile-title">Solo agents get the same craft.</h2>
@@ -366,8 +452,13 @@ export default function Coast() {
         </TileLinks>
       </section>
 
-      {/* ── 5 · The offer ───────────────────────────────────────────── */}
-      <section className="tile is-compare" data-tile="compare" data-act-theme="light">
+      {/* ── 5 · The offer ── */}
+      <section
+        className="tile is-compare"
+        data-tile="compare"
+        data-frame="/packages"
+        data-act-theme="light"
+      >
         <div className="tile-copy" data-reveal>
           <PromptChip question="what does it cost?" />
           <h2 className="tile-title">
@@ -384,7 +475,6 @@ export default function Coast() {
           <OfferGrid />
         </div>
 
-        {/* Them and us — the rows a platform hopes you never line up. */}
         <div className="versus" data-reveal>
           {COMPARISON.rows.slice(0, 3).map((row) => (
             <div key={row.question} className="versus-row" data-reveal-child>
@@ -401,8 +491,13 @@ export default function Coast() {
         </TileLinks>
       </section>
 
-      {/* ── 5b · The range ribbon ───────────────────────────────────── */}
-      <section className="tile is-ribbon is-gray" data-tile="ribbon" data-act-theme="light">
+      {/* ── 5b · The range ribbon ── */}
+      <section
+        className="tile is-ribbon is-gray"
+        data-tile="ribbon"
+        data-frame="/options"
+        data-act-theme="light"
+      >
         <div className="tile-copy" data-reveal>
           <PromptChip question="do you build my kind of site?" />
           <h2 className="tile-title">
@@ -412,8 +507,15 @@ export default function Coast() {
         <Ribbon />
       </section>
 
-      {/* ── 6 · Capabilities bento ──────────────────────────────────── */}
-      <section className="tile is-bento" data-tile="bento" data-act-theme="dark">
+      {/* ── 6 · Capabilities bento ── the aperture leans left; the coast
+          keeps pace on the right of your eye. */}
+      <section
+        className="tile is-bento"
+        data-tile="bento"
+        data-frame="/capabilities"
+        data-aperture="left"
+        data-act-theme="dark"
+      >
         <div className="tile-copy" data-reveal>
           <PromptChip question="why can't my template do this?" />
           <h2 className="tile-title">Because templates can't.</h2>
@@ -439,9 +541,9 @@ export default function Coast() {
             </p>
           </div>
           <a href="#exhibit" className="bento-cell">
-            <h3 className="bento-title">The engine, above ↑</h3>
+            <h3 className="bento-title">The chart beneath this page ↑</h3>
             <p className="bento-body">
-              Type where you want to go. Every mark is a shipped site.
+              Every mark on it is a site I shipped, at its true coordinate.
             </p>
           </a>
         </div>
@@ -450,8 +552,14 @@ export default function Coast() {
         </TileLinks>
       </section>
 
-      {/* ── 7 · The close ───────────────────────────────────────────── */}
-      <section className="tile is-close is-gray" data-tile="close" data-act-theme="light" ref={closeRef}>
+      {/* ── 7 · The close ── */}
+      <section
+        className="tile is-close is-gray"
+        data-tile="close"
+        data-frame="/contact"
+        data-act-theme="light"
+        ref={closeRef}
+      >
         <div className="tile-copy" data-reveal>
           <PromptChip question="ok — what happens if I reach out?" />
           <h2 className="tile-title">
