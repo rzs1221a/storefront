@@ -2036,11 +2036,14 @@ select.field option {
 .page-panel.is-wide {
   width: min(64rem, calc(100vw - 2 * var(--gutter)));
 }
+/* Apple product-page heads: centered eyebrow, title and datum; the body
+   below stays left for reading. */
+.page-head {
+  text-align: center;
+}
 .page-back {
   display: inline-block;
   margin-bottom: 1rem;
-  /* Sits on the panel's lit rim, where muted ink measured 4.09:1 — the
-     soft tone holds 4.5 there. */
   color: var(--color-ink-soft);
 }
 @media (hover: hover) and (pointer: fine) {

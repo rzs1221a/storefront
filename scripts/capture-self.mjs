@@ -32,15 +32,19 @@ async function resolveChromium() {
 const { default: sharp } = await import("sharp");
 await mkdir(OUT, { recursive: true });
 
-const browser = await chromium.launch({
-  executablePath: await resolveChromium(),
-  args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader"],
-});
-
 for (const shot of [
   { name: "desktop", width: 1440, height: 900, mobile: false, max: 1800 },
   { name: "mobile", width: 390, height: 844, mobile: true, max: 780 },
 ]) {
+  /* One browser per shot, deliberately: a second WebGL capture in a
+     swiftshader process the first capture has already churned fails with
+     "Unable to capture screenshot" — reproducibly in sequence, never in
+     isolation. A fresh process per frame costs seconds and removes the
+     whole failure class. */
+  const browser = await chromium.launch({
+    executablePath: await resolveChromium(),
+    args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader"],
+  });
   const ctx = await browser.newContext({
     viewport: { width: shot.width, height: shot.height },
     deviceScaleFactor: 2,
@@ -73,9 +77,22 @@ for (const shot of [
     }
     .beacon-dot { opacity: 1 !important; }`,
   });
-  const png = await page.screenshot({ type: "png" });
+  /* Software-rendered WebGL occasionally refuses a capture the instant the
+     context churns ("Unable to capture screenshot") — a retry with a beat
+     between attempts has always succeeded in practice. */
+  let png;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      png = await page.screenshot({ type: "png" });
+      break;
+    } catch (err) {
+      if (attempt >= 4) throw err;
+      await page.waitForTimeout(1500);
+    }
+  }
   await freeze.evaluate((n) => n.remove());
   await ctx.close();
+  await browser.close();
 
   /*
    * Blank guard, same as capture.mjs: a capture whose pixels barely vary is a
@@ -102,4 +119,3 @@ for (const shot of [
   console.log(`capture-self: wrote ${path.relative(root, out)}`);
 }
 
-await browser.close();
