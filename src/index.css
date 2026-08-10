@@ -3047,3 +3047,143 @@ html[data-sky="dusk"] {
     text-underline-offset: 4px;
   }
 }
+
+/* ═══ The scrubbed film ══════════════════════════════════════════════════
+ * Scroll stops being a trigger and becomes the conductor: in browsers
+ * with scroll-driven animations, every entrance, settle, and shade drift
+ * is TIED to scroll position — reverse the scroll and the film runs
+ * backward. Compositor-run, transform/opacity only, no scroll-jacking.
+ *
+ * Browsers without animation-timeline (older iOS) keep the IO enter-once
+ * system these same elements already carry; reduced motion keeps
+ * stillness. Three tiers, one markup.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Entrances become scrubs. The animation overrides the IO transition
+       styles while active, so the two systems never fight. */
+    [data-reveal],
+    [data-reveal]:not(.is-revealed) {
+      opacity: 1;
+      transform: none;
+      transition: none;
+      animation: scrub-rise both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 85%;
+    }
+    [data-reveal] [data-reveal-child],
+    [data-reveal]:not(.is-revealed) [data-reveal-child] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+      animation: scrub-rise both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 95%;
+    }
+    @keyframes scrub-rise {
+      from {
+        opacity: 0;
+        transform: translateY(44px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* The hero performs its own exit: as you scroll off the claim, the
+       statement rises, shrinks a breath, and dissolves — pulled by your
+       own hand. */
+    .tile.is-claim .tile-copy {
+      animation: claim-exit both linear;
+      animation-timeline: view();
+      animation-range: exit 0% exit 90%;
+    }
+    @keyframes claim-exit {
+      to {
+        opacity: 0;
+        transform: translateY(-70px) scale(0.95);
+      }
+    }
+
+    /* Stages settle under the scrub: the work arrives at 1.06 and lands
+       at 1 exactly as it reaches the eye. */
+    .tile-stage img,
+    .half-tile-stage img,
+    .work-showcase-stage img {
+      animation: scrub-settle both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 45%;
+    }
+    @keyframes scrub-settle {
+      from {
+        transform: scale(1.06) translateY(24px);
+      }
+      to {
+        transform: none;
+      }
+    }
+
+    /* The shade itself drifts: each aperture's hole slides with the
+       scroll, so the coast appears to move under the page. */
+    .tile[data-aperture]::before {
+      animation: shade-drift both linear;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+    @keyframes shade-drift {
+      from {
+        transform: translateY(-3.5rem);
+      }
+      to {
+        transform: translateY(3.5rem);
+      }
+    }
+    /* The shade sheet needs bleed so its drift never exposes an edge. */
+    .tile[data-aperture]::before {
+      inset: -4rem 0;
+    }
+
+    /* The money arrives at three depths — each numeral on its own rate. */
+    .stat-strip > div:nth-child(1) {
+      animation-range: entry 0% entry 70%;
+    }
+    .stat-strip > div:nth-child(2) {
+      animation-range: entry 15% entry 85%;
+    }
+    .stat-strip > div:nth-child(3) {
+      animation-range: entry 30% entry 100%;
+    }
+
+    /* Ribbon cards deal themselves in with a card-dealer's flick. */
+    .ribbon-card {
+      animation: card-deal both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 80%;
+    }
+    @keyframes card-deal {
+      from {
+        opacity: 0;
+        transform: translateY(36px) rotate(1.2deg);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* Bento cells stagger by column position via their own timelines. */
+    .bento-cell {
+      animation: scrub-rise both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 75%;
+    }
+
+    /* The versus verdicts: them fades in struck, us lands after. */
+    .versus-row {
+      animation: scrub-rise both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 90%;
+    }
+  }
+}
