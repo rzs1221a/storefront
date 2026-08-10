@@ -180,10 +180,11 @@ async function main() {
     // and the inverted close.
     const CONTRAST_PASSES = [
       { route: "/" },
-      { route: "/", scrollTo: '[data-act="proof"]' },
-      { route: "/", scrollTo: '[data-act="engine"]' },
-      { route: "/", scrollTo: '[data-act="offer"]' },
-      { route: "/", scrollTo: '[data-act="close"]' },
+      { route: "/", scrollTo: '[data-tile="aerial"]' },
+      { route: "/", scrollTo: '[data-tile="work"]' },
+      { route: "/", scrollTo: '[data-tile="compare"]' },
+      { route: "/", scrollTo: '[data-tile="bento"]' },
+      { route: "/", scrollTo: '[data-tile="close"]' },
       { route: "/work/crane-island-bhhs" },
       { route: "/packages" },
       { route: "/contact" },
@@ -232,7 +233,7 @@ async function main() {
 
         const out = [];
         for (const el of document.querySelectorAll(
-          "p.lede, .mono-label, .head-link, .act-lede, .store-band-lede, h1, h2, .category-name, .tier-name, .hero-sub, .stage-caption"
+          "p.lede, .mono-label, .head-link, .tile-sub, .tile-links a, h1, h2, .tier-name, .hero-sub, .stat-caption, .stat-figure, .versus-them, .versus-us, .bento-title, .bento-body"
         )) {
           const r = el.getBoundingClientRect();
           if (r.width < 8 || r.height < 8) continue;

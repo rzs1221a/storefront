@@ -1,14 +1,12 @@
 /**
- * The Seamark Studio mark.
+ * The Seamark Studio mark: the slash key.
  *
- * A daymark, drawn the way daymarks are actually made: a diamond board with a
- * solid center panel. US channel markers use exactly this nested geometry, and
- * it happens to be the site's own visual grammar in one glyph — the solid
- * center is the shipped work, the open frame around it is the concept ring.
+ * Lifted from the site's own search affordance — press `/` anywhere and the
+ * command bar answers in plain English. A keycap with the slash inside is
+ * that promise as a glyph: type to it, it takes you there. The rounded
+ * square reads as a key at 16px and as an app tile at 512.
  *
- * Geometry beats illustration below about 20px, so both shapes are pure
- * diamonds; at 16px it reads as a mark, at 30px (the og card) the nesting
- * becomes visible. Keep in sync with public/favicon.svg and scripts/og.mjs.
+ * Keep in sync with public/favicon.svg and scripts/og.mjs.
  */
 export default function BrandMark({
   className = "",
@@ -26,13 +24,21 @@ export default function BrandMark({
       aria-hidden="true"
       className={className}
     >
-      <path
-        d="M8 1.2 14.8 8 8 14.8 1.2 8Z"
+      <rect
+        x="1.2"
+        y="1.2"
+        width="13.6"
+        height="13.6"
+        rx="3.4"
         stroke="currentColor"
         strokeWidth="1.5"
-        strokeLinejoin="round"
       />
-      <path d="M8 5.4 10.6 8 8 10.6 5.4 8Z" fill="currentColor" />
+      <path
+        d="M9.6 4.4 6.4 11.6"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }

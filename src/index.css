@@ -53,10 +53,14 @@
   --color-ink-muted: #a7a7ae;
   --color-ink-faint: #55555c;
 
-  /* The "accent" is white light. No hue anywhere in the chrome. */
   --color-signal: #f5f5f7;
   --color-signal-glow: rgba(255, 255, 255, 0.14);
-  /* The one permitted hue: errors. Everything else stays achromatic. */
+  /* The one-accent doctrine: link blue for actions (text-link pairs, the
+     primary CTA, focus, selection) and alert red for errors. Nothing else
+     in the chrome carries hue — the work's screenshots supply the color.
+     Both accents are re-tuned per register below for measured 4.5:1. */
+  --color-accent: #2997ff;
+  --color-accent-content: #050505;
   --color-alert: #f87171;
 
   /* ---- Semantic surfaces — the registers of the page ----------------
@@ -190,6 +194,8 @@
   --color-ink-faint: #a2a2aa;
   --color-signal: #0c0c0e;
   --color-signal-glow: rgba(0, 0, 0, 0.12);
+  --color-accent: #0066cc;
+  --color-accent-content: #ffffff;
   --color-alert: #b91c1c;
   --surface-solid: var(--color-plate);
   --surface-raised: var(--color-plate-raised);
@@ -340,8 +346,8 @@ body {
 }
 
 ::selection {
-  background: var(--color-signal);
-  color: #050505;
+  background: var(--color-accent);
+  color: var(--color-accent-content);
 }
 
 /* Skip link — visible only when focused. */
@@ -1336,7 +1342,7 @@ textarea,
 select,
 summary,
 [tabindex]):focus-visible {
-  outline: 2px solid var(--color-signal);
+  outline: 2px solid var(--color-accent);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -1525,16 +1531,17 @@ summary,
 }
 
 /* Primary: inverted. Highest contrast on the page, reserved for conversion. */
+/* The Apple button: accent-filled pill. Content color is a per-register
+   token — the dark register's lighter blue needs dark ink to measure. */
 .btn-primary {
-  background: var(--color-ink);
-  color: #050505;
+  background: var(--color-accent);
+  color: var(--color-accent-content);
   padding: 0.9375rem 1.75rem;
-  border: 1px solid var(--color-ink);
+  border: 1px solid var(--color-accent);
 }
 @media (hover: hover) and (pointer: fine) {
   .btn-primary:hover {
-    background: #ffffff;
-    border-color: #ffffff;
+    filter: brightness(1.12);
   }
 }
 
@@ -1930,19 +1937,6 @@ select.field option {
 /* Type directly on the plate — no card. The claim IS the surface. */
 
 /* ── The proof rail ── */
-.proof-rail {
-  margin-top: 1.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.25rem 3rem;
-  max-width: min(76rem, 100%);
-}
-.proof-rail dd {
-  margin-top: 0.25rem;
-  font-family: var(--font-mono);
-  font-size: var(--text-title);
-  letter-spacing: -0.01em;
-}
 
 
 /* ── Store bands ── */
@@ -2133,116 +2127,14 @@ select.field option {
  * ramps, so everything below styles ONE way and renders on both registers.
  */
 
-.act {
-  padding: var(--space-section) var(--gutter);
-  background: var(--color-plate);
-  color: var(--color-ink);
-}
 
-.act-head {
-  max-width: 52rem;
-}
-.act-title {
-  margin-top: 0.6rem;
-  font-size: var(--text-section);
-  font-weight: var(--text-section--font-weight);
-  letter-spacing: var(--text-section--letter-spacing);
-  line-height: var(--text-section--line-height);
-  text-wrap: balance;
-}
-.act-title em,
-.act-title em {
-  font-style: normal;
-  font-weight: 420;
-  color: var(--color-ink-soft);
-}
-.act-lede {
-  margin-top: 1rem;
-  font-size: var(--text-lede);
-  line-height: var(--text-lede--line-height);
-  letter-spacing: var(--text-lede--letter-spacing);
-  color: var(--color-ink-soft);
-  max-width: 58ch;
-  text-wrap: pretty;
-}
-.act-actions {
-  margin-top: 2rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-}
-.act-head + * {
-  margin-top: var(--space-7);
-}
 /* The offer grid's container queries size against this, exactly as they do
    inside a page panel. */
 .act-grid {
   container-type: inline-size;
 }
 
-/* ── Act I: the claim — one statement, centered in a full viewport ── */
-.act-claim {
-  min-height: 100svh;
-  display: grid;
-  align-content: center;
-  /* Tuck under the floating masthead so the first frame is all statement. */
-  margin-top: calc(-1 * var(--head-clearance));
-  padding-top: var(--head-clearance);
-}
-.act-claim-copy {
-  max-width: 68rem;
-}
-/* Transform-only arrival: paints at t=0 (never delays LCP), settles like
-   a title card. */
-@media (prefers-reduced-motion: no-preference) {
-  .act-claim-copy {
-    animation: claim-settle 0.9s var(--ease-out-expo);
-  }
-  @keyframes claim-settle {
-    from {
-      transform: translateY(16px);
-    }
-  }
-}
-
-/* ── Act II: the stages — the work gets the light ── */
-.stage {
-  margin-top: var(--space-7);
-}
-.stage-media {
-  display: block;
-  overflow: hidden;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-e2);
-}
-.stage-caption {
-  margin-top: 0.75rem;
-  font-size: var(--text-caption);
-  line-height: 1.5;
-  color: var(--color-ink-muted);
-}
-/* The flagship goes full-bleed: the act's gutters fall away and the work
-   touches the edges of the screen. */
-.stage.is-feature {
-  margin-inline: calc(-1 * var(--gutter));
-}
-.stage.is-feature .stage-caption {
-  padding-inline: var(--gutter);
-}
-.stage-pair {
-  display: grid;
-  gap: var(--space-5);
-  margin-top: var(--space-7);
-}
-@media (min-width: 900px) {
-  .stage-pair {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-/* ── Act III: the exhibit — a lit instrument in a dark room ── */
+/* ── The exhibit — a lit instrument in a dark room ── */
 .exhibit {
   margin-top: var(--space-7);
 }
@@ -2280,12 +2172,271 @@ select.field option {
   }
 }
 
-/* ── Act V: the close ── */
-.act-close-form {
-  margin-top: var(--space-7);
-  max-width: 40rem;
+
+/* ═══ The tiles ══════════════════════════════════════════════════════════
+ * Apple's homepage grammar: full-bleed product tiles, each a centered
+ * composition — semibold headline, one-line subhead, a pair of accent
+ * text links, the product filling the stage below. Tiles alternate
+ * registers via [data-act-theme]; nothing here styles twice.
+ */
+
+.tile {
+  min-height: 92svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-section-tight) var(--gutter);
+  background: var(--color-plate);
+  color: var(--color-ink);
+  overflow: clip;
 }
 
-/* R1→R2 shim: detail routes still render the map-era chart window above
-   their panels; with no global chart it is a hole. Hidden here, rebuilt as
-   a paper-first article layout in the next phase. */
+.tile-copy {
+  text-align: center;
+  max-width: 46rem;
+}
+.tile-title {
+  margin-top: 0.6rem;
+  font-size: var(--text-section);
+  font-weight: 600;
+  letter-spacing: var(--text-section--letter-spacing);
+  line-height: var(--text-section--line-height);
+  text-wrap: balance;
+}
+.tile-sub {
+  margin-top: 0.9rem;
+  font-size: var(--text-lede);
+  line-height: var(--text-lede--line-height);
+  letter-spacing: var(--text-lede--letter-spacing);
+  color: var(--color-ink-soft);
+  text-wrap: pretty;
+}
+
+/* The link pair — accent, ›, and nothing else. The Apple signature. */
+.tile-links {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem 2.25rem;
+}
+.tile-links a {
+  color: var(--color-accent);
+  font-size: var(--text-body);
+  transition: opacity var(--dur-2) var(--ease-out-quart);
+}
+@media (hover: hover) and (pointer: fine) {
+  .tile-links a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
+/* ── The claim tile ── */
+.tile.is-claim {
+  min-height: 100svh;
+  justify-content: center;
+  margin-top: calc(-1 * var(--head-clearance));
+  padding-top: var(--head-clearance);
+}
+/* Display type needs the full measure; the 46rem copy width is for ledes. */
+.tile.is-claim .tile-copy {
+  max-width: 64rem;
+}
+.tile.is-claim .tile-sub {
+  max-width: 46rem;
+  margin-inline: auto;
+}
+.tile.is-claim .hero-title {
+  font-weight: 600;
+}
+/* Transform-only arrival: paints at t=0 (never delays LCP — measured),
+   settles like a title card. */
+@media (prefers-reduced-motion: no-preference) {
+  .tile.is-claim .tile-copy {
+    animation: claim-settle 0.9s var(--ease-out-expo);
+  }
+  @keyframes claim-settle {
+    from {
+      transform: translateY(16px);
+    }
+  }
+}
+
+/* ── Stages: where the product lives ── */
+.tile-stage {
+  margin-top: var(--space-7);
+  width: min(88rem, 100%);
+}
+.tile-stage img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* Edge to edge — the gutters fall away and the work touches the screen. */
+.tile-stage.is-bleed {
+  width: calc(100% + 2 * var(--gutter));
+  margin-inline: calc(-1 * var(--gutter));
+  margin-bottom: calc(-1 * var(--space-section-tight));
+}
+.tile-stage:not(.is-bleed) img {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-e3);
+}
+.tile-wide {
+  width: min(88rem, 100%);
+}
+
+/* ── The stat strip — measured, never asserted ── */
+.stat-strip {
+  margin-top: var(--space-7);
+  width: min(76rem, 100%);
+  display: grid;
+  gap: var(--space-6) var(--space-5);
+  text-align: center;
+}
+@media (min-width: 800px) {
+  .stat-strip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.stat-figure {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(2.5rem, 1.6rem + 3.8vw, 5.5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.stat-caption {
+  margin-top: 0.75rem;
+  margin-inline: auto;
+  max-width: 24ch;
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  color: var(--color-ink-muted);
+}
+
+/* ── Half tiles, two abreast ── */
+.tile-grid-2 {
+  width: min(88rem, 100%);
+  display: grid;
+  gap: var(--space-5);
+}
+@media (min-width: 900px) {
+  .tile-grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.half-tile {
+  text-align: center;
+  padding-top: var(--space-6);
+}
+.half-tile-title {
+  margin-top: 0.4rem;
+  font-size: var(--text-heading);
+  font-weight: 600;
+  letter-spacing: var(--text-heading--letter-spacing);
+  line-height: var(--text-heading--line-height);
+}
+.half-tile-stage {
+  display: block;
+  margin-top: var(--space-5);
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-e2);
+}
+.half-tile-stage img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform var(--dur-4) var(--ease-out-quart);
+}
+@media (hover: hover) and (pointer: fine) {
+  .half-tile-stage:hover img {
+    transform: scale(1.015);
+  }
+}
+.tile.is-grid .tile-links {
+  margin-top: var(--space-6);
+}
+
+/* ── The versus band — them and us, lined up ── */
+.versus {
+  margin-top: var(--space-7);
+  width: min(70rem, 100%);
+  display: grid;
+  gap: var(--space-6) var(--space-5);
+  text-align: center;
+}
+@media (min-width: 900px) {
+  .versus {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.versus-them {
+  margin-top: 0.75rem;
+  font-size: var(--text-body-sm);
+  line-height: 1.55;
+  color: var(--color-ink-muted);
+}
+.versus-us {
+  margin-top: 0.5rem;
+  font-size: var(--text-body);
+  line-height: 1.55;
+  font-weight: 500;
+}
+
+/* ── The bento ── */
+.bento {
+  margin-top: var(--space-7);
+  display: grid;
+  gap: 0.875rem;
+}
+@media (min-width: 640px) {
+  .bento {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .bento {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.bento-cell {
+  display: block;
+  padding: 1.75rem;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--line);
+  background: var(--tint-1);
+  text-align: left;
+  transition:
+    border-color var(--dur-2) var(--ease-out-quart),
+    background-color var(--dur-2) var(--ease-out-quart);
+}
+@media (hover: hover) and (pointer: fine) {
+  a.bento-cell:hover {
+    border-color: var(--line-strong);
+    background: var(--tint-2);
+  }
+}
+.bento-title {
+  font-size: var(--text-title);
+  font-weight: 600;
+  letter-spacing: var(--text-title--letter-spacing);
+  line-height: var(--text-title--line-height);
+}
+.bento-body {
+  margin-top: 0.6rem;
+  font-size: var(--text-body-sm);
+  line-height: 1.55;
+  color: var(--color-ink-soft);
+}
+
+/* ── The close tile ── */
+.tile-form {
+  margin-top: var(--space-7);
+  width: min(40rem, 100%);
+  text-align: left;
+}
