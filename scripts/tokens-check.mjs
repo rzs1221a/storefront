@@ -61,7 +61,12 @@ check(css, /transition:\s*[^;]*\s+ease$/, "bare `ease`; use an --ease-* token");
     // Declarations only — @supports feature-query conditions also contain
     // the property name but never end in a semicolon.
     if (!/backdrop-filter:[^;]*;/.test(line)) return;
-    if (/var\(--glass-filter-heavy\)|backdrop-filter:\s*none/.test(line)) return;
+    if (
+      /var\(--glass-filter-heavy\)|var\(--glass-filter-nav\)|backdrop-filter:\s*none/.test(
+        line
+      )
+    )
+      return;
     if (/^\s*\*/.test(line) || /^\s*\/\*/.test(line)) return; // comments
     failures.push(
       `src/index.css:${i + 1} — backdrop-filter outside the exhibit; use --glass-filter-heavy or none\n    ${line.trim()}`

@@ -37,10 +37,10 @@
    hand-written CSS. Without it, half these tokens silently vanish from the
    build. */
 @theme static {
-  /* ---- Color: plate (depth) ---------------------------------------- */
-  --color-plate: #050505;
-  --color-plate-raised: #0a0a0c;
-  --color-plate-high: #101014;
+  /* ---- Color: plate (depth) — Apple's dark register values ---------- */
+  --color-plate: #000000;
+  --color-plate-raised: #101010;
+  --color-plate-high: #161617;
 
   /* Ink — white light through silver to shadow. Each step sits at or above
      the luminance of the warm value it replaced, so the swap alone can never
@@ -49,9 +49,9 @@
      background here is never a fixed colour — verify.mjs re-measures at four
      live camera positions. */
   --color-ink: #f5f5f7;
-  --color-ink-soft: #c9c9cf;
-  --color-ink-muted: #a7a7ae;
-  --color-ink-faint: #55555c;
+  --color-ink-soft: #d2d2d7;
+  --color-ink-muted: #a1a1a6;
+  --color-ink-faint: #6e6e73;
 
   --color-signal: #f5f5f7;
   --color-signal-glow: rgba(255, 255, 255, 0.14);
@@ -138,7 +138,7 @@
   --gutter: clamp(1.25rem, 5vw, 5rem);
   --measure: 68ch;
   /* Clearance under the sticky masthead for anchored/keyboard scrolls. */
-  --head-clearance: 5.5rem;
+  --head-clearance: 4rem;
 
   /* ---- Radius — six values, no in-betweens --------------------------- */
   --radius-xs: 0.25rem;
@@ -167,10 +167,14 @@
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* The one surviving blur: overlays that float over the live chart inside
-     the exhibit (tour caption, beacons, mark cards) and need frost for
-     legibility over moving imagery. */
+  /* The two permitted blurs: overlays floating over the live chart inside
+     the exhibit, and the global nav bar floating over scrolling content —
+     each refracts something real. tokens-check bans any third. */
   --glass-filter-heavy: blur(14px) saturate(150%);
+  --glass-filter-nav: saturate(180%) blur(20px);
+
+  /* The global nav's height, and the clearance anchored scrolls need. */
+  --nav-height: 3rem;
 }
 
 /* ── Act theming ─────────────────────────────────────────────────────────
@@ -185,13 +189,14 @@
  * flips to ink so "accent" stays "the strongest available contrast".
  */
 [data-act-theme="light"] {
-  --color-plate: #f4f4f6;
+  /* Apple's light register, verbatim: page white, gray field, their inks. */
+  --color-plate: #fbfbfd;
   --color-plate-raised: #ffffff;
-  --color-plate-high: #e9e9ee;
-  --color-ink: #0c0c0e;
-  --color-ink-soft: #3c3c42;
-  --color-ink-muted: #5c5c64;
-  --color-ink-faint: #a2a2aa;
+  --color-plate-high: #f5f5f7;
+  --color-ink: #1d1d1f;
+  --color-ink-soft: #424245;
+  --color-ink-muted: #6e6e73;
+  --color-ink-faint: #a1a1a6;
   --color-signal: #0c0c0e;
   --color-signal-glow: rgba(0, 0, 0, 0.12);
   --color-accent: #0066cc;
@@ -425,13 +430,6 @@ body {
  * grade. Arriving, not switching on. Under reduced motion the stage is
  * never set, so none of this runs and the chart is simply at rest. */
 
-/* The chrome acknowledges the world opening behind it: solid masthead over
-   the curtain, glass again once the chart is out. */
-.site-head {
-  transition:
-    background-color var(--dur-5) var(--ease-out-quart),
-    box-shadow var(--dur-5) var(--ease-out-quart);
-}
 
 /* The real sky. Above the plate, below every piece of chrome, never
    interactive. Draws nothing at all while the sun is up. */
@@ -1811,47 +1809,25 @@ select.field option {
   }
 }
 
-/* ── Masthead ── */
-
-/* The dock: a floating glass pill, HW's glass-nav grammar. Sticky rather
-   than fixed so it keeps its flow space (content clearance and tab order
-   need no compensation) while floating over everything once scrolled. */
-.site-head {
+/* ── The global nav ──────────────────────────────────────────────────────
+ * One slim translucent bar, full width, always dark: the logo alone on
+ * the left, small text links centered, search and the one commercial
+ * action on the right. The bar's blur is the second and last permitted
+ * backdrop-filter (--glass-filter-nav): unlike the retired glass system,
+ * this one genuinely floats over scrolling content everywhere. */
+.global-nav {
   position: sticky;
-  top: 0.6rem;
+  top: 0;
   z-index: 40;
-  margin-inline: 0.75rem;
-  border-radius: 1.4rem;
-  padding: 0.65rem 1.1rem 0;
-  box-shadow:
-    0 18px 50px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16);
-  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: var(--glass-filter-nav);
+  color: #f5f5f7;
 }
-/* The dock carries small nav text over the flying chart — it takes the clear
-   pane but with a deeper backing than card glass. The rule lives after the
-   universal @supports block in source order, so it wins at equal specificity. */
-@supports (
-  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
-) {
-  .site-head {
-    /* Opaque, deliberately: there is no longer a moving map beneath the
-       chrome for glass to refract, and the masthead floats over both the
-       dark and the paper registers — translucency was costing the nav
-       links their 4.5:1 over paper (measured 4.40) for a refraction
-       effect with nothing left to refract. */
-    background:
-      linear-gradient(
-        138deg,
-        rgba(150, 150, 168, 0.14),
-        rgba(110, 110, 130, 0.08) 55%,
-        rgba(140, 140, 160, 0.12)
-      ),
-      var(--color-plate-raised);
-    backdrop-filter: none;
-  }
-}
-.site-head-row {
+.global-nav-row {
+  margin: 0 auto;
+  max-width: 64rem;
+  height: 3rem;
+  padding-inline: 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1860,86 +1836,114 @@ select.field option {
 .head-brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
+  color: #f5f5f7;
 }
-.site-head-command {
+.global-nav-links {
+  display: none;
   flex: 1;
-  max-width: 26rem;
-  display: none;
+  justify-content: center;
+  gap: 2.1rem;
 }
-@media (min-width: 780px) {
-  .site-head-command {
-    display: block;
+@media (min-width: 834px) {
+  .global-nav-links {
+    display: flex;
   }
-}
-.site-head-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-}
-.head-phone {
-  display: none;
-}
-@media (min-width: 1080px) {
-  .head-phone {
-    display: inline;
-  }
-}
-.site-head-actions .btn {
-  white-space: nowrap;
-}
-@media (max-width: 480px) {
-  .site-head-actions .btn {
-    padding-inline: 0.8rem;
-    font-size: 0.75rem;
-  }
-}
-.site-head-nav {
-  display: flex;
-  gap: 0.25rem;
-  margin-top: 0.5rem;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.site-head-nav::-webkit-scrollbar {
-  display: none;
 }
 .head-link {
-  padding: 0.55rem 0.7rem;
-  font-size: 0.875rem;
-  color: var(--color-ink-soft);
-  border-bottom: 2px solid transparent;
+  font-size: 0.75rem;
+  letter-spacing: 0.01em;
+  color: rgba(245, 245, 247, 0.8);
+  transition: color var(--dur-2) var(--ease-out-quart);
   white-space: nowrap;
-  transition: color 0.2s var(--ease-out-quart);
 }
-.head-link.is-active {
-  color: var(--color-ink);
-  border-bottom-color: var(--color-signal);
+.head-link.is-active,
+.head-link:hover {
+  color: #f5f5f7;
 }
-@media (hover: hover) and (pointer: fine) {
-  .head-link:hover {
-    color: var(--color-ink);
+.global-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+}
+.global-nav-icon {
+  display: inline-flex;
+  align-items: center;
+  color: rgba(245, 245, 247, 0.8);
+  transition: color var(--dur-2) var(--ease-out-quart);
+}
+.global-nav-icon:hover {
+  color: #f5f5f7;
+}
+.global-nav-cta {
+  display: none;
+}
+@media (min-width: 834px) {
+  .global-nav-cta {
+    display: inline;
+  }
+  .global-nav-icon.is-menu {
+    display: none;
   }
 }
 
-/* ── The hero band ── */
+/* The search sheet: the command bar unfolded beneath the bar. */
+.global-nav-search {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: var(--glass-filter-nav);
+  padding: 0.9rem var(--gutter) 1.1rem;
+}
+.global-nav-search .command {
+  margin: 0 auto;
+  max-width: 42rem;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .global-nav-search {
+    animation: nav-sheet-in 0.32s var(--ease-out-quart);
+  }
+  @keyframes nav-sheet-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+}
 
-/* The curtain. Opaque on purpose: first paint owes nothing to WebGL, and
-   the chart earns its entrance by being withheld for exactly one screen.
-   100svh, not 100vh — mobile browser chrome would otherwise jump the
-   curtain's bottom edge at the precise moment it must read as seamless.
-   The negative top margin tucks it under the floating masthead so no map
-   sliver shows above the curtain. */
-/* Type directly on the plate — no card. The claim IS the surface. */
-
-/* ── The proof rail ── */
-
-
-/* ── Store bands ── */
+/* The phone menu: a full-screen sheet, rows staggering in. */
+.global-nav-sheet {
+  position: fixed;
+  inset: 3rem 0 0 0;
+  z-index: 39;
+  background: #000000;
+  padding: 1.25rem var(--gutter) 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-y: auto;
+}
+.global-nav-sheet-search {
+  margin-bottom: 1.25rem;
+}
+.global-nav-sheet-link {
+  padding: 0.8rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: #f5f5f7;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .global-nav-sheet-link {
+    animation: sheet-link-in 0.42s var(--ease-out-expo) both;
+    animation-delay: calc(var(--sheet-i, 0) * 40ms);
+  }
+  @keyframes sheet-link-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+}
 
 /* The home page's spine. Referenced by scripts/verify.mjs (reduced-motion
    assertion queries ".page-panel, .storefront-home") — keep the class. */
@@ -2025,8 +2029,8 @@ select.field option {
   background: var(--color-plate);
   color: var(--color-ink);
   min-height: 100svh;
-  margin-top: calc(-1 * var(--head-clearance));
-  padding-top: var(--head-clearance);
+  margin-top: calc(-1 * var(--nav-height));
+  padding-top: var(--nav-height);
 }
 .page-panel {
   margin: 0 auto;
@@ -2183,15 +2187,25 @@ select.field option {
  * registers via [data-act-theme]; nothing here styles twice.
  */
 
+/* Product-tile heights and anatomy: copy block anchored high, the stage
+   filling the remainder. The claim keeps its full viewport (the hero
+   register); everything else sits in the ~580–690px band. */
 .tile {
-  min-height: 92svh;
+  min-height: clamp(36rem, 80svh, 43rem);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-section-tight) var(--gutter);
+  justify-content: flex-start;
+  padding: 3.4rem var(--gutter) 0;
   background: var(--color-plate);
   color: var(--color-ink);
   overflow: clip;
+}
+/* The gray field variant — the light register's second surface. Local
+   token override, so half-tile color fields invert automatically. */
+.tile.is-gray {
+  --color-plate: #f5f5f7;
+  --color-plate-high: #fbfbfd;
 }
 
 .tile-copy {
@@ -2199,18 +2213,18 @@ select.field option {
   max-width: 46rem;
 }
 .tile-title {
-  margin-top: 0.6rem;
-  font-size: var(--text-section);
+  margin-top: 0.5rem;
+  font-size: clamp(2.25rem, 1.8rem + 1.9vw, 3.5rem);
   font-weight: 600;
-  letter-spacing: var(--text-section--letter-spacing);
-  line-height: var(--text-section--line-height);
+  letter-spacing: -0.02em;
+  line-height: 1.08;
   text-wrap: balance;
 }
 .tile-sub {
-  margin-top: 0.9rem;
-  font-size: var(--text-lede);
-  line-height: var(--text-lede--line-height);
-  letter-spacing: var(--text-lede--letter-spacing);
+  margin-top: 0.7rem;
+  font-size: 1.3125rem;
+  line-height: 1.45;
+  letter-spacing: 0.011em;
   color: var(--color-ink-soft);
   text-wrap: pretty;
 }
@@ -2225,7 +2239,7 @@ select.field option {
 }
 .tile-links a {
   color: var(--color-accent);
-  font-size: var(--text-body);
+  font-size: 1.0625rem;
   transition: opacity var(--dur-2) var(--ease-out-quart);
 }
 @media (hover: hover) and (pointer: fine) {
@@ -2239,8 +2253,8 @@ select.field option {
 .tile.is-claim {
   min-height: 100svh;
   justify-content: center;
-  margin-top: calc(-1 * var(--head-clearance));
-  padding-top: var(--head-clearance);
+  margin-top: calc(-1 * var(--nav-height));
+  padding-top: var(--nav-height);
 }
 /* Display type needs the full measure; the 46rem copy width is for ledes. */
 .tile.is-claim .tile-copy {
@@ -2266,9 +2280,11 @@ select.field option {
   }
 }
 
-/* ── Stages: where the product lives ── */
+/* ── Stages: where the product lives ──
+   Square-cornered, chromeless: a product image sits on the tile's color
+   with nothing between it and the visitor. The tile IS the frame. */
 .tile-stage {
-  margin-top: var(--space-7);
+  margin-top: 2.75rem;
   width: min(88rem, 100%);
 }
 .tile-stage img {
@@ -2280,12 +2296,8 @@ select.field option {
 .tile-stage.is-bleed {
   width: calc(100% + 2 * var(--gutter));
   margin-inline: calc(-1 * var(--gutter));
-  margin-bottom: calc(-1 * var(--space-section-tight));
-}
-.tile-stage:not(.is-bleed) img {
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-e3);
+  margin-top: auto;
+  padding-top: 2.75rem;
 }
 .tile-wide {
   width: min(88rem, 100%);
@@ -2321,10 +2333,14 @@ select.field option {
 }
 
 /* ── Half tiles, two abreast ── */
+/* Half tiles are color fields, not cards: the counter-surface of the page
+   they sit on (gray on white, white on gray — the .is-gray override flips
+   --color-plate-high automatically), square-cornered, 12px apart. */
 .tile-grid-2 {
-  width: min(88rem, 100%);
+  width: calc(100% + 2 * var(--gutter) - 1.5rem);
+  margin-inline: calc(-1 * var(--gutter) + 0.75rem);
   display: grid;
-  gap: var(--space-5);
+  gap: 0.75rem;
 }
 @media (min-width: 900px) {
   .tile-grid-2 {
@@ -2332,23 +2348,25 @@ select.field option {
   }
 }
 .half-tile {
+  display: flex;
+  flex-direction: column;
   text-align: center;
-  padding-top: var(--space-6);
+  padding: 3rem 1.5rem 0;
+  background: var(--color-plate-high);
+  min-height: clamp(30rem, 62svh, 36rem);
 }
 .half-tile-title {
   margin-top: 0.4rem;
-  font-size: var(--text-heading);
+  font-size: clamp(1.75rem, 1.4rem + 1.1vw, 2.5rem);
   font-weight: 600;
-  letter-spacing: var(--text-heading--letter-spacing);
-  line-height: var(--text-heading--line-height);
+  letter-spacing: -0.015em;
+  line-height: 1.1;
 }
 .half-tile-stage {
   display: block;
-  margin-top: var(--space-5);
+  margin-top: auto;
+  padding-top: 2rem;
   overflow: hidden;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-e2);
 }
 .half-tile-stage img {
   display: block;
