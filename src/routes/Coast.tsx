@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { WORK, TOTALS } from "../lib/work";
-import { CATALOG_TOTALS } from "../lib/catalog";
+import { CATALOG_TOTALS, CATEGORIES, offeringsByCategory } from "../lib/catalog";
 import { COMPARISON, TIERS } from "../lib/offer";
 import { CAPABILITIES } from "../lib/capabilities";
 import { BRAND, CONTACT } from "../lib/brand";
@@ -32,9 +32,58 @@ const byWorkSlug = (slug: string) => WORK.find((w) => w.slug === slug)!;
 const HEYMANN = byWorkSlug("heymann-williams-coastal");
 const PAIR = [byWorkSlug("sold-on-amelia-island"), byWorkSlug("crane-island-bhhs")];
 
-/** The Apple link pair: accent text links with the › that means "go". */
+/** The link pair: accent text links with the › that means "go". */
 function TileLinks({ children }: { children: ReactNode }) {
   return <p className="tile-links">{children}</p>;
+}
+
+/**
+ * The range ribbon: one card per catalog category plus a CTA card, in a
+ * scroll-snapping row with edge peek. Desktop gets paging arrows; on touch
+ * the row itself is the control. The snap grammar mirrors MarkDeck's.
+ */
+function Ribbon() {
+  const rowRef = useRef<HTMLDivElement | null>(null);
+
+  const page = (dir: 1 | -1) => {
+    const row = rowRef.current;
+    if (!row) return;
+    row.scrollBy({ left: dir * row.clientWidth * 0.8, behavior: "smooth" });
+  };
+
+  return (
+    <div className="ribbon" data-reveal>
+      <div className="ribbon-row" ref={rowRef}>
+        {CATEGORIES.map((cat) => {
+          const offerings = offeringsByCategory(cat.slug);
+          return (
+            <Link key={cat.slug} to={`/options#${cat.slug}`} className="ribbon-card">
+              <p className="eyebrow">{offerings.length} options</p>
+              <h3 className="ribbon-card-title">{cat.name}</h3>
+              <p className="ribbon-card-body">{cat.blurb}</p>
+              <p className="ribbon-card-link">Browse ›</p>
+            </Link>
+          );
+        })}
+        <Link to="/contact" className="ribbon-card is-cta">
+          <h3 className="ribbon-card-title">Not sure which?</h3>
+          <p className="ribbon-card-body">
+            Describe what you sell and I will point at the closest thing I
+            have already built.
+          </p>
+          <p className="ribbon-card-link">Just ask ›</p>
+        </Link>
+      </div>
+      <div className="ribbon-arrows" aria-hidden="true">
+        <button type="button" onClick={() => page(-1)} aria-label="Previous">
+          ‹
+        </button>
+        <button type="button" onClick={() => page(1)} aria-label="Next">
+          ›
+        </button>
+      </div>
+    </div>
+  );
 }
 
 /**
@@ -173,7 +222,7 @@ export default function Coast() {
       </section>
 
       {/* ── 4 · Two more, side by side ──────────────────────────────── */}
-      <section className="tile is-grid" data-tile="pair" data-act-theme="light">
+      <section className="tile is-grid is-gray" data-tile="pair" data-act-theme="light">
         <div className="tile-grid-2">
           {PAIR.map((item) => (
             <article key={item.slug} className="half-tile" data-reveal>
@@ -238,10 +287,22 @@ export default function Coast() {
 
         <TileLinks>
           <Link to="/packages">Compare in detail ›</Link>
-          <Link to="/options">
-            All {CATALOG_TOTALS.options} site types ›
-          </Link>
+          <Link to="/capabilities">What a template cannot do ›</Link>
         </TileLinks>
+      </section>
+
+      {/* ── 5b · The range ribbon ───────────────────────────────────── */}
+      {/* The catalog as a snap ribbon: one card per category plus a CTA
+          card, edge-peek, arrows on desktop. An index you flick through,
+          not scroll past. */}
+      <section className="tile is-ribbon is-gray" data-tile="ribbon" data-act-theme="light">
+        <div className="tile-copy" data-reveal>
+          <p className="eyebrow">Everything I build</p>
+          <h2 className="tile-title">
+            {CATALOG_TOTALS.options} site types. Five categories.
+          </h2>
+        </div>
+        <Ribbon />
       </section>
 
       {/* ── 6 · Capabilities bento ──────────────────────────────────── */}
@@ -283,7 +344,7 @@ export default function Coast() {
       </section>
 
       {/* ── 7 · The close ───────────────────────────────────────────── */}
-      <section className="tile is-close" data-tile="close" data-act-theme="light" ref={closeRef}>
+      <section className="tile is-close is-gray" data-tile="close" data-act-theme="light" ref={closeRef}>
         <div className="tile-copy" data-reveal>
           <h2 className="tile-title">
             Your website should be the reason they call you.

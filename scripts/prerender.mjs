@@ -137,6 +137,8 @@ function bodyFor(dest) {
       <ul>${WORK.map((w) => `<li><a href="/work/${w.slug}"><strong>${esc(w.name)}</strong></a> — ${esc(w.kind)}. ${esc(w.summary)}</li>`).join("")}</ul>
       <h2>Pay once. Own it forever.</h2>
       <p>${CATALOG_TOTALS.options} site types across ${CATEGORIES.length} categories — from a one-week agent page to a full 3D market platform. ${CATALOG_TOTALS.shipped} are patterns running today in the shipped work above; the rest are build-ready concepts and say so. <a href="/options">See the full catalog</a>.</p>
+      <h2>Everything I build</h2>
+      <ul>${CATEGORIES.map((c) => `<li><a href="/options#${c.slug}">${esc(c.name)}</a> — ${esc(c.blurb)}</li>`).join("")}</ul>
     `;
   }
 

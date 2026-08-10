@@ -199,7 +199,9 @@
   --color-ink-faint: #a1a1a6;
   --color-signal: #0c0c0e;
   --color-signal-glow: rgba(0, 0, 0, 0.12);
-  --color-accent: #0066cc;
+  /* One step darker than the reference link blue: measured 4.33:1 on the
+     gray field, and the gate does not negotiate. */
+  --color-accent: #0053a6;
   --color-accent-content: #ffffff;
   --color-alert: #b91c1c;
   --surface-solid: var(--color-plate);
@@ -2077,55 +2079,75 @@ select.field option {
 
 /* ── Foot ── */
 
+/* The footer: a gray band of dense small-text columns over hairlines,
+   then the fine print, then the identity line. Light register via the
+   act attribute on the element itself. */
 .site-foot {
-  position: relative;
-  z-index: 1;
-  border-radius: 0;
-  border-inline: 0;
-  border-bottom: 0;
-  padding: clamp(2.5rem, 6vh, 4rem) var(--gutter) 2rem;
+  padding: 2.4rem var(--gutter) 1.6rem;
+  background: var(--color-plate-high);
+  color: var(--color-ink);
 }
-.site-foot-grid {
-  display: grid;
-  gap: 2.5rem;
-  grid-template-columns: 1fr;
-}
-@media (min-width: 900px) {
-  .site-foot-grid {
-    grid-template-columns: minmax(16rem, 22rem) 1fr;
-  }
+.site-foot-inner {
+  margin: 0 auto;
+  max-width: 64rem;
 }
 .site-foot-nav {
   display: grid;
-  gap: 2rem;
-  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 1.75rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 834px) {
+  .site-foot-nav {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.site-foot-heading {
+  margin-bottom: 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-ink);
 }
 .site-foot-nav ul {
   display: grid;
 }
 .site-foot-nav a {
-  /* Block with real height: these are the phone's directory, and 44px is
-     the floor for a tap target. */
   display: flex;
   align-items: center;
-  min-height: 2.75rem;
-  font-size: 0.875rem;
+  min-height: 2rem;
+  font-size: 0.75rem;
   color: var(--color-ink-muted);
   transition: color 0.2s var(--ease-out-quart);
 }
 @media (hover: hover) and (pointer: fine) {
   .site-foot-nav a:hover {
     color: var(--color-ink);
+    text-decoration: underline;
   }
 }
-.site-foot-legal {
-  margin-top: 2.5rem;
+.site-foot-live {
+  margin-top: 1.75rem;
   border-top: 1px solid var(--line);
-  padding-top: 1.25rem;
-  font-size: 0.6875rem;
-  line-height: 1.6;
-  color: var(--color-ink-faint);
-  max-width: 72ch;
+  padding-top: 1.1rem;
+}
+.site-foot-legal {
+  margin-top: 1.1rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1.1rem;
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--color-ink-muted);
+  max-width: 80ch;
+}
+.site-foot-identity {
+  margin-top: 1.1rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1.1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
 }
 
 /* ═══ The acts ═══════════════════════════════════════════════════════════
@@ -2460,4 +2482,165 @@ select.field option {
   margin-top: var(--space-7);
   width: min(40rem, 100%);
   text-align: left;
+}
+
+/* ── The range ribbon ────────────────────────────────────────────────────
+ * A scroll-snapping card row with edge peek: the catalog as something you
+ * flick through. The row is the control on touch; arrows page it on
+ * pointer devices. */
+.ribbon {
+  width: 100%;
+  margin-top: var(--space-6);
+}
+.ribbon-row {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-inline: max(var(--gutter), calc((100vw - 64rem) / 2));
+  padding-bottom: 0.75rem;
+  scrollbar-width: none;
+}
+.ribbon-row::-webkit-scrollbar {
+  display: none;
+}
+.ribbon-card {
+  flex: none;
+  scroll-snap-align: start;
+  width: min(25rem, 82vw);
+  display: flex;
+  flex-direction: column;
+  padding: 1.9rem;
+  border-radius: var(--radius-xl);
+  background: var(--color-plate-high);
+  box-shadow: var(--shadow-e1);
+  text-align: left;
+  transition: transform var(--dur-3) var(--ease-out-quart);
+}
+@media (hover: hover) and (pointer: fine) {
+  .ribbon-card:hover {
+    transform: translateY(-3px);
+  }
+}
+.ribbon-card.is-cta {
+  background: var(--color-ink);
+  color: var(--color-plate);
+}
+.ribbon-card.is-cta .ribbon-card-body {
+  color: var(--color-plate);
+  opacity: 0.75;
+}
+.ribbon-card-title {
+  margin-top: 0.4rem;
+  font-size: var(--text-title);
+  font-weight: 600;
+  letter-spacing: var(--text-title--letter-spacing);
+  line-height: var(--text-title--line-height);
+}
+.ribbon-card-body {
+  margin-top: 0.5rem;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+}
+.ribbon-card-link {
+  margin-top: auto;
+  padding-top: 1.25rem;
+  font-size: var(--text-body-sm);
+  color: var(--color-accent);
+}
+.ribbon-card.is-cta .ribbon-card-link {
+  color: var(--color-accent);
+}
+.ribbon-arrows {
+  display: none;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding-inline: max(var(--gutter), calc((100vw - 64rem) / 2));
+  margin-top: 0.5rem;
+}
+@media (hover: hover) and (pointer: fine) {
+  .ribbon-arrows {
+    display: flex;
+  }
+}
+.ribbon-arrows button {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  background: var(--tint-2);
+  color: var(--color-ink-soft);
+  font-size: 1.1rem;
+  line-height: 1;
+  transition:
+    background-color var(--dur-2) var(--ease-out-quart),
+    color var(--dur-2) var(--ease-out-quart);
+}
+.ribbon-arrows button:hover {
+  background: var(--tint-3);
+  color: var(--color-ink);
+}
+/* The ribbon tile lets its row run full width. */
+.tile.is-ribbon {
+  padding-inline: 0;
+}
+.tile.is-ribbon .tile-copy {
+  padding-inline: var(--gutter);
+}
+
+/* ── The local nav ───────────────────────────────────────────────────────
+ * The product sub-nav: pins under the global bar once the page head has
+ * scrolled away — the page's name on the left, its one action on the
+ * right. Hidden (and out of the tab order) until then. */
+.local-nav {
+  position: sticky;
+  top: var(--nav-height);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 3.25rem;
+  padding-inline: var(--gutter);
+  background: color-mix(in srgb, var(--color-plate) 78%, transparent);
+  backdrop-filter: var(--glass-filter-nav);
+  border-bottom: 1px solid var(--line);
+  opacity: 0;
+  transform: translateY(-100%);
+  pointer-events: none;
+  /* visibility, not just opacity: an invisible bar translated up under the
+     global nav still has geometry, and the contrast sampler (correctly)
+     refuses to trust opacity alone. */
+  visibility: hidden;
+  transition:
+    opacity var(--dur-3) var(--ease-out-quart),
+    transform var(--dur-3) var(--ease-out-quart),
+    visibility 0s linear var(--dur-3);
+}
+.local-nav.is-pinned {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.local-nav-title {
+  font-size: 1.3125rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.local-nav-cta {
+  padding: 0.45rem 0.95rem;
+  font-size: 0.75rem;
+}
+
+/* ── Gray feature bands inside reading pages ── */
+.page-section {
+  margin-block: var(--space-6);
+  padding: var(--space-6) var(--space-5);
+  border-radius: var(--radius-xl);
+  background: var(--color-plate-high);
 }

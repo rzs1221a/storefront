@@ -183,6 +183,7 @@ async function main() {
       { route: "/", scrollTo: '[data-tile="aerial"]' },
       { route: "/", scrollTo: '[data-tile="work"]' },
       { route: "/", scrollTo: '[data-tile="compare"]' },
+      { route: "/", scrollTo: '[data-tile="ribbon"]' },
       { route: "/", scrollTo: '[data-tile="bento"]' },
       { route: "/", scrollTo: '[data-tile="close"]' },
       { route: "/work/crane-island-bhhs" },
@@ -233,16 +234,28 @@ async function main() {
 
         const out = [];
         for (const el of document.querySelectorAll(
-          "p.lede, .mono-label, .head-link, .tile-sub, .tile-links a, h1, h2, .tier-name, .hero-sub, .stat-caption, .stat-figure, .versus-them, .versus-us, .bento-title, .bento-body"
+          "p.lede, .mono-label, .head-link, .tile-sub, .tile-links a, h1, h2, .tier-name, .hero-sub, .stat-caption, .stat-figure, .versus-them, .versus-us, .bento-title, .bento-body, .ribbon-card-title, .ribbon-card-body, .site-foot-nav a, .local-nav-title"
         )) {
           const r = el.getBoundingClientRect();
           if (r.width < 8 || r.height < 8) continue;
           if (r.bottom < 0 || r.top > window.innerHeight) continue;
           if (clippedByScroller(el, r)) continue;
           // Closed <details> content keeps geometry under Chrome's
-          // content-visibility implementation but is never painted —
-          // checkVisibility is the only honest test.
-          if (typeof el.checkVisibility === "function" && !el.checkVisibility())
+          // content-visibility implementation but is never painted, and a
+          // visibility:hidden bar translated under the nav still has a box.
+          // checkVisibility is the honest test — but ONLY with the option
+          // flags: the bare call ignores the visibility and opacity
+          // properties entirely. (Both option spellings passed; dictionaries
+          // ignore unknown members.)
+          if (
+            typeof el.checkVisibility === "function" &&
+            !el.checkVisibility({
+              visibilityProperty: true,
+              opacityProperty: true,
+              checkVisibilityCSS: true,
+              checkOpacity: true,
+            })
+          )
             continue;
           const fg = parse(getComputedStyle(el).color);
           if (fg === null) continue;
