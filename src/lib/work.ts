@@ -192,9 +192,9 @@ export const WORK: WorkItem[] = [
     kind: "The site you are on",
     client: "Seamark Studio — in-house",
     outcome:
-      "A storefront told as a film — five acts alternating dark and light, the live mapping engine framed as a single interactive exhibit — with the honesty contract enforced by the build itself, which fails if any option claims shipped work without a named proof.",
+      "A storefront that sells by answering: every section opens with the question an agent actually asks, typed into the site's own slash prompt, and clicking any question makes the live search answer it — with the honesty contract enforced by the build itself, which fails if any option claims shipped work without a named proof.",
     summary:
-      "The studio's own storefront: five cinematic acts where the shipped work carries the imagery, the live chart appears once as an exhibit you can drive, and every route is prerendered — a case study you are reading from inside its subject.",
+      "The studio's own storefront, presented as a session of buyer questions asked and answered — every section header is a live query into the site's plain-English search, the flagship is demonstrated by its running engine, and every route is prerendered.",
     detail:
       "The page alternates dark and light acts from one token registry — a single attribute remaps the color ramps, so every component renders on both registers with no forks. The live MapLibre chart appears exactly once, as a framed exhibit: type where you want to go in plain English and the camera answers; the engine and its tiles are fetched only when you approach the frame, never on the routes that don't show it — a performance budget asserts that against every build. Every destination is stamped out as static HTML at build time from the same imported modules the React app renders, so the crawler's copy and the visitor's copy cannot drift. A verifier measures text contrast at 4.5:1 on both registers, on every route, at four breakpoints. The tide reading in the exhibit is a live NOAA gauge, fetched when you arrived.",
     highlights: [

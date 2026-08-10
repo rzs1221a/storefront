@@ -2644,3 +2644,83 @@ select.field option {
   border-radius: var(--radius-xl);
   background: var(--color-plate-high);
 }
+
+/* ── Asked & Answered ────────────────────────────────────────────────────
+ * The page's grammar: every section opens with the buyer's own question,
+ * typed into the site's slash prompt. Clicking one opens the real search
+ * sheet with the question prefilled — the presentation IS the demo. */
+.prompt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem 0.4rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--tint-1);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  /* Soft, not muted: chips sit on the gray fields too, where muted ink
+     measured 4.34:1. */
+  color: var(--color-ink-soft);
+  transition:
+    border-color var(--dur-2) var(--ease-out-quart),
+    color var(--dur-2) var(--ease-out-quart),
+    background-color var(--dur-2) var(--ease-out-quart);
+}
+.prompt-chip:hover {
+  border-color: var(--color-ink-muted);
+  color: var(--color-ink);
+  background: var(--tint-2);
+}
+.prompt-chip-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 0.35rem;
+  border: 1px solid var(--line-strong);
+  font-size: 0.75rem;
+  color: var(--color-ink-soft);
+}
+.tile-copy .prompt-chip {
+  margin-bottom: 0.9rem;
+}
+
+/* The hero's prompt: the visitor's doubts, cycling in a field that looks
+   like — and opens — the real one. */
+.hero-prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1.4rem;
+  padding: 0.7rem 1.3rem 0.7rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--tint-1);
+  font-family: var(--font-mono);
+  font-size: clamp(0.8125rem, 0.7rem + 0.5vw, 1rem);
+  color: var(--color-ink-muted);
+  transition:
+    border-color var(--dur-2) var(--ease-out-quart),
+    color var(--dur-2) var(--ease-out-quart);
+}
+.hero-prompt:hover {
+  border-color: var(--color-ink-muted);
+  color: var(--color-ink);
+}
+.hero-prompt .prompt-chip-key {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-prompt-q {
+    animation: doubt-in 0.5s var(--ease-out-quart);
+  }
+  @keyframes doubt-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+}

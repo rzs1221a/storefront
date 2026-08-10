@@ -4,7 +4,7 @@ import { WORK, TOTALS } from "../lib/work";
 import { CATALOG_TOTALS, CATEGORIES, offeringsByCategory } from "../lib/catalog";
 import { COMPARISON, TIERS } from "../lib/offer";
 import { CAPABILITIES } from "../lib/capabilities";
-import { BRAND, CONTACT } from "../lib/brand";
+import { CONTACT } from "../lib/brand";
 import { numberWord } from "../lib/format";
 import { useReveals } from "../lib/useReveal";
 import CountUp from "../components/CountUp";
@@ -14,75 +14,81 @@ import OfferGrid from "../components/OfferGrid";
 import LeadForm from "../components/LeadForm";
 
 /**
- * The storefront as a product stack — Apple's homepage grammar:
+ * Asked & Answered — the storefront as a session of buyer questions.
  *
- * Full-bleed tiles, each a centered composition: semibold headline, one
- * line of subhead, a pair of accent text links, and the product filling
- * the tile's stage. Tiles alternate dark and white. The flagship's tile
- * holds the LIVE exhibit — The Aerial never appears as a screenshot on
- * this page, because a living map demonstrated by a picture of a map
- * would defeat both.
+ * Every section opens with the question an agent actually asks, typed into
+ * the site's own slash-prompt, and the section is the answer. Clicking any
+ * question opens the real search sheet with it prefilled — the presentation
+ * device IS the product demo, because the product's whole claim is "type
+ * plain English and it answers."
  *
- * Stat numerals are arithmetic-true or measured, never invented: $0/month
- * is the deal, 100% ownership is the contract, the line count is derived
- * in work.ts, and the Lighthouse score was measured on this page.
+ * The copy sells outcomes, not features: leads, listings, ownership,
+ * money. Every number is measured, derived, or arithmetic the reader can
+ * check on the spot — the template-cost figure states its own assumptions
+ * in the caption.
  */
 
 const byWorkSlug = (slug: string) => WORK.find((w) => w.slug === slug)!;
 const HEYMANN = byWorkSlug("heymann-williams-coastal");
 const PAIR = [byWorkSlug("sold-on-amelia-island"), byWorkSlug("crane-island-bhhs")];
 
-/** The link pair: accent text links with the › that means "go". */
-function TileLinks({ children }: { children: ReactNode }) {
-  return <p className="tile-links">{children}</p>;
+/** A typical template subscription, five years out — the caption states
+    the assumption so the arithmetic is checkable, not asserted. */
+const TEMPLATE_MO = 79;
+const TEMPLATE_5YR = TEMPLATE_MO * 60;
+
+/** The doubts an agent brings to this page. Each resolves in the command
+    bar — clicking one is the demo. */
+const DOUBTS = [
+  "why am I paying $99 a month for a template?",
+  "can my site answer buyers in plain English?",
+  "what does a site I own outright cost?",
+];
+
+function ask(question: string) {
+  window.dispatchEvent(new CustomEvent("seamark:ask", { detail: question }));
 }
 
-/**
- * The range ribbon: one card per catalog category plus a CTA card, in a
- * scroll-snapping row with edge peek. Desktop gets paging arrows; on touch
- * the row itself is the control. The snap grammar mirrors MarkDeck's.
- */
-function Ribbon() {
-  const rowRef = useRef<HTMLDivElement | null>(null);
+/** A section opener: the buyer's question, typed into the slash prompt.
+    Click it and the site actually answers. */
+function PromptChip({ question }: { question: string }) {
+  return (
+    <button type="button" className="prompt-chip" onClick={() => ask(question)}>
+      <span className="prompt-chip-key" aria-hidden="true">
+        /
+      </span>
+      <span className="prompt-chip-q">{question}</span>
+    </button>
+  );
+}
 
-  const page = (dir: 1 | -1) => {
-    const row = rowRef.current;
-    if (!row) return;
-    row.scrollBy({ left: dir * row.clientWidth * 0.8, behavior: "smooth" });
-  };
+/** The hero's prompt: the visitor's own doubts, cycling in the field.
+    Static first doubt under reduced motion. */
+function HeroPrompt() {
+  const [i, setI] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => {
+      setI((v) => (v + 1) % DOUBTS.length);
+    }, 4200);
+    return () => window.clearInterval(id);
+  }, []);
 
   return (
-    <div className="ribbon" data-reveal>
-      <div className="ribbon-row" ref={rowRef}>
-        {CATEGORIES.map((cat) => {
-          const offerings = offeringsByCategory(cat.slug);
-          return (
-            <Link key={cat.slug} to={`/options#${cat.slug}`} className="ribbon-card">
-              <p className="eyebrow">{offerings.length} options</p>
-              <h3 className="ribbon-card-title">{cat.name}</h3>
-              <p className="ribbon-card-body">{cat.blurb}</p>
-              <p className="ribbon-card-link">Browse ›</p>
-            </Link>
-          );
-        })}
-        <Link to="/contact" className="ribbon-card is-cta">
-          <h3 className="ribbon-card-title">Not sure which?</h3>
-          <p className="ribbon-card-body">
-            Describe what you sell and I will point at the closest thing I
-            have already built.
-          </p>
-          <p className="ribbon-card-link">Just ask ›</p>
-        </Link>
-      </div>
-      <div className="ribbon-arrows" aria-hidden="true">
-        <button type="button" onClick={() => page(-1)} aria-label="Previous">
-          ‹
-        </button>
-        <button type="button" onClick={() => page(1)} aria-label="Next">
-          ›
-        </button>
-      </div>
-    </div>
+    <button
+      type="button"
+      className="hero-prompt"
+      onClick={() => ask(DOUBTS[i])}
+      aria-label={`Ask: ${DOUBTS[i]}`}
+    >
+      <span className="prompt-chip-key" aria-hidden="true">
+        /
+      </span>
+      <span className="hero-prompt-q" key={i}>
+        {DOUBTS[i]}
+      </span>
+    </button>
   );
 }
 
@@ -110,8 +116,58 @@ function MobileCtaBar({ hideWhenVisible }: { hideWhenVisible: React.RefObject<HT
         Text {CONTACT.phoneDisplay}
       </a>
       <Link to="/contact" className="btn btn-primary btn-sm">
-        Start a project →
+        Get a quote →
       </Link>
+    </div>
+  );
+}
+
+/** The link pair: accent text links with the › that means "go". */
+function TileLinks({ children }: { children: ReactNode }) {
+  return <p className="tile-links">{children}</p>;
+}
+
+/** The range ribbon: one card per catalog category plus a CTA card. */
+function Ribbon() {
+  const rowRef = useRef<HTMLDivElement | null>(null);
+
+  const page = (dir: 1 | -1) => {
+    const row = rowRef.current;
+    if (!row) return;
+    row.scrollBy({ left: dir * row.clientWidth * 0.8, behavior: "smooth" });
+  };
+
+  return (
+    <div className="ribbon" data-reveal>
+      <div className="ribbon-row" ref={rowRef}>
+        {CATEGORIES.map((cat) => {
+          const offerings = offeringsByCategory(cat.slug);
+          return (
+            <Link key={cat.slug} to={`/options#${cat.slug}`} className="ribbon-card">
+              <p className="eyebrow">{offerings.length} options</p>
+              <h3 className="ribbon-card-title">{cat.name}</h3>
+              <p className="ribbon-card-body">{cat.blurb}</p>
+              <p className="ribbon-card-link">Browse ›</p>
+            </Link>
+          );
+        })}
+        <Link to="/contact" className="ribbon-card is-cta">
+          <h3 className="ribbon-card-title">Not sure which?</h3>
+          <p className="ribbon-card-body">
+            Describe what you sell and I will point at the closest thing I
+            have already built — and quote it in writing.
+          </p>
+          <p className="ribbon-card-link">Just ask ›</p>
+        </Link>
+      </div>
+      <div className="ribbon-arrows" aria-hidden="true">
+        <button type="button" onClick={() => page(-1)} aria-label="Previous">
+          ‹
+        </button>
+        <button type="button" onClick={() => page(1)} aria-label="Next">
+          ›
+        </button>
+      </div>
     </div>
   );
 }
@@ -125,22 +181,17 @@ export default function Coast() {
       {/* ── 1 · The claim ───────────────────────────────────────────── */}
       <section className="tile is-claim" data-tile="claim" data-act-theme="dark">
         <div className="tile-copy">
-          <p className="eyebrow">
-            {BRAND.name} — {CONTACT.location}
-          </p>
-          <h1 className="hero-title">
-            Built once.
-            <br />
-            Owned outright.
-          </h1>
+          <HeroPrompt />
+          <h1 className="hero-title">Stop renting your website.</h1>
           <p className="hero-sub tile-sub">
-            High-converting custom web systems and interactive real estate
-            platforms for BHHS agents — no monthly platform fee, and every
-            lead routed straight into BoldTrail.
+            Template platforms charge you monthly for a site that looks like
+            every other agent's — and they keep your leads. I build BHHS
+            agents one-of-one sites you own outright: built once, $0 a
+            month, every lead wired straight into BoldTrail.
           </p>
           <TileLinks>
-            <Link to="/packages">See packages &amp; pricing ›</Link>
-            <Link to="/work">See the shipped work ›</Link>
+            <Link to="/work">See six live sites ›</Link>
+            <Link to="/packages">Pricing — from $1,500 ›</Link>
           </TileLinks>
         </div>
       </section>
@@ -148,11 +199,13 @@ export default function Coast() {
       {/* ── 2 · The flagship ────────────────────────────────────────── */}
       <section className="tile is-aerial" data-tile="aerial" data-act-theme="dark" id="exhibit">
         <div className="tile-copy" data-reveal>
-          <p className="eyebrow">The flagship</p>
-          <h2 className="tile-title">The Aerial.</h2>
+          <PromptChip question="what am I actually buying?" />
+          <h2 className="tile-title">
+            The site nobody in your market can copy.
+          </h2>
           <p className="tile-sub">
-            A living 3D map of your whole market — the site nobody else can
-            copy. This is not a screenshot. It is running, right here.
+            The Aerial — a living 3D map of this coast that IS the website.
+            Fly it right here. Then imagine your name on it.
           </p>
           <TileLinks>
             <Link to="/work/the-aerial">Case study ›</Link>
@@ -160,23 +213,23 @@ export default function Coast() {
           </TileLinks>
         </div>
 
-        {/* The numbers on the way to the product — measured, not asserted. */}
+        {/* Money the reader can check, not claims they have to trust. */}
         <dl className="stat-strip" data-reveal>
+          <div data-reveal-child>
+            <dd className="stat-figure">
+              <CountUp to={TEMPLATE_5YR} format={(n) => `$${n.toLocaleString("en-US")}`} />
+            </dd>
+            <dt className="stat-caption">
+              what a typical ${TEMPLATE_MO}/month template costs you over
+              five years — and you still own nothing.
+            </dt>
+          </div>
           <div data-reveal-child>
             <dd className="stat-figure">
               <CountUp to={0} format={(n) => `$${n}`} />
             </dd>
             <dt className="stat-caption">
-              owed monthly after launch. A template charges you forever.
-            </dt>
-          </div>
-          <div data-reveal-child>
-            <dd className="stat-figure">
-              <CountUp to={100} format={(n) => `${n}%`} />
-            </dd>
-            <dt className="stat-caption">
-              of the source code owned by you. A template licenses you
-              nothing.
+              what this costs after launch. Forever. The code is yours.
             </dt>
           </div>
           <div data-reveal-child>
@@ -184,7 +237,7 @@ export default function Coast() {
               <CountUp to={TOTALS.loc} />
             </dd>
             <dt className="stat-caption">
-              lines of production source shipped along this coast.
+              lines of production source already shipped for this coast.
             </dt>
           </div>
         </dl>
@@ -197,9 +250,15 @@ export default function Coast() {
       {/* ── 3 · The brokerage site ──────────────────────────────────── */}
       <section className="tile is-work" data-tile="work" data-act-theme="light">
         <div className="tile-copy" data-reveal>
-          <p className="eyebrow">{HEYMANN.kind}</p>
-          <h2 className="tile-title">{HEYMANN.name}.</h2>
-          <p className="tile-sub">{HEYMANN.summary}</p>
+          <PromptChip question="will it actually win me listings?" />
+          <h2 className="tile-title">
+            Listings follow the best-looking site in town.
+          </h2>
+          <p className="tile-sub">
+            {HEYMANN.name}: seventeen routes and twenty-six neighborhood
+            pages, each one built to rank — this is what buyers find when
+            they search the island.
+          </p>
           <TileLinks>
             {HEYMANN.liveUrl && (
               <a href={HEYMANN.liveUrl} target="_blank" rel="noreferrer">
@@ -223,6 +282,10 @@ export default function Coast() {
 
       {/* ── 4 · Two more, side by side ──────────────────────────────── */}
       <section className="tile is-grid is-gray" data-tile="pair" data-act-theme="light">
+        <div className="tile-copy" data-reveal>
+          <PromptChip question="what if I'm a solo agent?" />
+          <h2 className="tile-title">Solo agents get the same craft.</h2>
+        </div>
         <div className="tile-grid-2">
           {PAIR.map((item) => (
             <article key={item.slug} className="half-tile" data-reveal>
@@ -259,14 +322,14 @@ export default function Coast() {
       {/* ── 5 · The offer ───────────────────────────────────────────── */}
       <section className="tile is-compare" data-tile="compare" data-act-theme="light">
         <div className="tile-copy" data-reveal>
-          <p className="eyebrow">Packages</p>
+          <PromptChip question="what does it cost?" />
           <h2 className="tile-title">
-            Pay once. Own it forever.
+            One price. In writing. Before anything starts.
           </h2>
           <p className="tile-sub">
-            {numberWord(TIERS.length)} build sizes, one fee agreed in writing
-            before anything starts. After launch you owe nothing — and the
-            code is yours.
+            {numberWord(TIERS.length)} build sizes from $1,500. You approve a
+            fixed quote before I write a line — and after launch you owe me
+            nothing, forever.
           </p>
         </div>
 
@@ -292,14 +355,11 @@ export default function Coast() {
       </section>
 
       {/* ── 5b · The range ribbon ───────────────────────────────────── */}
-      {/* The catalog as a snap ribbon: one card per category plus a CTA
-          card, edge-peek, arrows on desktop. An index you flick through,
-          not scroll past. */}
       <section className="tile is-ribbon is-gray" data-tile="ribbon" data-act-theme="light">
         <div className="tile-copy" data-reveal>
-          <p className="eyebrow">Everything I build</p>
+          <PromptChip question="do you build my kind of site?" />
           <h2 className="tile-title">
-            {CATALOG_TOTALS.options} site types. Five categories.
+            {CATALOG_TOTALS.options} site types. Yours is in here.
           </h2>
         </div>
         <Ribbon />
@@ -308,8 +368,8 @@ export default function Coast() {
       {/* ── 6 · Capabilities bento ──────────────────────────────────── */}
       <section className="tile is-bento" data-tile="bento" data-act-theme="dark">
         <div className="tile-copy" data-reveal>
-          <p className="eyebrow">Capabilities</p>
-          <h2 className="tile-title">Things a template cannot do.</h2>
+          <PromptChip question="why can't my template do this?" />
+          <h2 className="tile-title">Because templates can't.</h2>
         </div>
         <div className="bento tile-wide" data-reveal>
           {CAPABILITIES.slice(0, 4).map((cap) => (
@@ -346,12 +406,14 @@ export default function Coast() {
       {/* ── 7 · The close ───────────────────────────────────────────── */}
       <section className="tile is-close is-gray" data-tile="close" data-act-theme="light" ref={closeRef}>
         <div className="tile-copy" data-reveal>
+          <PromptChip question="ok — what happens if I reach out?" />
           <h2 className="tile-title">
-            Your website should be the reason they call you.
+            Twenty minutes. A straight answer. A number in writing.
           </h2>
           <p className="tile-sub">
-            Twenty minutes on the phone and you will know whether this is
-            worth doing. Or skip the call — tell me what you need right here.
+            Tell me what you sell and where. If it's worth doing you get a
+            fixed quote; if it's not a fit, I'll say so and you've lost
+            nothing.
           </p>
         </div>
         <div className="tile-form">

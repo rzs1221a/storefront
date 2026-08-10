@@ -28,11 +28,15 @@ const EXAMPLES = [
 export default function CommandBar({
   examples = EXAMPLES,
   onResolve,
+  initialValue = "",
 }: {
   examples?: string[];
   onResolve?: (hit: Resolution) => boolean | void;
+  /** Seed the field (used by the ask-a-question chips; remount with a
+      `key` to re-seed). */
+  initialValue?: string;
 } = {}) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(initialValue);
   const [said, setSaid] = useState<string | null>(null);
   const [placeholder, setPlaceholder] = useState(examples[0]);
   const inputRef = useRef<HTMLInputElement>(null);

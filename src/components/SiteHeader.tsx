@@ -21,6 +21,9 @@ export default function SiteHeader() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement | null>(null);
+  /* A question handed up from a prompt chip — seeds the field, and bumps a
+     key so a second click of the same chip re-seeds. */
+  const [asked, setAsked] = useState<{ q: string; n: number }>({ q: "", n: 0 });
 
   /* Navigation closes everything — a sheet that survives a route change
      reads as a stuck lid. State is adjusted during render (React's
@@ -75,7 +78,20 @@ export default function SiteHeader() {
     if (!searchOpen) return;
     const input = searchRef.current?.querySelector("input");
     input?.focus();
-  }, [searchOpen]);
+  }, [searchOpen, asked]);
+
+  /* The page's question chips ask through here: open the sheet with the
+     question already typed, so the visitor watches the site answer the
+     thing they were already wondering. */
+  useEffect(() => {
+    const onAsk = (e: Event) => {
+      const q = (e as CustomEvent<string>).detail ?? "";
+      setAsked((prev) => ({ q, n: prev.n + 1 }));
+      setSearchOpen(true);
+    };
+    window.addEventListener("seamark:ask", onAsk);
+    return () => window.removeEventListener("seamark:ask", onAsk);
+  }, []);
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `head-link${isActive ? " is-active" : ""}`;
@@ -117,7 +133,7 @@ export default function SiteHeader() {
             </svg>
           </button>
           <Link to={contact.path} className="head-link global-nav-cta">
-            Consultation
+            Get a quote
           </Link>
           <button
             type="button"
@@ -140,7 +156,7 @@ export default function SiteHeader() {
       {/* The search sheet: the command bar, unfolded beneath the bar. */}
       {searchOpen && (
         <div className="global-nav-search" ref={searchRef}>
-          <CommandBar />
+          <CommandBar key={asked.n} initialValue={asked.q} />
         </div>
       )}
 

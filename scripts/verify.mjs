@@ -234,7 +234,7 @@ async function main() {
 
         const out = [];
         for (const el of document.querySelectorAll(
-          "p.lede, .mono-label, .head-link, .tile-sub, .tile-links a, h1, h2, .tier-name, .hero-sub, .stat-caption, .stat-figure, .versus-them, .versus-us, .bento-title, .bento-body, .ribbon-card-title, .ribbon-card-body, .site-foot-nav a, .local-nav-title"
+          "p.lede, .mono-label, .head-link, .tile-sub, .tile-links a, h1, h2, .tier-name, .hero-sub, .stat-caption, .stat-figure, .versus-them, .versus-us, .bento-title, .bento-body, .ribbon-card-title, .ribbon-card-body, .site-foot-nav a, .local-nav-title, .prompt-chip-q, .hero-prompt-q"
         )) {
           const r = el.getBoundingClientRect();
           if (r.width < 8 || r.height < 8) continue;
