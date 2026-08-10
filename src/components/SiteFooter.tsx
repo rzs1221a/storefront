@@ -1,8 +1,25 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BRAND, CONTACT } from "../lib/brand";
 import { PRIMARY_NAV, WORK_DESTINATIONS } from "../lib/destinations";
 import { CATEGORIES } from "../lib/catalog";
+import { getSky } from "../lib/sky";
 import Conditions from "./Conditions";
+
+/** The living-light caption: names the real sky phase currently grading
+    the page, on the same 30-second cadence Shell stamps it. */
+function SkyLine() {
+  const [label, setLabel] = useState(() => getSky().label);
+  useEffect(() => {
+    const timer = window.setInterval(() => setLabel(getSky().label), 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
+  return (
+    <p className="site-foot-sky">
+      This page is lit by the real sky over Amelia Island — {label} now.
+    </p>
+  );
+}
 
 /**
  * The footer, in the global-footer anatomy: a gray band of dense small-text
@@ -72,6 +89,7 @@ export default function SiteFooter() {
 
         <div className="site-foot-live">
           <Conditions />
+          <SkyLine />
         </div>
 
         <p className="site-foot-legal">

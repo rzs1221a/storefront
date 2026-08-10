@@ -62,32 +62,66 @@ function PromptChip({ question }: { question: string }) {
   );
 }
 
-/** The hero's prompt: the visitor's own doubts, cycling in the field.
-    Static first doubt under reduced motion. */
-function HeroPrompt() {
-  const [i, setI] = useState(0);
+/** One doubt, typed character by character. Remounted per doubt (key in
+    the parent), so the character count INITIALIZES at zero — no reset
+    call, no cascading render. */
+function TypedDoubt({ text, reduced }: { text: string; reduced: boolean }) {
+  const [chars, setChars] = useState(reduced ? text.length : 0);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(() => {
-      setI((v) => (v + 1) % DOUBTS.length);
-    }, 4200);
-    return () => window.clearInterval(id);
-  }, []);
+    if (reduced) return;
+    const typer = window.setInterval(() => {
+      setChars((c) => {
+        if (c >= text.length) {
+          window.clearInterval(typer);
+          return c;
+        }
+        return c + 1;
+      });
+    }, 34);
+    return () => window.clearInterval(typer);
+  }, [text, reduced]);
+
+  return (
+    <span className="hero-prompt-q">
+      {text.slice(0, chars)}
+      {!reduced && <span className="hero-prompt-caret" aria-hidden="true" />}
+    </span>
+  );
+}
+
+/** The hero's prompt: the visitor's own doubts, typed with a live caret —
+    the site thinking the buyer's thoughts aloud. Under reduced motion the
+    current doubt is simply present. */
+function HeroPrompt() {
+  const [i, setI] = useState(0);
+  const reduced =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  useEffect(() => {
+    if (reduced) return;
+    const doubt = DOUBTS[i];
+    const hold = window.setTimeout(
+      () => setI((v) => (v + 1) % DOUBTS.length),
+      doubt.length * 34 + 2600
+    );
+    return () => window.clearTimeout(hold);
+  }, [i, reduced]);
+
+  const doubt = DOUBTS[i];
 
   return (
     <button
       type="button"
       className="hero-prompt"
-      onClick={() => ask(DOUBTS[i])}
-      aria-label={`Ask: ${DOUBTS[i]}`}
+      onClick={() => ask(doubt)}
+      aria-label={`Ask: ${doubt}`}
     >
       <span className="prompt-chip-key" aria-hidden="true">
         /
       </span>
-      <span className="hero-prompt-q" key={i}>
-        {DOUBTS[i]}
-      </span>
+      <TypedDoubt key={i} text={doubt} reduced={reduced} />
     </button>
   );
 }
@@ -267,6 +301,14 @@ export default function Coast() {
             )}
             <Link to={`/work/${HEYMANN.slug}`}>Case study ›</Link>
           </TileLinks>
+          {/* The mark's real light characteristic, blinking its actual
+              pattern — the same signature its beacon runs on the chart. */}
+          <p className="mono-label mt-3">
+            {HEYMANN.light.anim && (
+              <span className={`sig-dot ${HEYMANN.light.anim}`} aria-hidden="true" />
+            )}
+            {HEYMANN.light.characteristic} · live on the chart
+          </p>
         </div>
         <div className="tile-stage is-bleed" data-reveal="scale">
           <img
@@ -289,7 +331,12 @@ export default function Coast() {
         <div className="tile-grid-2">
           {PAIR.map((item) => (
             <article key={item.slug} className="half-tile" data-reveal>
-              <p className="eyebrow">{item.kind}</p>
+              <p className="eyebrow">
+                {item.light.anim && (
+                  <span className={`sig-dot ${item.light.anim}`} aria-hidden="true" />
+                )}
+                {item.kind}
+              </p>
               <h2 className="half-tile-title">{item.name}.</h2>
               <TileLinks>
                 {item.liveUrl && (

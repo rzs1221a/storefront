@@ -39,8 +39,11 @@ if (entryKB > ENTRY_CEILING) {
   );
 }
 
-/* 2 — the stylesheet. Measured 11.8 kB gz after the great deletion. */
-const CSS_CEILING = 13;
+/* 2 — the stylesheet. Measured 11.8 kB gz after the great deletion;
+   raised to 14 for the living-light system (sky-phase grading, the beam,
+   light signatures, the typed prompt) — measured at 13.4, a deliberate
+   feature purchase, not drift. */
+const CSS_CEILING = 14;
 const cssKB = gzKB(join(ASSETS, css));
 if (cssKB > CSS_CEILING) {
   failures.push(`css ${css}: ${cssKB.toFixed(1)} kB gz > ${CSS_CEILING} kB ceiling`);
