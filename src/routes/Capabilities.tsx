@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import Page from "../components/Page";
 import Conditions from "../components/Conditions";
+import CaptureDemo from "../components/CaptureDemo";
+import LocalPack from "../components/LocalPack";
 import { CAPABILITIES } from "../lib/capabilities";
 
 /**
- * The capability showcase.
+ * The capability showcase — the demo floor.
  *
  * The novelty on this site is not decoration and should not be filed under
  * "about us" — it is the product demo. The map behind this sheet is a running
@@ -15,21 +17,68 @@ import { CAPABILITIES } from "../lib/capabilities";
  * A feature list persuades developers. "Your listing pages will still be
  * indexed when the JavaScript fails" persuades the person paying.
  *
- * The list itself lives in lib/capabilities.ts so the prerendered body and
- * this one cannot drift.
+ * ── Why capture leads the page now ───────────────────────────────────────
+ *
+ * The map and the tide gauge are the most impressive things here and they used
+ * to open the page. They are also not what anybody buys. An agent buys the
+ * last station of the passage — the record arriving in the CRM they already
+ * open every morning — and that was previously a paragraph two-thirds of the
+ * way down, in a list, described rather than shown.
+ *
+ * So the demo floor is rearranged around the passage: capture first, because
+ * it is the pillar that sells, and the visitor can fire it themselves. The
+ * tide gauge and the map keep their panel directly underneath, which is where
+ * they belong — the thing that makes the work memorable, sitting under the
+ * thing that makes it worth paying for.
+ *
+ * The capability list itself lives in lib/capabilities.ts so the prerendered
+ * body and this one cannot drift.
  */
 
 export default function Capabilities() {
   return (
     <Page wide shortWindow eyebrow="Capabilities demo" title="Things a template cannot do for you">
       <p className="lede">
-        Not a longer feature list — a different category of thing. Every item
-        below is running in a site you can open, and two of them are running
-        behind this panel right now.
+        Not a longer feature list — a different category of thing. Nothing on
+        this page is described where it could be demonstrated: the first thing
+        below is a real submission you can fire yourself, and it prints what a
+        real serverless function did with it.
       </p>
 
-      {/* The showcase: the live engine, pointed at rather than described. */}
+      {/* ── Station 04, running, on the page that sells it ──────────── */}
       <section className="showcase mt-8">
+        <p className="eyebrow">Station 04 — Captured. Live, on this page</p>
+        <h2 className="showcase-title">Fire a lead through the wiring</h2>
+        <p className="showcase-body">
+          Every platform says it captures leads. This is what capture actually
+          is: a submission validated before it goes anywhere, split into named
+          fields, timestamped, and handed on as a record rather than an email
+          somebody has to read. Change the values, press the button, and watch
+          the parse.
+        </p>
+
+        <div className="mt-6">
+          <CaptureDemo />
+        </div>
+      </section>
+
+      {/* ── Station 02, drawn ──────────────────────────────────────── */}
+      <section className="showcase mt-12">
+        <p className="eyebrow">Station 02 — Found</p>
+        <h2 className="showcase-title">The five levers in the local pack</h2>
+        <p className="showcase-body">
+          This is the interface that decides whether a search on this coast ever
+          reaches you, and most of it is fields somebody has to be responsible
+          for rather than facts about your business. Here is which parts move.
+        </p>
+
+        <div className="mt-6">
+          <LocalPack />
+        </div>
+      </section>
+
+      {/* The showcase: the live engine, pointed at rather than described. */}
+      <section className="showcase mt-12">
         <p className="eyebrow">Live, on this page</p>
         <h2 className="showcase-title">Real-time API integration engine</h2>
         <p className="showcase-body">

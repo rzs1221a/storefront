@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#050505" />
 
-    <title>Seamark Studio — Custom websites for real estate agents</title>
+    <title>Seamark Studio — Get found. Get the lead. Own the whole route.</title>
     <!-- The counts here are a static approximation of the derived ones in
          src/lib — the prerender retags every route with the real figures. -->
     <meta
       name="description"
-      content="Custom websites for real estate professionals — 24 site types, from agent pages to full 3D market platforms, five shipped along this coast as proof. Built once, owned outright, no monthly platform fee."
+      content="The whole route a client travels — the search, the light that catches them, the page they land on, the record that reaches your CRM. Built once, owned outright, no monthly platform fee."
     />
     <link rel="canonical" href="https://seamark.studio/" />
 
@@ -18,11 +18,11 @@
     <meta property="og:url" content="https://seamark.studio/" />
     <meta
       property="og:title"
-      content="Seamark Studio — Custom websites for real estate agents"
+      content="Seamark Studio — Get found. Get the lead. Own the whole route."
     />
     <meta
       property="og:description"
-      content="Your website should be the reason they call you. Built once, owned outright, no monthly platform fee."
+      content="The whole route a client travels, built once and owned outright. No monthly platform fee."
     />
     <meta property="og:image" content="https://seamark.studio/og.webp" />
     <meta property="og:site_name" content="Seamark Studio" />
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="Seamark Studio — Custom websites for real estate agents"
+      content="Seamark Studio — Get found. Get the lead. Own the whole route."
     />
     <meta
       name="twitter:description"
@@ -40,24 +40,14 @@
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
-    <!-- The largest above-the-fold image, and therefore the largest
-         contentful paint. Preloaded per breakpoint so a phone fetches the
-         phone capture and never pays for the desktop one. Must stay in sync
-         with the featured <picture> in src/routes/Coast.tsx. -->
-    <link
-      rel="preload"
-      as="image"
-      href="/work/the-aerial/desktop.webp"
-      type="image/webp"
-      media="(min-width: 641px)"
-    />
-    <link
-      rel="preload"
-      as="image"
-      href="/work/the-aerial/mobile.webp"
-      type="image/webp"
-      media="(max-width: 640px)"
-    />
+    <!-- There is deliberately no image preload here any more.
+         The home page used to open on a full-bleed screenshot of The Aerial,
+         which was the largest contentful paint and worth preloading per
+         breakpoint. It now opens on the Passage: an inline SVG that ships
+         inside the document and paints without a single extra request. The
+         screenshots moved below the fold into the proof strip, where they are
+         lazily loaded — preloading one of them now would fetch a megabyte
+         nobody has scrolled to yet, on the page whose speed is the pitch. -->
 
     <script type="application/ld+json">
       {

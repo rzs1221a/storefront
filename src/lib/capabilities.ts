@@ -42,6 +42,14 @@ export const CAPABILITIES: Capability[] = [
     proofPath: "/work/heymann-williams-coastal",
   },
   {
+    title: "The profile that decides whether you are found at all",
+    body:
+      "Your Google Business Profile is the second station of the passage, and it is a set of fields rather than a description of you: primary category, service areas, hours, photos, and a review stream that has to be answered. Most of it is a lever; almost nobody treats it as one.",
+    matters:
+      "It is the cheapest lead route an agent has and the one most often left unattended. It also carries a risk nobody warns you about until it happens — a profile suspended over a category or an address is a light that goes out overnight, and there is no website in the world that compensates for it.",
+    proof: "The five levers, annotated on this page",
+  },
+  {
     title: "Leads into BoldTrail, properly",
     body:
       "Validated submissions ingested into BoldTrail through the Lead Dropbox parser, so your follow-up, campaigns, and reporting keep working exactly as they do today. Already built and running.",
