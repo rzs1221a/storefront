@@ -66,6 +66,21 @@ export interface Destination {
    * drift. Falls back to `title` when omitted.
    */
   verifyPhrase?: string;
+  /**
+   * A real, linkable, prerendered page whose COMMERCIAL TERMS are not settled.
+   *
+   * The prerender stamps `robots: noindex` on it and leaves it out of the
+   * sitemap, so an unpriced page can never be indexed, ranked, or quoted back
+   * at the studio as though it were an offer — while the page itself stays
+   * shareable, so it can be sent to someone deliberately.
+   *
+   * This is the same instinct the rest of the codebase already runs on: a
+   * concept beacon is drawn hollow rather than omitted, and an unpriced page is
+   * published rather than hidden — it just does not get to rank. The build
+   * fails if a draft route's product carries prices, or if a priced product's
+   * route is still marked draft (see scripts/prerender.mjs).
+   */
+  draft?: boolean;
 }
 
 /*
@@ -151,12 +166,12 @@ export const DESTINATIONS: Destination[] = [
     path: "/",
     frame: "top",
     label: "Home",
-    title: "Custom websites for real estate professionals",
-    blurb: `Bespoke, high-performance websites for BHHS agents — built once, owned outright, no monthly platform fee. ${CATALOG_TOTALS.options} site types on the menu, ${numberWord(TOTALS.projects).toLowerCase()} sites shipped along this coast as proof.`,
+    title: "Get found. Get the lead. Own the whole route",
+    blurb: `The whole route a client travels — the search, the light that catches them, the page they land on, the record that reaches your CRM — built once and owned outright, with no monthly platform fee. ${CATALOG_TOTALS.options} site types on the menu, ${numberWord(TOTALS.projects).toLowerCase()} sites shipped along this coast as proof.`,
     group: "coast",
     navOrder: 1,
     mobileTab: "Home",
-    verifyPhrase: "interactive real estate platforms",
+    verifyPhrase: "Own the whole route",
   },
   ...workDestinations,
   {
@@ -205,12 +220,32 @@ export const DESTINATIONS: Destination[] = [
     verifyPhrase: "Maps that are the product",
   },
   {
+    path: "/watch",
+    frame: "watch",
+    label: "The Watch",
+    title: "Somebody has to be looking at the scope",
+    blurb:
+      "A site is not a thing you finish, it is a thing you keep lit. Reviews arrive, hours drift, a form quietly stops reaching your CRM. The Watch is a person checking every month — and dealing with it. Three plans, one of which needs no website at all.",
+    group: "studio",
+    /*
+     * Deliberately no navOrder. Two reasons, and both would hold on their own:
+     * this page is a draft with no prices on it, and a seventh item would
+     * crowd a masthead that is already at the limit of what a buyer scans.
+     * It lives instead as the closing card on /packages — which is arguably
+     * where it converts best anyway, since the person who has just read the
+     * build prices is exactly the person ready to hear what keeps it lit.
+     */
+    draft: true,
+    verifyPhrase: "looking at the scope",
+  },
+  {
     path: "/contact",
     frame: "contact",
     label: "Contact",
-    title: "Tell me what you need",
+    title: "Request a pilot",
     blurb:
-      "Twenty minutes on the phone and you will know whether this is worth doing. Call (904) 548-8222 or send a note.",
+      "A harbour pilot boards your vessel, brings you through water they know, and then leaves — the ship is still yours. Twenty minutes on the phone: I will pull up your Google presence while we talk and tell you what is missing, whether or not you ever hire me. Call (904) 548-8222 or send a note.",
+    verifyPhrase: "Request a pilot",
     group: "studio",
     navOrder: 6,
     mobileTab: "Contact",

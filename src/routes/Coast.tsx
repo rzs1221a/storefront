@@ -1,51 +1,61 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { WORK, TOTALS } from "../lib/work";
-import {
-  CATALOG_TOTALS,
-  CATEGORIES,
-  MODULES,
-  offeringsByCategory,
-} from "../lib/catalog";
-import { TIERS } from "../lib/offer";
+import { OWNERSHIP } from "../lib/offer";
+import { COST_OF_THE_ALTERNATIVE, COST_COUNTERPOINT } from "../lib/cost";
 import { BRAND, CONTACT } from "../lib/brand";
 import { observeFrames, flyOnHover, cancelHoverFly } from "../lib/cameraFrames";
 import { numberWord } from "../lib/format";
-import BrowserFrame from "../components/BrowserFrame";
 import MagneticButton from "../components/MagneticButton";
-import CountUp from "../components/CountUp";
 import MarkDeck from "../components/MarkDeck";
 import TourControl from "../components/TourControl";
 import Conditions from "../components/Conditions";
-import OfferGrid from "../components/OfferGrid";
-import LeadForm from "../components/LeadForm";
+import Passage from "../components/Passage";
 
 /**
- * The storefront. One grand page that scrolls — and as it scrolls, the coast
- * flies beneath it: every section declares a camera frame, and chart windows
- * between sections open the map at full height wherever the argument has
- * just landed.
+ * The storefront.
  *
- * The order is the sales argument: the claim (hero), the evidence (work),
- * the offer (packages, with real prices), the range (catalog), the close
- * (the form itself, not a link to it). Proof before price, price before
- * breadth — a visitor who never leaves this page has still seen the whole
- * pitch in the order it convinces.
+ * ── What changed, and why ────────────────────────────────────────────────
  *
- * The scroll-synced camera is observeFrames in lib/cameraFrames.ts — it
- * observes every [data-frame] and flies to whichever owns the most viewport.
+ * This page used to argue in selling order: claim, evidence, offer, range,
+ * close. Five bands, everything on one scroll, nothing more than a page-down
+ * away. It converted by being complete.
+ *
+ * It now does one thing four times smaller, because the offer moved. What is
+ * for sale is no longer a website — it is the ROUTE a stranger travels from a
+ * search box into an agent's CRM, and a page that lists twenty-four options
+ * argues for breadth at exactly the moment it needs to argue for a mechanism.
+ * A visitor who scrolls past a running demonstration to reach a price grid has
+ * been given the wrong thing to think about.
+ *
+ * So: one demonstration, one wound, one promise, one door.
+ *
+ *   The Passage      the whole pitch, playing, in eight seconds without reading
+ *   The proof strip  five real sites — evidence for the LANDED station
+ *   The cost band    what the route costs when somebody else owns it
+ *   The cartouche    the ownership contract, and the only CTA on the page
+ *
+ * Everything the old page carried is still a real, prerendered, crawlable
+ * route — packages, the catalog, capabilities, process, questions — reachable
+ * from the masthead on every screen. Nothing was deleted; the homepage stopped
+ * trying to be all of them at once. A nav that lists everything ranks nothing,
+ * and a homepage that says everything closes nobody.
+ *
+ * The scroll-synced camera is unchanged: observeFrames in lib/cameraFrames.ts
+ * flies to whichever [data-frame] owns the viewport.
  */
-
-const FEATURED = WORK[0];
-const ENTRY_PRICE = TIERS[0].price;
 
 /**
- * Phone-only sticky contact bar. The header CTA scrolls away in the long
- * hero, and on a phone the close band is several windows down — this keeps
- * the two actions that make money one thumb away, and hides itself once the
- * real close (with the full form) is on screen.
+ * Phone-only sticky contact bar. The masthead CTA scrolls away inside the
+ * Passage — which on a phone is the better part of a screen and a half — so
+ * this keeps the two actions that make money one thumb away, and hides itself
+ * once the real door is on screen.
  */
-function MobileCtaBar({ hideWhenVisible }: { hideWhenVisible: React.RefObject<HTMLElement | null> }) {
+function MobileCtaBar({
+  hideWhenVisible,
+}: {
+  hideWhenVisible: React.RefObject<HTMLElement | null>;
+}) {
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
@@ -65,7 +75,7 @@ function MobileCtaBar({ hideWhenVisible }: { hideWhenVisible: React.RefObject<HT
         Text {CONTACT.phoneDisplay}
       </a>
       <Link to="/contact" className="btn btn-primary btn-sm">
-        Start a project →
+        Request a pilot →
       </Link>
     </div>
   );
@@ -77,60 +87,53 @@ export default function Coast() {
 
   return (
     <div className="storefront-home" id="sheet">
-      {/* ── The arrival ─────────────────────────────────────────────── */}
-      <section className="hero-band" data-frame="top">
-        <div className="hero-copy panel hero-panel">
+      {/* ── The Passage ─────────────────────────────────────────────── */}
+      <section className="hero-band passage-band" data-frame="top">
+        {/*
+         * Source order is the phone's order, and CSS reorders it for the
+         * desktop reading the design vision describes ("under it, the only
+         * headline the page needs").
+         *
+         * On a phone the claim has to come first anyway. The vertical Passage
+         * is most of a screen and a half — a headline underneath it would be a
+         * lead-generation page whose proposition sits below the fold, which no
+         * amount of showmanship pays for. The visitor reads the claim, then
+         * scrolls, and their own thumb drives the vessel down the route.
+         */}
+        <div className="passage-claim panel">
           <p className="eyebrow">
             {BRAND.name} — {CONTACT.location}
           </p>
 
-          <h1 className="hero-title">
-            High-converting custom web systems and{" "}
-            <em>interactive real estate platforms.</em>
+          <h1 className="passage-headline">
+            Get found. Get the lead. <em>Own the whole route.</em>
           </h1>
 
-          <p className="hero-sub">
-            Built once, owned outright, no monthly platform fee. Static-fast
-            pages that rank on their own, live map and market data wired in,
-            and every lead routed straight into BoldTrail.
+          <p className="passage-sub">
+            This is the passage every client travels — a stranger's search, your
+            light catching them, your page, your CRM. I build all of it, in your
+            name, for one fee.
           </p>
 
           <div className="hero-actions">
             <MagneticButton>
-              <Link to="/packages" className="btn btn-primary">
-                See packages &amp; pricing
+              <Link to="/contact" className="btn btn-primary">
+                {OWNERSHIP.cta}
               </Link>
             </MagneticButton>
-            <Link to="/work" className="btn btn-ghost">
-              See the shipped work
+            <Link to="/packages" className="btn btn-ghost">
+              What it costs
             </Link>
             <TourControl />
           </div>
 
-          <dl className="hero-stats">
-            <div>
-              <dt className="mono-label">Sites shipped</dt>
-              <dd>
-                <CountUp to={TOTALS.projects} />
-              </dd>
-            </div>
-            <div>
-              <dt className="mono-label">Builds start at</dt>
-              <dd>
-                {ENTRY_PRICE != null
-                  ? `$${ENTRY_PRICE.toLocaleString("en-US")}`
-                  : "A call"}
-              </dd>
-            </div>
-            <div>
-              <dt className="mono-label">Monthly fee</dt>
-              <dd>$0</dd>
-            </div>
-          </dl>
-
           <div className="hero-conditions">
             <Conditions />
           </div>
+        </div>
+
+        <div className="passage-stage panel">
+          <Passage />
         </div>
 
         {/* The chart's own helm: sail the twelve marks without leaving the
@@ -140,210 +143,158 @@ export default function Coast() {
 
       {/* ── The proof ───────────────────────────────────────────────── */}
       <div
-        className="chart-window"
+        className="chart-window is-short"
         data-frame="work-sold-on-amelia-island"
         aria-hidden="true"
       />
 
       <section className="store-band seam-y" data-frame="top">
         <header className="store-band-head">
-          <p className="eyebrow">Selected work</p>
+          <p className="eyebrow">Station 03 — Landed</p>
           <h2 className="store-band-title">
-            {numberWord(TOTALS.projects)} sites. <em>All of them real.</em>
+            {numberWord(TOTALS.projects)} real sites on this coast.{" "}
+            <em>Click any of them.</em>
           </h2>
           <p className="store-band-lede">
-            Every one is the actual site, captured from the live deployment or
-            a production build — no mockups and no concepts. Hover a row and
-            the chart beneath you flies to its mark.
+            Evidence for one station of the passage: the page a lead actually
+            arrives on. Every frame below is the real site, captured from the
+            live deployment or a production build — no mockups, no concepts —
+            and each mark blinks its own light characteristic, the way a lighted
+            seamark identifies itself. Hover one and the chart flies to it.
           </p>
         </header>
 
-        <div className="work-feature panel">
-          <BrowserFrame
-            url={FEATURED.liveUrl?.replace(/^https:\/\//, "")}
-            liveUrl={FEATURED.liveUrl}
-          >
-            <picture>
-              <source media="(max-width: 640px)" srcSet={FEATURED.mobile} />
-              <img
-                src={FEATURED.desktop}
-                alt={`The ${FEATURED.name} website — ${FEATURED.kind.toLowerCase()}`}
-                width={1440}
-                height={900}
-                decoding="async"
-                className="block w-full"
-              />
-            </picture>
-          </BrowserFrame>
-          <p className="hero-proof-caption">
-            <Link to={`/work/${FEATURED.slug}`} className="hover:text-(--color-ink)">
-              {FEATURED.name} — {FEATURED.kind.toLowerCase()}
-            </Link>
-            <span className="text-(--color-ink-faint)">
-              {" "}
-              · flagship, running live
-            </span>
-          </p>
-        </div>
-
-        <ul className="work-rows panel">
-          {WORK.map((item, i) => (
+        <ul className="proof-strip">
+          {WORK.map((item) => (
             <li key={item.slug}>
               <Link
                 to={`/work/${item.slug}`}
-                className="case-row"
+                className="proof-card glass-card"
                 onMouseEnter={() => flyOnHover(`work-${item.slug}`)}
                 onMouseLeave={cancelHoverFly}
               >
-                <span className="case-index">{String(i + 1).padStart(2, "0")}</span>
-                <span className="min-w-0 flex-1">
-                  <span className="case-head">
-                    <span className="case-name">{item.name}</span>
-                    <span className="case-kind">{item.kind}</span>
-                  </span>
-                  <span className="case-summary">{item.summary}</span>
-                  <span className="case-meta">
-                    <span className="font-mono text-[0.6875rem] text-(--color-ink-faint)">
-                      {item.light.characteristic} ·{" "}
-                      {item.loc.toLocaleString("en-US")} lines
-                    </span>
-                    {item.liveUrl && <span className="case-live">Public</span>}
-                  </span>
+                <span className="proof-shot">
+                  <picture>
+                    <source media="(max-width: 640px)" srcSet={item.mobile} />
+                    <img
+                      src={item.desktop}
+                      alt={`The ${item.name} website — ${item.kind.toLowerCase()}`}
+                      width={1440}
+                      height={900}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </picture>
+                </span>
+                <span className="proof-meta">
+                  <span className="proof-name">{item.name}</span>
+                  <span className="proof-kind">{item.kind}</span>
+                </span>
+                <span className="proof-light">
+                  <span
+                    aria-hidden="true"
+                    className={`beacon-dot${item.light.anim ? ` ${item.light.anim}` : ""}`}
+                  />
+                  <span className="reading">{item.light.characteristic}</span>
+                  {item.liveUrl && <span className="case-live">Public</span>}
                 </span>
               </Link>
             </li>
           ))}
         </ul>
-      </section>
-
-      {/* ── The offer ───────────────────────────────────────────────── */}
-      <div className="chart-window is-short" data-frame="pricing" aria-hidden="true" />
-
-      <section className="store-band seam-y">
-        <header className="store-band-head">
-          <p className="eyebrow">Packages</p>
-          <h2 className="store-band-title">
-            Pay once. <em>Own it forever.</em>
-          </h2>
-          <p className="store-band-lede">
-            {numberWord(TIERS.length)} build sizes, one fee agreed in writing
-            before anything starts. After launch you owe nothing — hosting is
-            free at the traffic these sites see, and the code is yours.
-          </p>
-        </header>
-
-        <div className="store-band-grid">
-          <OfferGrid />
-        </div>
-
-        <p className="modules-strip">
-          <span className="mono-label">Add to any build</span>
-          <Link to="/options#tools" className="modules-strip-link">
-            {numberWord(MODULES.length)} add-on modules from $
-            {Math.min(
-              ...MODULES.map((m) => m.priceFrom ?? Infinity)
-            ).toLocaleString("en-US")}{" "}
-            — search, market data, editor, client portal →
-          </Link>
-        </p>
 
         <div className="store-band-actions">
-          <Link to="/packages" className="btn btn-ghost">
-            Compare in detail →
+          <Link to="/work" className="btn btn-ghost">
+            Read the case studies →
           </Link>
           <Link to="/capabilities" className="btn btn-ghost">
-            See the live demo →
+            Fire the capture demo yourself →
           </Link>
         </div>
       </section>
 
-      {/* ── The catalog ─────────────────────────────────────────────── */}
-      <div className="chart-window" data-frame="catalog" aria-hidden="true" />
+      {/* ── The cost of the alternative ─────────────────────────────── */}
+      <div className="chart-window is-short" data-frame="pricing" aria-hidden="true" />
 
-      <section className="store-band seam-y">
+      <section className="store-band seam-y cost-band">
         <header className="store-band-head">
-          <p className="eyebrow">Everything I build</p>
+          <p className="eyebrow">The alternative</p>
           <h2 className="store-band-title">
-            {CATALOG_TOTALS.options} options. {numberWord(TOTALS.projects)}{" "}
-            shipped proofs.
+            Someone already owns this route. <em>They rent it back to you.</em>
           </h2>
           <p className="store-band-lede">
-            Every site type a real estate business needs, as a catalog rather
-            than a sales call. {numberWord(CATALOG_TOTALS.shipped)} of these
-            patterns run today in shipped work; the rest are marked{" "}
-            <span className="badge badge-concept">Concept</span> and say so
-            everywhere they appear.
+            Every figure below is somebody else's published number, with its
+            source and the date it was last checked printed under it. None of
+            it is a fee I charge — it is what the same passage costs when the
+            light, the page, and the lead all belong to a platform.
           </p>
         </header>
 
-        <div className="category-grid">
-          {CATEGORIES.map((cat) => {
-            const offerings = offeringsByCategory(cat.slug);
-            return (
-              <div key={cat.slug} className="category-card glass-card">
-                <h3 className="category-name">{cat.name}</h3>
-                <p className="category-blurb">{cat.blurb}</p>
-                <ul className="category-list">
-                  {offerings.map((o) => (
-                    <li key={o.slug}>
-                      <Link to={`/options/${o.slug}`}>
-                        <span>{o.name}</span>
-                        <span
-                          className={`badge ${o.status === "shipped" ? "badge-shipped" : "badge-concept"}`}
-                        >
-                          {o.status === "shipped" ? "Shipped" : "Concept"}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+        {/*
+         * The one band on this site where amber outweighs white, deliberately.
+         * Cyan-versus-amber became white-versus-amber (see the colour
+         * semantics at the top of index.css), and the rule is unchanged: white
+         * is what you own, amber is value in motion. A whole band of amber is
+         * therefore a picture of value moving the wrong way — out of the agent
+         * and up the pipe. It is the only place on the site that reads that
+         * way, and it is meant to be uncomfortable.
+         */}
+        <ul className="cost-grid">
+          {COST_OF_THE_ALTERNATIVE.map((item) => (
+            <li key={item.label} className="cost-tile glass-card">
+              <p className="cost-figure reading reading-lead">{item.figure}</p>
+              <p className="cost-label">{item.label}</p>
+              <p className="cost-detail">{item.detail}</p>
+              <p className="source-line">
+                Source: {item.source}. Checked{" "}
+                <time dateTime={item.checked}>{item.checked}</time>.
+                {item.assumption && ` ${item.assumption}`}
+              </p>
+            </li>
+          ))}
+        </ul>
 
-          <div className="category-card glass-card is-cta">
-            <h3 className="category-name">Not sure which?</h3>
-            <p className="category-blurb">
-              Describe what you sell and I will point at the closest thing I
-              have already built.
-            </p>
-            <div className="mt-4 flex flex-col gap-2">
-              <Link to="/options" className="btn btn-primary btn-sm">
-                Browse all {CATALOG_TOTALS.options} options
-              </Link>
-              <Link to="/contact" className="btn btn-ghost btn-sm">
-                Just ask →
-              </Link>
-            </div>
-          </div>
-        </div>
+        <p className="cost-counterpoint">{COST_COUNTERPOINT}</p>
       </section>
 
-      {/* ── The close ───────────────────────────────────────────────── */}
+      {/* ── The ownership contract, and the one door ────────────────── */}
       <div className="chart-window is-short" data-frame="contact" aria-hidden="true" />
 
-      <section className="store-band store-close panel" ref={closeRef}>
-        <h2 className="store-band-title">
-          Your website should be <em>the reason they call you.</em>
-        </h2>
-        <p className="store-band-lede">
-          Twenty minutes on the phone and you will know whether this is worth
-          doing. Or skip the call — tell me what you need right here.
-        </p>
+      <section className="store-band store-close" ref={closeRef}>
+        {/*
+         * A chart's title block: the panel where the sheet declares its datum
+         * and its authority, double-ruled the way the real thing is drawn. It
+         * is the one place a chart speaks about itself, which makes it the
+         * only correct home for the ownership contract.
+         */}
+        <div className="cartouche panel">
+          <div className="soundings" aria-hidden="true">
+            {SOUNDINGS.map((s) => (
+              <span key={`${s.x}-${s.y}`} style={{ left: `${s.x}%`, top: `${s.y}%` }}>
+                {s.v}
+              </span>
+            ))}
+          </div>
 
-        {/* The form itself, not a link to it: every navigation removed from
-            the conversion path is a lead that did not leak. */}
-        <div className="store-close-form">
-          <LeadForm />
-        </div>
+          <p className="mono-label">{OWNERSHIP.datum}</p>
+          <h2 className="cartouche-title">{OWNERSHIP.title}</h2>
 
-        <div className="store-band-actions">
-          <a href={`sms:${CONTACT.phone}`} className="btn btn-ghost">
-            Text {CONTACT.phoneDisplay}
-          </a>
-          <a href={`tel:${CONTACT.phone}`} className="btn btn-ghost">
-            Call {CONTACT.phoneDisplay}
-          </a>
+          <ul className="cartouche-clauses">
+            {OWNERSHIP.clauses.map((clause) => (
+              <li key={clause}>{clause}</li>
+            ))}
+          </ul>
+
+          <div className="cartouche-close">
+            <MagneticButton>
+              <Link to="/contact" className="btn btn-primary">
+                {OWNERSHIP.cta}
+              </Link>
+            </MagneticButton>
+            <a href={`tel:${CONTACT.phone}`} className="btn btn-ghost">
+              Call {CONTACT.phoneDisplay}
+            </a>
+          </div>
         </div>
       </section>
 
@@ -351,3 +302,23 @@ export default function Coast() {
     </div>
   );
 }
+
+/**
+ * Depth soundings — the scattered numerals that fill open water on a real
+ * chart. Authored rather than random so the layout is stable across renders
+ * and can never wander behind a line of text. Held at 5.5% opacity by
+ * `.soundings`; if you can read one of these without looking for it, it is
+ * too strong.
+ */
+const SOUNDINGS = [
+  { x: 8, y: 18, v: 27 },
+  { x: 22, y: 61, v: 34 },
+  { x: 37, y: 12, v: 19 },
+  { x: 49, y: 78, v: 41 },
+  { x: 63, y: 33, v: 23 },
+  { x: 71, y: 88, v: 52 },
+  { x: 84, y: 24, v: 36 },
+  { x: 92, y: 67, v: 48 },
+  { x: 15, y: 92, v: 31 },
+  { x: 57, y: 47, v: 26 },
+];

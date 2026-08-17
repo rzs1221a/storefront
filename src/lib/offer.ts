@@ -176,6 +176,11 @@ export function tierBySlug(slug: string | null | undefined): Tier | undefined {
  * specific dollar figures. Publishing named per-vendor pricing on a commercial
  * page means standing behind numbers that change without notice — the pattern
  * is accurate, durable, and makes the same point.
+ *
+ * ONE narrow exception exists, at the owner's explicit direction: the homepage
+ * cost band in `lib/cost.ts` names figures, and pays for the privilege by
+ * carrying a source and a verification date on every one of them. That
+ * exception does not extend here. This table stays pattern-only.
  */
 export const COMPARISON = {
   headline: "What you are actually being sold elsewhere",
@@ -211,6 +216,40 @@ export const COMPARISON = {
       us: "Yes — a real editor, and no limits on what I can change for you.",
     },
   ],
+} as const;
+
+/**
+ * The ownership contract — the cartouche.
+ *
+ * A real chart carries a title block: the panel where the sheet states its
+ * datum, its scale, and who surveyed it. It is the one place a chart speaks in
+ * its own voice about its own authority, and it is where a mariner looks to
+ * find out whether the thing in their hands can be trusted.
+ *
+ * This is that block. Six clauses, each one a fact that is either true of a
+ * delivered project or is not — no adjectives, nothing that needs a
+ * qualifier, nothing that could be argued about after a launch. It closes the
+ * homepage because the cost band immediately above it is the wound, and a
+ * wound with no promise under it is just a complaint.
+ *
+ * Every clause here is already load-bearing somewhere else in this codebase
+ * (FAQ, COMPARISON, the tier deliverables). Stated together and undiluted,
+ * they are the offer. Change one only if the way projects are actually
+ * delivered has changed.
+ */
+export const OWNERSHIP = {
+  title: "The ownership contract",
+  datum: "What is true of every project, on the day it launches",
+  clauses: [
+    "The source code lives in a repository in your name.",
+    "The site deploys from your own Netlify account, on your own domain.",
+    "Your leads land in your BoldTrail, not in a CRM I control.",
+    "One fee, agreed in writing before anything starts. Nothing recurring to me.",
+    "If you and I never speak again, nothing turns off.",
+    "If you change brokerages, the site changes its branding and keeps working.",
+  ],
+  /** The single door the homepage ends on. */
+  cta: "Twenty minutes, and you'll know.",
 } as const;
 
 /** What happens after they say yes. Sets expectations, reduces friction. */

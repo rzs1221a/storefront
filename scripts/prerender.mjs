@@ -28,8 +28,17 @@ import { BRAND, CONTACT } from "../src/lib/brand.ts";
 import { DESTINATIONS } from "../src/lib/destinations.ts";
 import { FRAMES } from "../src/lib/cameraFrames.ts";
 import { WORK, TOTALS } from "../src/lib/work.ts";
-import { TIERS, COMPARISON, PROCESS, FAQ } from "../src/lib/offer.ts";
+import { TIERS, COMPARISON, PROCESS, FAQ, OWNERSHIP } from "../src/lib/offer.ts";
 import { CAPABILITIES } from "../src/lib/capabilities.ts";
+import { STATIONS } from "../src/lib/passage.ts";
+import { COST_OF_THE_ALTERNATIVE } from "../src/lib/cost.ts";
+import {
+  WATCH_PLANS,
+  WATCH_DRAFT,
+  BLIPS,
+  CHANNEL_INPUTS,
+  CHANNEL_MODEL,
+} from "../src/lib/watch.ts";
 import {
   CATALOG,
   CATEGORIES,
@@ -54,8 +63,23 @@ const esc = (s) =>
     .replaceAll('"', "&quot;");
 
 /** Swap the template's head tags for page-specific ones. */
-function retag(html, { title, description, url }) {
+function retag(html, { title, description, url, noindex }) {
   return html
+    /*
+     * A draft route is real, linkable and shareable, but must never rank.
+     * Its commercial terms are not settled, so an indexed copy is a price
+     * quote the studio has not agreed to — see the `draft` field in
+     * src/lib/destinations.ts. The tag is INJECTED rather than swapped
+     * because the template deliberately carries no robots meta: the default
+     * for every other page is indexable, and a default that has to be
+     * remembered is a default that eventually is not.
+     */
+    .replace(
+      "<link rel=\"canonical\"",
+      noindex
+        ? '<meta name="robots" content="noindex, follow" />\n    <link rel="canonical"'
+        : '<link rel="canonical"'
+    )
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
     .replace(
       /<meta\s+name="description"[\s\S]*?\/>/,
@@ -127,13 +151,28 @@ const list = (lines) =>
 
 /** The written body for one destination, as semantic HTML. */
 function bodyFor(dest) {
+  /*
+   * The home page's crawlable body mirrors what the React page now argues:
+   * the four stations of the passage, the proof for one of them, the cost of
+   * letting somebody else own the route, and the ownership contract. It is
+   * NOT allowed to be richer than the rendered page — a prerender that carries
+   * content the visitor never sees is cloaking, and this file is the one place
+   * that would be easy to do by accident.
+   */
   if (dest.path === "/") {
     return `
-      <header><h1>High-converting custom web systems and interactive real estate platforms.</h1></header>
-      <p>Built once, owned outright, no monthly platform fee. Static-fast pages that rank on their own, live map and market data wired in, and every lead routed straight into BoldTrail. ${esc(String(TOTALS.projects))} sites shipped along the Amelia Island coast, totalling ${TOTALS.loc.toLocaleString("en-US")} lines of production source.</p>
-      <h2>Selected work</h2>
+      <header><h1>Get found. Get the lead. Own the whole route.</h1></header>
+      <p>This is the passage every client travels — a stranger's search, your light catching them, your page, your CRM. I build all of it, in your name, for one fee. Built once, owned outright, no monthly platform fee. ${esc(String(TOTALS.projects))} sites shipped along the Amelia Island coast, totalling ${TOTALS.loc.toLocaleString("en-US")} lines of production source.</p>
+      <h2>The passage, station by station</h2>
+      <ol>${STATIONS.map((s) => `<li><strong>${esc(s.name)}</strong> — ${esc(s.role)}. ${esc(s.detail)}</li>`).join("")}</ol>
+      <h2>${esc(String(TOTALS.projects))} real sites on this coast</h2>
+      <p>Evidence for one station of the passage: the page a lead actually arrives on. Every one is the real site, captured from the live deployment or a production build.</p>
       <ul>${WORK.map((w) => `<li><a href="/work/${w.slug}"><strong>${esc(w.name)}</strong></a> — ${esc(w.kind)}. ${esc(w.summary)}</li>`).join("")}</ul>
-      <h2>Everything I build</h2>
+      <h2>What the route costs when somebody else owns it</h2>
+      <ul>${COST_OF_THE_ALTERNATIVE.map((c) => `<li><strong>${esc(c.figure)}</strong> ${esc(c.label)}. ${esc(c.detail)} Source: ${esc(c.source)}, checked ${esc(c.checked)}.${c.assumption ? ` ${esc(c.assumption)}` : ""}</li>`).join("")}</ul>
+      <h2>${esc(OWNERSHIP.title)}</h2>
+      <p>${esc(OWNERSHIP.datum)}.</p>
+      ${list(OWNERSHIP.clauses)}
       <p>${CATALOG_TOTALS.options} site types across ${CATEGORIES.length} categories — from a one-week agent page to a full 3D market platform. ${CATALOG_TOTALS.shipped} are patterns running today in the shipped work above; the rest are build-ready concepts and say so. <a href="/options">See the full catalog</a>.</p>
     `;
   }
@@ -234,10 +273,35 @@ function bodyFor(dest) {
       list(
         CAPABILITIES.map((c) => `${c.title} — ${c.body}`)
       ),
+    /*
+     * Draft, and the body says so in the crawlable HTML rather than only in a
+     * styled notice — same rule the catalog holds for concept offerings, where
+     * "build-ready concept" is stated in the markup so no snippet anywhere can
+     * read it as shipped work. An unpriced plan gets the same treatment: no
+     * figure appears, and the absence is explained.
+     */
+    "/watch": () => `
+      ${WATCH_DRAFT ? `<p><strong>Status: the plans below are not yet priced.</strong> This page is excluded from the sitemap and marked noindex until they are. <a href="/contact">Ask and I will tell you what it would cost.</a></p>` : ""}
+      <h2>What the sweep catches</h2>
+      ${list(BLIPS.map((b) => `${b.event} — ${b.action}.`))}
+      <h2>The plans</h2>
+      ${WATCH_PLANS.map(
+        (p) => `
+        <h3>${esc(p.name)} — ${esc(p.system.toLowerCase())}</h3>
+        <p>${esc(p.audience)} ${esc(p.summary)}</p>
+        <p>${p.price != null ? `$${p.price.toLocaleString("en-US")} per month.` : "Not yet priced."}</p>
+        ${list(p.includes)}
+        <p>Not included: ${esc(p.excludes.join("; "))}.</p>`
+      ).join("")}
+      <h2>The paid channel</h2>
+      <p>Under sail, the wind is free and you go where it allows. Under power, you go where you point and a meter runs the whole time. The channel is under power, and it stops the day you stop paying.</p>
+      <p>A worked example with stated inputs — not published market data, not a quote, and not a forecast. At a $${CHANNEL_INPUTS.floor.toLocaleString("en-US")} monthly floor, a modelled $${CHANNEL_INPUTS.cpc.toFixed(2)} cost per click and a modelled ${(CHANNEL_INPUTS.conversionRate * 100).toFixed(2)}% click-to-enquiry rate: ${CHANNEL_MODEL.clicks.toLocaleString("en-US")} clicks, ${CHANNEL_MODEL.leads} validated enquiries, $${CHANNEL_MODEL.costPerLead.toFixed(2)} per lead. Your real numbers depend on your market, your season and who else is bidding, and get quoted in writing before anything runs. Ad spend is paid to the platform from your own account, never through me.</p>
+    `,
     "/process": () => list(PROCESS.map((p) => `${p.name} — ${p.detail}`)),
     "/questions": () => list(FAQ.map((f) => `${f.q} ${f.a}`)),
     "/contact": () =>
       list([
+        "Twenty minutes on the phone. I will pull up your Google presence while we talk and tell you what is missing — whether or not you ever hire me.",
         `Call or text ${CONTACT.phoneDisplay}.`,
         `Email ${CONTACT.email}.`,
         `Based on ${CONTACT.location}. I reply within one business day.`,
@@ -272,6 +336,10 @@ const pages = DESTINATIONS.map((dest) => ({
   title: titleFor(dest),
   description: dest.blurb,
   body: `${bodyFor(dest)}${navHtml(dest.path)}`,
+  /* Draft routes are still built and still linked from every other page —
+     they are real, shareable pages. They are simply not offered up to be
+     indexed or ranked. */
+  noindex: Boolean(dest.draft),
 }));
 
 const template = await readFile(path.join(dist, "index.html"), "utf8");
@@ -282,6 +350,7 @@ for (const page of pages) {
     title: page.title,
     description: page.description,
     url,
+    noindex: page.noindex,
   });
   html = inject(html, page.body);
 
@@ -296,10 +365,16 @@ for (const page of pages) {
   await writeFile(out, html, "utf8");
 }
 
-// Sitemap, from the same list so the two cannot drift.
+/*
+ * Sitemap, from the same list so the two cannot drift — minus the drafts.
+ * Submitting a noindex URL in a sitemap is a contradiction: it asks a crawler
+ * to fetch a page and then tells it to throw the result away, and Search
+ * Console reports it as an error against the whole site.
+ */
+const indexable = pages.filter((p) => !p.noindex);
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${pages
+${indexable
   .map(
     (p) => `  <url>
     <loc>${ORIGIN}${p.route === "/" ? "/" : p.route}</loc>
@@ -390,6 +465,47 @@ if (CATALOG_TOTALS.options !== CATALOG.length) {
   failures.push("CATALOG_TOTALS drifted from the catalog itself");
 }
 
+/*
+ * The draft contract.
+ *
+ * A route marked `draft` is one whose commercial terms are not settled, and
+ * the whole point of the flag is that it cannot be forgotten in either
+ * direction. Publishing a price on a noindexed page wastes a real offer;
+ * leaving the flag on after pricing lands quietly keeps a finished page out of
+ * the index forever, which is the failure mode that costs leads and shows no
+ * symptom. So both directions fail the build.
+ */
+const watchRoute = DESTINATIONS.find((d) => d.path === "/watch");
+if (!watchRoute) {
+  failures.push("the /watch destination is missing");
+} else {
+  const priced = WATCH_PLANS.filter((p) => p.price != null);
+  if (WATCH_DRAFT && priced.length) {
+    failures.push(
+      `WATCH_DRAFT is true but ${priced.length} watch plan(s) carry a price — set WATCH_DRAFT to false and drop \`draft\` from the /watch destination`
+    );
+  }
+  if (!WATCH_DRAFT && priced.length !== WATCH_PLANS.length) {
+    failures.push(
+      "WATCH_DRAFT is false but not every watch plan carries a price"
+    );
+  }
+  if (WATCH_DRAFT !== Boolean(watchRoute.draft)) {
+    failures.push(
+      "WATCH_DRAFT and the /watch destination's `draft` flag disagree — an unpriced page must be noindexed, and a priced one must not be"
+    );
+  }
+}
+
+/* A draft page that nothing links to is a page nobody will ever remember to
+   finish, and a draft page in the masthead is an unpriced offer in the
+   storefront window. Neither is allowed. */
+for (const dest of DESTINATIONS) {
+  if (dest.draft && dest.navOrder !== undefined) {
+    failures.push(`${dest.path} is a draft but carries navOrder ${dest.navOrder}`);
+  }
+}
+
 if (failures.length) {
   console.error(
     `\nPrerender failed its invariants:\n${failures.map((f) => `  ✗ ${f}`).join("\n")}\n`
@@ -397,4 +513,8 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`Prerendered ${pages.length} routes + sitemap (${ORIGIN}).`);
+const drafts = pages.length - indexable.length;
+console.log(
+  `Prerendered ${pages.length} routes + sitemap (${ORIGIN})` +
+    (drafts ? ` — ${drafts} draft route(s) noindexed and kept out of the sitemap.` : ".")
+);

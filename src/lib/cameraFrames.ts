@@ -108,6 +108,13 @@ export const FRAMES: Record<string, CameraFrame> = {
   capabilities: { center: [-81.44, 30.65], zoom: 12.4, pitch: 58, bearing: 8 },
   pricing: { center: [-81.46, 30.62], zoom: 11.4, pitch: 50, bearing: -20 },
   contact: { center: [-81.47, 30.66], zoom: 12.6, pitch: 60, bearing: 24 },
+  /*
+   * The Watch looks out to sea rather than down at the town: flat, high, and
+   * pointed at the approaches off the island's eastern shore. It is the only
+   * page about the horizon instead of about a place, and the frame should say
+   * so before a word is read — a lookout's view, not a survey.
+   */
+  watch: { center: [-81.415, 30.66], zoom: 11.9, pitch: 26, bearing: 62 },
 
   /*
    * The catalog overview pulls all the way out to the working corridor —

@@ -111,6 +111,32 @@ export default function Packages() {
         ))}
       </dl>
 
+      {/*
+        The Watch, as the closing card rather than a seventh item in the
+        masthead. Two reasons: seven is more than a buyer scans, and this is
+        where it converts best anyway — the person who has just finished
+        reading build prices is exactly the person ready to hear what keeps the
+        thing lit afterwards. It is also still a draft, and an unpriced page
+        does not belong in the storefront window.
+      */}
+      <aside className="watch-cta">
+        <div>
+          <p className="eyebrow">After launch</p>
+          <h2 className="watch-cta-title">
+            A build lights the route. <em>Something has to keep it lit.</em>
+          </h2>
+          <p className="watch-cta-body">
+            Reviews arrive, hours drift, a form quietly stops reaching your CRM.
+            The Watch is a person checking every month and dealing with it —
+            including one plan for agents who own no site at all, only a Google
+            profile nobody is attending.
+          </p>
+        </div>
+        <Link to="/watch" className="btn btn-ghost btn-sm">
+          See the Watch →
+        </Link>
+      </aside>
+
       <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-(--line) pt-6">
         <Link to="/contact" className="btn btn-primary btn-sm">
           Schedule a consultation

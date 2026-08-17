@@ -8,6 +8,7 @@ import Options from "./routes/Options";
 import OptionDetail from "./routes/OptionDetail";
 import Packages from "./routes/Packages";
 import Capabilities from "./routes/Capabilities";
+import Watch from "./routes/Watch";
 import Contact from "./routes/Contact";
 import { Process, Questions } from "./routes/Studio";
 
@@ -35,6 +36,9 @@ export default function App() {
           <Route path="options" element={<Options />} />
           <Route path="options/:slug" element={<OptionDetail />} />
           <Route path="capabilities" element={<Capabilities />} />
+          {/* Draft — unpriced, noindexed, and deliberately absent from the
+              masthead. See src/lib/watch.ts. */}
+          <Route path="watch" element={<Watch />} />
           <Route path="contact" element={<Contact />} />
 
           <Route path="process" element={<Process />} />

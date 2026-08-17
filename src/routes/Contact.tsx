@@ -2,6 +2,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { BRAND, CONTACT, SHOW_PRICING } from "../lib/brand";
 import { tierBySlug, TIERS } from "../lib/offer";
 import { offeringBySlug, priceLabelFor } from "../lib/catalog";
+import { WATCH_PLANS, WATCH_DRAFT } from "../lib/watch";
 import Page from "../components/Page";
 import LeadForm from "../components/LeadForm";
 
@@ -10,15 +11,26 @@ import LeadForm from "../components/LeadForm";
  * project sheet — on a map interface the conversion path has to be permanently
  * one tap away, because there is no "scroll to the bottom" to fall back on.
  *
- * Arriving from an offer card carries `?package=<slug>`; arriving from a
- * catalog option carries `?option=<slug>`. Either pre-selects the form and
- * acknowledges the choice above it. Carrying the selection in the URL rather
- * than in component state is deliberate: it survives a reload, it can be sent
- * to someone, and it works from the prerendered HTML before React has mounted.
+ * ── Request a pilot ──────────────────────────────────────────────────────
+ *
+ * A harbour pilot is the local expert who boards your vessel to bring you
+ * through waters they know and you do not — and then leaves, and the ship is
+ * still yours. That is precisely the twenty-minute call, and precisely the
+ * ownership promise, in one word an agent already understands from every
+ * coastal town they have ever sold in. It is the only frame on the site that
+ * describes both the service and the exit at the same time.
+ *
+ * Arriving from an offer card carries `?package=<slug>`; a catalog option
+ * carries `?option=<slug>`; a Watch plan carries `?watch=<slug>`. Each
+ * pre-selects the form and acknowledges the choice above it. Carrying the
+ * selection in the URL rather than in component state is deliberate: it
+ * survives a reload, it can be sent to someone, and it works from the
+ * prerendered HTML before React has mounted.
  */
 export default function Contact() {
   const [params] = useSearchParams();
   const offering = offeringBySlug(params.get("option"));
+  const watch = WATCH_PLANS.find((p) => p.slug === params.get("watch"));
   // A build implies its tier; a module prices on its own and implies none.
   // An explicit ?package= still wins when that is how the visitor arrived.
   const tier =
@@ -27,7 +39,7 @@ export default function Contact() {
       ? TIERS.find((t) => t.slug === offering.tierSlug)
       : undefined);
 
-  const subject = offering?.name ?? tier?.name;
+  const subject = offering?.name ?? tier?.name ?? watch?.name;
 
   return (
     <Page
@@ -37,15 +49,48 @@ export default function Contact() {
           ? `Everything I build — ${offering.name}`
           : tier
             ? `Packages — ${tier.name}`
-            : "Start here"
+            : watch
+              ? `The Watch — ${watch.name}`
+              : "Start here"
       }
-      title={subject ? `Let's talk about your ${subject}` : "Tell me what you need"}
+      title={subject ? `Let's talk about your ${subject}` : "Request a pilot"}
     >
       <p className="lede">
-        Twenty minutes on the phone and you will know whether this is worth
-        doing. If it is not a fit, I will say so — I would rather turn down work
-        than build something that does not earn its keep.
+        A harbour pilot is the local expert who boards your vessel, brings you
+        through water they know and you do not, and then leaves — and the ship
+        is still yours. That is this call.
       </p>
+
+      <p className="mt-4 max-w-(--measure) text-[0.9375rem] leading-relaxed text-(--color-ink-soft)">
+        Twenty minutes on the phone. I will pull up your Google presence while
+        we talk and tell you what is missing — whether or not you ever hire me.
+        If it is not a fit, I will say so; I would rather turn down work than
+        build something that does not earn its keep.
+      </p>
+
+      {watch && (
+        <div className="selected-package">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <p className="selected-package-name">
+              {watch.name}
+              <span className="selected-package-system"> · {watch.system}</span>
+            </p>
+            <p className="reading text-sm text-(--color-ink-muted)">
+              {WATCH_DRAFT || watch.price == null
+                ? "Not yet priced — ask"
+                : `$${watch.price.toLocaleString("en-US")} per month`}
+            </p>
+          </div>
+          <p className="mt-2 text-[0.875rem] leading-relaxed text-(--color-ink-soft)">
+            {watch.summary}
+          </p>
+          <p className="mono-label mt-3">
+            <Link to="/watch" className="hover:text-(--color-ink)">
+              Back to the Watch →
+            </Link>
+          </p>
+        </div>
+      )}
 
       {offering ? (
         <div className="selected-package">

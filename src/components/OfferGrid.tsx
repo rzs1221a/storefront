@@ -3,6 +3,8 @@ import { TIERS, type Tier } from "../lib/offer";
 import { SHOW_PRICING } from "../lib/brand";
 import { WORK } from "../lib/work";
 import { CATALOG } from "../lib/catalog";
+import { TIER_COVERAGE } from "../lib/passage";
+import PassageDiagram from "./PassageDiagram";
 
 /**
  * The offer matrix — four productized build sizes, side by side.
@@ -76,6 +78,19 @@ function TierCard({ tier, order }: { tier: Tier; order: number }) {
       </p>
 
       <p className="tier-summary">{tier.summary}</p>
+
+      {/*
+        How much of the route this size buys, before any feature list. Two
+        cards side by side are now two diagrams with different numbers of lit
+        stations, which is a comparison a buyer completes in a glance instead
+        of by holding six bullets from the first card in their head while they
+        read the third. See components/PassageDiagram.tsx — a lit station is a
+        claim, and TIER_COVERAGE is where those claims are kept honest.
+      */}
+      <PassageDiagram
+        coverage={TIER_COVERAGE[tier.slug]}
+        caption={`${tier.name} covers`}
+      />
 
       {/* The CTA sits above the fold of the card, before the long list. A
           reader who is already convinced should not have to scroll past six

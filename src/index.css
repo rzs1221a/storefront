@@ -30,6 +30,32 @@
  * Accent discipline: `signal` is now white light — reserved for live state,
  * eyebrows, focus rings, and data emphasis. Primary CTAs invert to solid
  * white on black — the highest-contrast treatment available.
+ *
+ * ── Colour is semantics ──────────────────────────────────────────────────
+ *
+ * There is exactly one hue on this site, and it means something specific.
+ *
+ *   white light   what the agent OWNS — beacons, the site, the profile, the
+ *                 route infrastructure, prices. The chrome itself.
+ *   amber         the LEAD — value in motion. The vessel on the passage, a
+ *                 form filling, the captured contact, money leaving.
+ *   hollow/dashed not yet built. Concept beacons; unlit stations.
+ *   red           nothing. Never decorative. Errors only.
+ *
+ * The Living Chart Act II asked for cyan-versus-amber. Cyan lost, and should
+ * have: the chrome went monochrome deliberately (five differently-branded
+ * client screenshots have to sit in one frame), and white light is the truer
+ * reading of "what you own" anyway — a beacon shows white. Keeping the frame
+ * achromatic also means amber is the ONLY hue anywhere, so it carries more
+ * weight as a signal than it would as one of two.
+ *
+ * The Passage hero teaches this vocabulary in its first loop; every later page
+ * speaks it. When a tier price renders in white, that is not a style choice —
+ * it is the claim: this is a thing you own, not a thing you rent.
+ *
+ * The discipline that makes it work is restraint. Amber appears where value is
+ * MOVING and nowhere else. The moment it becomes a way to make something look
+ * important, it stops meaning anything and the system is dead.
  */
 
 @theme {
@@ -55,6 +81,13 @@
   --color-signal: #f5f5f7;
   --color-signal-dim: #9a9aa1;
   --color-signal-glow: rgba(255, 255, 255, 0.14);
+
+  /* The lead: the site's only hue, and the only thing it is allowed to mean.
+     10.9:1 on the plate, so it clears AA for body text and not just for the
+     large figures it usually carries. */
+  --color-lead: #f5b445;
+  --color-lead-dim: #b3822e;
+  --color-lead-glow: rgba(245, 180, 69, 0.22);
 
   --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
@@ -863,6 +896,9 @@ body {
     align-items: start;
   }
   .offer-grid > .tier-card {
+  /* The mini-passage diagram inside sizes itself against the card, not the
+     viewport — see the container query in the mini-passage section. */
+  container-type: inline-size;
     order: var(--tier-order, 0);
   }
 }
@@ -1529,6 +1565,100 @@ summary,
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-ink-muted);
+}
+
+/*
+ * Readings.
+ *
+ * The chart aesthetic lives or dies on the difference between PROSE and
+ * READINGS. A price, a coordinate, a timestamp, a source citation, a terminal
+ * line — none of those are sentences, and setting them in the reading voice is
+ * what makes the page feel like an instrument rather than a brochure.
+ *
+ * `mono-label` already did this for eyebrows; this promotes it from a habit to
+ * a rule with the one property `mono-label` was missing. `tabular-nums` is the
+ * whole point: a column of figures whose digits do not line up reads as
+ * decoration, and a figure that shifts width as it counts reads as broken.
+ */
+.reading {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.01em;
+}
+
+/* A reading that is money in motion, not money you keep. See the colour
+   semantics at the top of this file — amber is never decorative. */
+.reading-lead {
+  color: var(--color-lead);
+}
+
+/* Where a figure came from and when it was last checked. Small, quiet, and
+   never optional: lib/cost.ts publishes named third-party figures, and a named
+   figure without its provenance is a claim this studio cannot stand behind. */
+.source-line {
+  margin-top: 0.625rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: var(--color-ink-faint);
+  text-wrap: pretty;
+}
+
+/* ── Chart furniture ──────────────────────────────────────────────────────
+ *
+ * Texture borrowed from the real object: the scattered depth soundings that
+ * fill open water on a chart, and the compass rose. Both are decoration in the
+ * strict sense — they carry no data — which is why they are held under 8%
+ * opacity and are never, ever allowed behind body text. They exist to make a
+ * panel read as a sheet of paper rather than a div, and the instant one of
+ * them competes with something readable it has failed at its only job.
+ */
+.soundings {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink);
+  opacity: 0.055;
+  user-select: none;
+}
+.soundings span {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.compass-rose {
+  color: var(--color-ink);
+  opacity: 0.06;
+  pointer-events: none;
+}
+
+/*
+ * The cartouche: a chart's title block, where the sheet declares its datum and
+ * its authority. Double-ruled, because that is how the real thing is drawn.
+ */
+.cartouche {
+  position: relative;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.5rem;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+}
+.cartouche::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid var(--line);
+  border-radius: 0.3125rem;
+  pointer-events: none;
+}
+.cartouche > * {
+  position: relative;
 }
 
 /* ── Surfaces: Surface Liquid Glass ───────────────────────────────────── */
@@ -2593,4 +2723,1416 @@ html[data-render-load="austere"] body.route-blooming main :is(.glass, .glass-dee
   line-height: 1.6;
   color: var(--color-ink-faint);
   max-width: 72ch;
+}
+
+/* ── The Passage ──────────────────────────────────────────────────────────
+ *
+ * The hero's running demonstration: one lead's voyage from a search box to a
+ * contact record. See src/components/Passage.tsx for the timeline and
+ * src/lib/passage.ts for the geometry and the vocabulary.
+ *
+ * Everything positional is set by JavaScript from a single `progress` number.
+ * What lives here is only what CSS is better at: the material of the scene,
+ * the lamp states, and the lit-versus-unlit convention the map already uses
+ * for shipped work against concepts.
+ */
+
+.passage {
+  position: relative;
+  width: 100%;
+  container-type: inline-size;
+}
+
+/*
+ * The aspect-ratio box holds the SVG and nothing else. The legend underneath
+ * is real content with its own height, and putting both inside a ratio box
+ * spills the legend over whatever follows the hero.
+ *
+ * Height-capped rather than width-driven. At 2.38:1 a full-width stage on a
+ * large monitor is over 600px tall, which pushes the headline and the CTA
+ * clean off the fold — a lead-generation page whose proposition is below the
+ * fold has traded the sale for the demo. The ratio then drives width DOWN from
+ * that cap, so the scene stays correctly proportioned and simply occupies less
+ * of the screen.
+ */
+.passage-frame {
+  width: 100%;
+  aspect-ratio: 1000 / 420;
+  max-height: min(40vh, 420px);
+  margin-inline: auto;
+}
+.passage[data-tall="true"] .passage-frame {
+  aspect-ratio: 440 / 1000;
+  /* The phone rendering is meant to be taller than the viewport: the visitor
+     scrolls THROUGH it, and that traversal is what drives the vessel. */
+  max-height: none;
+}
+
+.passage-chart {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ── The course ── */
+
+/* The plan: drawn ahead of the vessel, dashed, exactly as a passage plan is
+   plotted on a real chart before anyone casts off. */
+.passage-plan {
+  fill: none;
+  stroke: var(--color-signal);
+  stroke-width: 1.25;
+  stroke-opacity: 0.26;
+  stroke-dasharray: 7 7;
+  stroke-linecap: round;
+}
+
+/* The run: the course actually made good, drawn in behind the vessel. White,
+   because the route is infrastructure the agent owns. */
+.passage-run {
+  fill: none;
+  stroke: var(--color-signal);
+  stroke-width: 1.75;
+  stroke-opacity: 0.92;
+  stroke-linecap: round;
+}
+
+/* ── The lead ── */
+
+/*
+ * The only amber object on the chart. If a second one ever appears here, the
+ * colour has stopped meaning "value in motion" and the system is dead.
+ *
+ * It has to out-read a station marker, because it spends the end of every loop
+ * docked on top of one — at matched sizes the two merged into a single amber
+ * blob and the vessel stopped looking like a vessel. Bigger than the ring,
+ * with a dark keel line to separate it from the white route beneath, and a
+ * glow tight enough to stay a shape rather than become a smudge.
+ */
+.passage-vessel path {
+  fill: var(--color-lead);
+  stroke: var(--color-plate);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+}
+.passage-vessel {
+  filter: drop-shadow(0 0 4px var(--color-lead-glow));
+}
+
+.passage-pulse {
+  fill: var(--color-lead);
+  opacity: 0;
+  filter: drop-shadow(0 0 6px var(--color-lead-glow));
+}
+
+.passage-wire {
+  fill: none;
+  stroke: var(--color-lead);
+  stroke-width: 1.25;
+  stroke-opacity: 0.55;
+  stroke-dasharray: 3 4;
+  opacity: 0;
+}
+
+/* The form filling is the lead arriving, so it fills amber. The empty slot
+   behind it is the page's own furniture, so it does not. */
+.passage-fill {
+  fill: var(--color-lead);
+  opacity: 0;
+  transform: scaleX(0);
+}
+.passage-slot {
+  fill: rgba(255, 255, 255, 0.09);
+}
+
+/* ── The light ── */
+
+.passage-beam {
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+/* ── Stations ── */
+
+/*
+ * Lit versus hollow-and-dashed is not a new convention — it is the one the map
+ * has drawn since the beginning: a shipped mark carries a light, an unbuilt
+ * one does not. A station the passage has not reached yet is an unbuilt mark.
+ */
+.passage-station-halo {
+  fill: var(--color-signal-glow);
+  opacity: 0;
+  transition: opacity 0.55s var(--ease-out-expo);
+}
+.passage-station-ring {
+  fill: none;
+  stroke: var(--color-signal);
+  stroke-width: 1.25;
+  stroke-opacity: 0.4;
+  stroke-dasharray: 3 4;
+  transition:
+    stroke-opacity 0.45s ease,
+    stroke-dasharray 0.45s ease;
+}
+.passage-station-core {
+  fill: var(--color-signal);
+  opacity: 0.18;
+  transition: opacity 0.45s ease;
+}
+.passage-station-name {
+  fill: var(--color-ink-faint);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  transition: fill 0.45s ease;
+}
+
+.passage-station[data-lit="true"] .passage-station-halo {
+  opacity: 1;
+}
+.passage-station[data-lit="true"] .passage-station-ring {
+  stroke-opacity: 1;
+  stroke-dasharray: none;
+}
+.passage-station[data-lit="true"] .passage-station-core {
+  opacity: 1;
+}
+.passage-station[data-lit="true"] .passage-station-name {
+  fill: var(--color-ink);
+}
+
+/* ── Instrument panels ── */
+
+.passage-panel > rect:first-of-type {
+  fill: rgba(8, 8, 10, 0.82);
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+.passage-panel.is-pack {
+  opacity: 0;
+}
+
+.passage-cap {
+  fill: var(--color-ink-muted);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+}
+
+.passage-mono {
+  fill: var(--color-ink-soft);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+.passage-mono.is-cmd {
+  fill: var(--color-ink);
+}
+.passage-mono.is-field {
+  fill: var(--color-lead);
+}
+.passage-mono.is-ok {
+  fill: var(--color-ink);
+}
+/* The CRM prints nothing until the record actually arrives. JS sets these
+   inline as the capture beat runs; this is the state before the first frame,
+   so no paint ever shows a terminal that has already logged a lead. */
+.passage-panel.is-terminal .passage-mono {
+  opacity: 0;
+}
+
+.passage-field {
+  fill: rgba(255, 255, 255, 0.05);
+  stroke: var(--line);
+  stroke-width: 1;
+}
+.passage-block {
+  fill: rgba(255, 255, 255, 0.07);
+}
+
+.passage-caret {
+  fill: var(--color-signal);
+  animation: passage-caret 1.05s steps(2, end) infinite;
+}
+@keyframes passage-caret {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.1;
+  }
+}
+
+.passage-pack-row rect {
+  fill: rgba(255, 255, 255, 0.045);
+}
+.passage-pack-row.is-mine rect {
+  fill: rgba(255, 255, 255, 0.11);
+  stroke: var(--color-signal);
+  stroke-width: 1;
+  stroke-opacity: 0.55;
+}
+.passage-pack-row.is-mine .passage-mono {
+  fill: var(--color-ink);
+}
+
+/* Every fabricated record on this site is labelled as one. */
+.passage-chip rect {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+.passage-chip text {
+  fill: var(--color-ink-faint);
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.14em;
+}
+
+/* ── The vocabulary, in words ── */
+
+/*
+ * Not a caption. This is the four-station vocabulary stated once in prose, so
+ * that it is crawlable, announceable, and legible if the SVG never paints.
+ * The rest of the site — the tier diagrams, /watch — assumes the reader has
+ * met these four words, and a graphic is not a safe place to teach them.
+ */
+.passage-legend {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+@media (min-width: 640px) {
+  .passage-legend {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+}
+.passage-legend li {
+  display: grid;
+  gap: 0.1875rem;
+}
+.passage-legend-index {
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  color: var(--color-ink-faint);
+}
+.passage-legend-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.008em;
+}
+.passage-legend-role {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--color-ink-muted);
+}
+
+/*
+ * Reduced motion is a first-class rendering here, not a kill switch.
+ *
+ * The component never starts its loop under the preference — it draws
+ * progress = 1 once and leaves. That is the completed passage: route drawn,
+ * four stations lit, beam held on its crossing bearing as a fixed lit sector,
+ * vessel docked, terminal full. All that remains for CSS is to stop the two
+ * things it owns — the lamp fades and the caret blink — so the scene arrives
+ * finished rather than settling into place.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .passage-caret {
+    animation: none;
+    opacity: 0.35;
+  }
+  .passage-station-halo,
+  .passage-station-ring,
+  .passage-station-core,
+  .passage-station-name {
+    transition: none;
+  }
+}
+
+/* ── The Passage band, the proof strip, the wound, the cartouche ──────────
+ *
+ * The homepage's four movements. See src/routes/Coast.tsx for why the page
+ * shrank from five bands to four and what each one is now for.
+ */
+
+.passage-band {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 3vh, 2.25rem);
+}
+
+/*
+ * Source order is the phone's order: claim, then Passage. On a wide screen the
+ * design vision's order applies — the performance plays, and the headline sits
+ * under it — which is a pure presentational reorder, so it belongs here rather
+ * than in the component. Tab and reading order follow the DOM either way, and
+ * the DOM order is the one that makes sense read aloud.
+ */
+.passage-claim {
+  max-width: 46rem;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border-radius: 1.25rem;
+}
+@media (min-width: 768px) {
+  /*
+   * Explicit on all three children rather than ordering two and letting the
+   * third fall where it may — an unordered flex child defaults to 0, which put
+   * the mark deck ABOVE the performance the first time this was written.
+   */
+  .passage-band > .passage-stage {
+    order: 1;
+  }
+  .passage-band > .passage-claim {
+    order: 2;
+  }
+  .passage-band > .mark-deck {
+    order: 3;
+  }
+
+  /* Two columns once there is room: the claim on the left, the actions and
+     the live conditions on the right, so the headline is not a narrow panel
+     floating under a full-width stage. */
+  .passage-claim {
+    max-width: 64rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    column-gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+  }
+  .passage-claim > .eyebrow,
+  .passage-claim > .passage-headline {
+    grid-column: 1;
+  }
+  .passage-claim > .passage-sub {
+    grid-column: 2;
+    grid-row: 2;
+    margin-top: 0.5rem;
+  }
+  .passage-claim > .hero-actions {
+    grid-column: 2;
+    grid-row: 3;
+    margin-top: 1.25rem;
+  }
+  .passage-claim > .hero-conditions {
+    grid-column: 1;
+    grid-row: 3;
+    align-self: end;
+  }
+}
+
+.passage-headline {
+  margin-top: 0.875rem;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  line-height: 1.04;
+  letter-spacing: -0.032em;
+  font-weight: 500;
+  text-wrap: balance;
+}
+.passage-headline em {
+  font-style: normal;
+  font-weight: 420;
+  color: var(--color-ink-soft);
+}
+.passage-sub {
+  margin-top: 1rem;
+  max-width: 54ch;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--color-ink-soft);
+}
+
+.passage-stage {
+  padding: clamp(1rem, 2.5vw, 1.75rem);
+  border-radius: 1.25rem;
+}
+
+/* ── The proof strip ── */
+
+/*
+ * Screenshots as evidence for exactly one station of the passage — the page a
+ * lead lands on. It replaced a hero frame plus a row list: two renderings of
+ * the same six projects, which was one more than the argument needed once the
+ * homepage stopped being the whole pitch.
+ */
+/* Sized so all six land in one row on a desktop — a strip, which is what it
+   is called and what it is for. Any wider a minimum and six projects wrap to
+   5 + 1, which reads as a grid that ran out. */
+.proof-strip {
+  margin-top: 2.5rem;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11.5rem), 1fr));
+}
+.proof-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.875rem;
+  height: 100%;
+  transition: transform 0.4s var(--ease-out-expo);
+}
+@media (hover: hover) and (pointer: fine) {
+  .proof-card:hover {
+    transform: translateY(-3px);
+  }
+}
+.proof-shot {
+  display: block;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  border: 1px solid var(--line);
+  aspect-ratio: 16 / 10;
+}
+.proof-shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+.proof-meta {
+  display: grid;
+  gap: 0.125rem;
+  padding-inline: 0.25rem;
+}
+.proof-name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.008em;
+}
+.proof-kind {
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+}
+.proof-light {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.25rem 0.125rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  color: var(--color-ink-faint);
+}
+.proof-light .beacon-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--color-signal);
+  flex: none;
+}
+
+/* ── The wound ── */
+
+/*
+ * Amber outweighs white here and nowhere else on the site. That imbalance IS
+ * the content: white is what the agent owns, amber is value in motion, and a
+ * band that is mostly amber is a picture of value moving in the wrong
+ * direction. Read the colour semantics at the top of this file before adding
+ * anything amber to any other band.
+ */
+.cost-grid {
+  margin-top: 2.5rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+}
+.cost-tile {
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border-radius: 0.875rem;
+  display: grid;
+  align-content: start;
+}
+.cost-figure {
+  font-size: clamp(2rem, 4.5vw, 2.875rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.cost-label {
+  margin-top: 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.006em;
+}
+.cost-detail {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+/* The answer, deliberately outside the tiles: putting it inside would blunt
+   both the wound and the promise. */
+.cost-counterpoint {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  max-width: 58ch;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-ink-muted);
+}
+
+/* ── The cartouche ── */
+
+.store-close .cartouche {
+  max-width: 46rem;
+  margin-inline: auto;
+  text-align: left;
+  border-radius: 1rem;
+}
+.cartouche-title {
+  margin-top: 0.5rem;
+  font-size: clamp(1.5rem, 3vw, 2.125rem);
+  font-weight: 500;
+  letter-spacing: -0.028em;
+  line-height: 1.1;
+}
+.cartouche-clauses {
+  margin-top: 1.75rem;
+  display: grid;
+  gap: 0.875rem;
+}
+.cartouche-clauses li {
+  position: relative;
+  padding-left: 1.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+/* A ruled tick, not a bullet: this is a title block, and a title block states
+   terms rather than listing features. */
+.cartouche-clauses li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 0.6rem;
+  height: 1px;
+  background: var(--color-signal);
+  opacity: 0.6;
+}
+.cartouche-close {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* ── The passage in miniature ─────────────────────────────────────────────
+ *
+ * Four stations, lit or hollow, on every tier card and on /watch. See
+ * src/components/PassageDiagram.tsx — the diagram IS the tier comparison, so
+ * a lit station here is a claim, not a decoration.
+ */
+
+.mini-passage {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+.mini-passage-caption {
+  display: block;
+  margin-bottom: 0.875rem;
+}
+
+/*
+ * Vertical, everywhere. Four columns inside a 17rem tier card gives each
+ * station about 60px, which clips "OPEN WATER" to "OPEN W…" — and a diagram
+ * whose station names are unreadable compares nothing, which is the one job it
+ * has. Running the route down the card also matches the phone rendering of the
+ * hero Passage exactly, so the two are visibly the same object at two sizes.
+ */
+.mini-passage-route {
+  display: grid;
+  gap: 0.75rem;
+}
+.mini-passage-route li {
+  position: relative;
+  padding-left: 1.25rem;
+  min-width: 0;
+}
+
+/* The mark. Solid white for a station this purchase covers; hollow and dashed
+   for one it does not — the same convention the chart draws for a shipped
+   beacon against a concept. */
+.mini-passage-mark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  border: 1px dashed var(--color-ink-faint);
+}
+.mini-passage-route li[data-lit="true"] .mini-passage-mark {
+  border: 1px solid var(--color-signal);
+  background: var(--color-signal);
+  box-shadow: 0 0 0 3px var(--color-signal-glow);
+}
+
+/* The leg leaving each station, styled by that station's own state: the run
+   you make good after a mark you own is a run you own. The last station has
+   no leg — the passage ends in the CRM. */
+.mini-passage-route li::after {
+  content: "";
+  position: absolute;
+  top: 13px;
+  bottom: -0.75rem;
+  left: 4px;
+  border-left: 1px dashed var(--color-ink-faint);
+}
+.mini-passage-route li:last-child::after {
+  display: none;
+}
+.mini-passage-route li[data-lit="true"]::after {
+  border-left: 1px solid var(--color-signal);
+  opacity: 0.75;
+}
+
+.mini-passage-name {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mini-passage-route li[data-lit="true"] .mini-passage-name {
+  color: var(--color-ink);
+}
+
+.mini-passage-note {
+  display: block;
+  margin-top: 0.3125rem;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  color: var(--color-ink-faint);
+  text-wrap: pretty;
+}
+.mini-passage-route li[data-lit="true"] .mini-passage-note {
+  color: var(--color-ink-muted);
+}
+
+/*
+ * Name and note share a line once the CARD is wide enough — a container query,
+ * not a viewport one. The viewport says nothing about how much room a tier
+ * card actually has: three watch plans across an 864px panel are 277px each on
+ * a 1440px screen, and a media query would happily split those into a 120px
+ * name column and an 89px note.
+ */
+@container (min-width: 22rem) {
+  .mini-passage:not(.is-compact) .mini-passage-route li {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    align-items: baseline;
+    gap: 0 0.75rem;
+  }
+  .mini-passage:not(.is-compact) .mini-passage-note {
+    margin-top: 0;
+  }
+}
+
+/* ── The radar room (/watch) ──────────────────────────────────────────────
+ *
+ * See src/components/RadarScope.tsx. Zero JavaScript: the sweep is one CSS
+ * rotation, and every return and log row carries a negative animation-delay
+ * derived from its own bearing so it lights exactly as the sweep reaches it.
+ */
+
+.radar {
+  display: grid;
+  gap: 1.75rem;
+  align-items: center;
+}
+@media (min-width: 800px) {
+  .radar {
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+.radar-scope {
+  max-width: 20rem;
+  margin-inline: auto;
+  width: 100%;
+}
+.radar-scope svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.radar-ring {
+  fill: none;
+  stroke: var(--color-signal);
+  stroke-opacity: 0.16;
+  stroke-width: 1;
+}
+.radar-graticule {
+  stroke: var(--color-signal);
+  stroke-opacity: 0.1;
+  stroke-width: 1;
+}
+
+.radar-sweep {
+  transform-origin: 50% 50%;
+  animation: radar-sweep 9s linear infinite;
+}
+.radar-hand {
+  stroke: var(--color-signal);
+  stroke-opacity: 0.6;
+  stroke-width: 1.25;
+}
+@keyframes radar-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/*
+ * A return holds briefly and decays, the way a phosphor scope actually
+ * behaves — then waits out the rest of the revolution dark. The long tail is
+ * the point: it says the sweep has moved on and this one is handled.
+ */
+.radar-blip {
+  animation: radar-return 9s linear infinite;
+}
+.radar-blip-core {
+  fill: var(--color-signal);
+}
+.radar-blip-halo {
+  fill: var(--color-signal-glow);
+}
+@keyframes radar-return {
+  0% {
+    opacity: 1;
+  }
+  38% {
+    opacity: 0.12;
+  }
+  100% {
+    opacity: 0.12;
+  }
+}
+
+.radar-log {
+  display: grid;
+  gap: 0.125rem;
+}
+.radar-log li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: baseline;
+  gap: 0.625rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.875rem;
+  animation: radar-row 9s linear infinite;
+}
+.radar-log li:last-child {
+  border-bottom: none;
+}
+.radar-log-event {
+  color: var(--color-ink-soft);
+}
+.radar-log-arrow {
+  color: var(--color-ink-faint);
+}
+/* The action is the product, so the action is the reading. */
+.radar-log-action {
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--color-ink);
+}
+@keyframes radar-row {
+  0% {
+    opacity: 1;
+  }
+  38% {
+    opacity: 0.58;
+  }
+  100% {
+    opacity: 0.58;
+  }
+}
+
+/*
+ * Reduced motion: the designed static state, not a kill switch. The sweep
+ * holds as a fixed lit sector, every return is lit, every log row is at full
+ * strength — the scope with the whole watch showing at once.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .radar-sweep {
+    animation: none;
+    transform: rotate(58deg);
+  }
+  .radar-blip,
+  .radar-log li {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ── The Watch's own furniture ────────────────────────────────────────── */
+
+.watch-scope {
+  margin: 2.5rem 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/*
+ * A draft notice has one job: be impossible to mistake for the finished page.
+ * It is ruled in white rather than amber on purpose — amber means value in
+ * motion on this site, and a warning is not that. Borrowing the accent for
+ * emphasis is exactly how a colour system stops meaning anything.
+ */
+.draft-notice {
+  margin-top: 2rem;
+  padding: 1rem 1.25rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--color-ink-muted);
+}
+.draft-notice .mono-label {
+  display: block;
+  margin-bottom: 0.375rem;
+  color: var(--color-ink);
+}
+.draft-notice code {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-ink-soft);
+}
+.draft-notice a {
+  color: var(--color-ink-soft);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 4px;
+}
+
+.watch-grid {
+  margin-top: 2.5rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 860px) {
+  .watch-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.watch-card {
+  position: relative;
+  /* The mini-passage diagram inside sizes itself against the card. */
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border-radius: 0.875rem;
+}
+
+.watch-badge {
+  align-self: flex-start;
+  margin-bottom: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+/*
+ * The only amber badge on the site. Keeper is the one product sold to somebody
+ * who owns nothing yet — which makes the buyer the lead rather than the
+ * client, and amber is what a lead is drawn in. If a second amber badge ever
+ * appears anywhere, this one has stopped meaning anything.
+ */
+.watch-badge.is-lead {
+  border-color: var(--color-lead-dim);
+  color: var(--color-lead);
+}
+
+.watch-name {
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.014em;
+}
+.watch-system {
+  margin-top: 0.125rem;
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+}
+.watch-price {
+  margin-top: 1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.watch-figure {
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+}
+/* An unpriced figure must never read as a price. Hollow, like an unbuilt
+   mark — the same convention the chart uses for a concept beacon. */
+.watch-figure.is-draft {
+  color: var(--color-ink-faint);
+  border-bottom: 1px dashed var(--color-ink-faint);
+}
+.watch-note {
+  font-size: 0.6875rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+.watch-audience {
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-ink-muted);
+}
+.watch-summary {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+}
+.watch-excludes {
+  margin-top: 0.5rem;
+  display: grid;
+  gap: 0.375rem;
+}
+.watch-excludes li {
+  position: relative;
+  padding-left: 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--color-ink-faint);
+}
+.watch-excludes li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 0.5rem;
+  height: 1px;
+  background: currentColor;
+}
+.watch-card .btn {
+  margin-top: auto;
+}
+
+/* ── The channel, as a fuel gauge ── */
+
+.channel-panel {
+  position: relative;
+  margin-top: 3rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border: 1px solid var(--line-strong);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+}
+.channel-title {
+  margin-top: 0.5rem;
+  font-size: clamp(1.375rem, 2.6vw, 1.875rem);
+  font-weight: 500;
+  letter-spacing: -0.022em;
+}
+.channel-rule {
+  margin-top: 1rem;
+  max-width: 62ch;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--color-ink-soft);
+}
+
+.rig-figure {
+  display: block;
+  width: 100%;
+  max-width: 34rem;
+  height: auto;
+  margin: 2rem 0;
+}
+.rig-hull {
+  fill: none;
+  stroke: var(--color-signal);
+  stroke-opacity: 0.7;
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+}
+.rig-mast {
+  stroke: var(--color-signal);
+  stroke-opacity: 0.55;
+  stroke-width: 1.25;
+}
+.rig-sail {
+  fill: var(--color-signal);
+  fill-opacity: 0.12;
+  stroke: var(--color-signal);
+  stroke-opacity: 0.6;
+  stroke-width: 1.25;
+}
+/* The wake is the cost. Amber, because it is the only part of this diagram
+   that is money leaving. */
+.rig-wake {
+  fill: none;
+  stroke: var(--color-lead);
+  stroke-opacity: 0.75;
+  stroke-width: 1.25;
+}
+.rig-label {
+  fill: var(--color-ink-muted);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+}
+.rig-meter {
+  fill: var(--color-ink-faint);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+}
+.rig.is-power .rig-meter {
+  fill: var(--color-lead);
+}
+
+.gauge {
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 1.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+@media (min-width: 640px) {
+  .gauge {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+}
+.gauge-rows {
+  margin-top: 0.875rem;
+  display: grid;
+  gap: 0.5rem;
+}
+.gauge-rows > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--line);
+}
+.gauge-rows dt {
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+}
+.gauge-rows dd {
+  font-size: 1rem;
+  color: var(--color-ink);
+}
+
+.channel-disclaimer {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  max-width: 68ch;
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  color: var(--color-ink-muted);
+}
+.channel-floor {
+  margin-top: 1.25rem;
+  max-width: 62ch;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--color-ink-muted);
+}
+
+/* The Watch's closing card on /packages — see the note in routes/Packages.tsx
+   for why it lives here and not in the masthead. */
+.watch-cta {
+  margin-top: 3rem;
+  padding: clamp(1.5rem, 3.5vw, 2.25rem);
+  border: 1px solid var(--line-strong);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  display: grid;
+  gap: 1.5rem;
+  align-items: end;
+}
+@media (min-width: 720px) {
+  .watch-cta {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2rem;
+  }
+}
+.watch-cta-title {
+  margin-top: 0.5rem;
+  font-size: clamp(1.25rem, 2.4vw, 1.625rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.watch-cta-title em {
+  font-style: normal;
+  font-weight: 420;
+  color: var(--color-ink-soft);
+}
+.watch-cta-body {
+  margin-top: 0.75rem;
+  max-width: 58ch;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--color-ink-soft);
+}
+
+/* ── The capture demo ─────────────────────────────────────────────────────
+ *
+ * See src/components/CaptureDemo.tsx and netlify/functions/lead-echo.ts. The
+ * form is real, the round trip is real, and the figure the caption reports is
+ * measured rather than written.
+ */
+
+.capture {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 860px) {
+  .capture {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.capture-form {
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+.capture-fields {
+  margin-top: 0.875rem;
+  display: grid;
+  gap: 0.75rem;
+}
+@media (min-width: 480px) {
+  .capture-fields {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.capture-form label > .mono-label {
+  display: block;
+  margin-bottom: 0.375rem;
+}
+.capture-privacy {
+  margin-top: 0.875rem;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: var(--color-ink-faint);
+}
+
+/* The pane reads as an instrument, not as a success message: the point is
+   watching the parse, and a green tick would hide the thing worth seeing. */
+.capture-pane {
+  border: 1px solid var(--line-strong);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: rgba(6, 6, 8, 0.72);
+}
+.capture-pane-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid var(--line);
+}
+.capture-chip {
+  padding: 0.125rem 0.375rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.14em;
+  color: var(--color-ink-faint);
+}
+.capture-out {
+  margin: 0;
+  padding: 0.875rem;
+  min-height: 15rem;
+  font-size: 0.75rem;
+  line-height: 1.75;
+  color: var(--color-ink-muted);
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+/* A parsed field is the lead, arriving. Amber, and only here. */
+.capture-field {
+  color: var(--color-lead);
+}
+.capture-ok {
+  color: var(--color-ink);
+}
+/* The one place red is allowed on this site: a real validation failure. */
+.capture-reject {
+  color: #f87171;
+}
+.capture-caption {
+  grid-column: 1 / -1;
+  margin-top: 0.25rem;
+  max-width: 68ch;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: var(--color-ink-muted);
+}
+
+/* ── The local pack, annotated ────────────────────────────────────────── */
+
+.localpack {
+  display: grid;
+  gap: 1.5rem;
+}
+@media (min-width: 900px) {
+  .localpack {
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+    gap: 2rem;
+    align-items: start;
+  }
+}
+
+.localpack-frame {
+  border: 1px solid var(--line-strong);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.025);
+}
+/* Says MOCK in plain sight. A drawing of an interface must never be able to
+   be mistaken for a capture of one. */
+.localpack-tag {
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: var(--color-ink-faint);
+}
+.localpack-tag .mono-label {
+  display: inline;
+  margin-right: 0.5rem;
+  color: var(--color-ink);
+}
+
+.localpack-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  border-bottom: 1px solid var(--line);
+}
+.localpack-row:last-child {
+  border-bottom: none;
+}
+.localpack-row.is-mine {
+  background: rgba(255, 255, 255, 0.05);
+}
+.localpack-rank {
+  font-size: 0.75rem;
+  color: var(--color-ink-faint);
+}
+.localpack-row.is-mine .localpack-rank {
+  color: var(--color-ink);
+}
+.localpack-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.localpack-name.is-blank {
+  color: var(--color-ink-faint);
+  letter-spacing: 0.05em;
+}
+.localpack-line {
+  margin-top: 0.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3125rem;
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+}
+.localpack-stars {
+  color: var(--color-ink-soft);
+  letter-spacing: -0.05em;
+}
+.localpack-open {
+  color: var(--color-ink-soft);
+}
+.localpack-quote {
+  color: var(--color-ink-faint);
+  font-size: 0.6875rem;
+}
+.localpack-actions {
+  margin-top: 0.625rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem;
+}
+.localpack-btn {
+  padding: 0.1875rem 0.5rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  color: var(--color-ink-soft);
+}
+
+/* The numbered markers, and their key. White: these are levers the agent
+   owns, which is the entire point of labelling them. */
+.localpack-marker,
+.localpack-key-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.0625rem;
+  height: 1.0625rem;
+  border: 1px solid var(--color-signal);
+  border-radius: 999px;
+  font-size: 0.5625rem;
+  color: var(--color-signal);
+  flex: none;
+}
+
+.localpack-key {
+  margin-top: 0.875rem;
+  display: grid;
+  gap: 0.875rem;
+}
+.localpack-key li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.625rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--color-ink-muted);
+}
+.localpack-key strong {
+  font-weight: 500;
+  color: var(--color-ink-soft);
 }
