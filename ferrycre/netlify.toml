@@ -11,7 +11,24 @@
   node_bundler = "esbuild"
 
 # SPA fallback — prerendered .html files and functions are matched first.
+# Deliberately NOT forced: Netlify serves matching static files before an
+# unforced redirect, so /yulee-commercial-real-estate resolves to its own
+# prerendered HTML with its title, canonical, and JSON-LD intact.
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[headers]]
+for = "/*"
+  [headers.values]
+  X-Frame-Options = "SAMEORIGIN"
+  X-Content-Type-Options = "nosniff"
+  Referrer-Policy = "strict-origin-when-cross-origin"
+  Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# Fingerprinted build output — safe to cache forever.
+[[headers]]
+for = "/assets/*"
+  [headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"

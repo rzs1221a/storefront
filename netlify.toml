@@ -1,35 +1,11 @@
-[build]
-  command = "npm run build"
-  publish = "dist"
-
-# SPA fallback for anything the prerender did not stamp out.
+# On this branch, the deployable site is ferrycre.com (ferrycre/).
+# Pointing base there means a Netlify site aimed at this branch needs zero
+# UI configuration — Netlify builds inside ferrycre/ and uses the
+# netlify.toml that lives there (build command, publish dir, functions,
+# redirects, headers).
 #
-# Deliberately NOT forced: Netlify serves matching static files before applying
-# an unforced redirect, so /pricing still resolves to the prerendered
-# dist/pricing.html with its own title, canonical, and written content. Force
-# this and every route would collapse to the generic index, silently undoing
-# the entire SEO layer.
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# The storefront's own config lives on main; this file intentionally
+# diverges here.
 
-[[headers]]
-for = "/*"
-  [headers.values]
-  X-Frame-Options = "SAMEORIGIN"
-  X-Content-Type-Options = "nosniff"
-  Referrer-Policy = "strict-origin-when-cross-origin"
-  Permissions-Policy = "geolocation=(), microphone=(), camera=()"
-
-# Fingerprinted build output — safe to cache forever.
-[[headers]]
-for = "/assets/*"
-  [headers.values]
-  Cache-Control = "public, max-age=31536000, immutable"
-
-# Screenshots are content-stable; a long cache with revalidation is fine.
-[[headers]]
-for = "/work/*"
-  [headers.values]
-  Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+[build]
+  base = "ferrycre"
