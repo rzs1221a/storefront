@@ -1,0 +1,315 @@
+{
+  "sample": true,
+  "note": "SAMPLE INVENTORY — six placeholder records shaped exactly like Antoinette's real ones. Replace each record with her live listings (full commercial detail per src/lib/commercial.ts) and set sample to false before launch. While sample is true the site shows a discreet 'sample inventory' notice and robots are told not to index listing pages. Traffic counts below are plausible corridor figures for demonstration; verify each against FDOT Florida Traffic Online and cite the station before publishing.",
+  "listings": [
+    {
+      "id": "sr200-outparcel",
+      "slug": "sr200-retail-outparcel-yulee",
+      "transaction": "sale",
+      "useType": "retail",
+      "secondaryUses": ["land"],
+      "address": "463000 State Road 200",
+      "city": "Yulee",
+      "county": "Nassau",
+      "state": "FL",
+      "zip": "32097",
+      "lat": 30.6295,
+      "lon": -81.5595,
+      "zoning": "C-2 — General Commercial",
+      "zoningNote": "Broad retail and service uses by right; drive-through permitted with site plan approval.",
+      "salePrice": 1450000,
+      "landAcres": 1.8,
+      "frontageFt": 285,
+      "frontageOn": "SR-200 / A1A",
+      "trafficCount": 42500,
+      "trafficCountYear": 2024,
+      "trafficCountSource": "FDOT Florida Traffic Online (verify station before publishing)",
+      "ingress": "Full median cut, shared signalized access with anchor center",
+      "corner": false,
+      "driveTimes": [
+        { "label": "I-95, exit 373", "minutes": 6 },
+        { "label": "Downtown Fernandina", "minutes": 14 },
+        { "label": "Jacksonville International Airport", "minutes": 22 }
+      ],
+      "distances": [
+        { "label": "I-95", "miles": 4.2 },
+        { "label": "Jacksonville International Airport", "miles": 18.5 },
+        { "label": "Port of Fernandina", "miles": 10.8 }
+      ],
+      "tenancy": "vacant",
+      "neighboringTenants": ["Publix", "Starbucks", "AT&T", "Heartland Dental"],
+      "headline": "Signalized SR-200 outparcel in the path of Yulee's retail growth",
+      "summary": "A pad-ready 1.8-acre outparcel on Nassau County's busiest retail corridor, with shared signalized access and a full median cut. Utilities to site; anchor co-tenancy already in place around it.",
+      "positioning": "For the QSR operator, credit retailer, or developer who needs signalized SR-200 frontage between I-95 and the island.",
+      "photos": [
+        {
+          "src": "/photos/sr200-retail-outparcel-yulee-hero.svg",
+          "alt": "Aerial placeholder of a State Road 200 retail outparcel in Yulee, Florida"
+        }
+      ],
+      "status": "available",
+      "listedAt": "2026-05-12",
+      "source": "direct"
+    },
+    {
+      "id": "centre-office",
+      "slug": "centre-street-office-fernandina",
+      "transaction": "lease",
+      "useType": "office",
+      "address": "300 Centre Street, Suite 200",
+      "city": "Fernandina Beach",
+      "county": "Nassau",
+      "state": "FL",
+      "zip": "32034",
+      "lat": 30.6702,
+      "lon": -81.4629,
+      "zoning": "C-3 — Central Business District",
+      "zoningNote": "Historic district design review applies to exterior signage.",
+      "leaseRate": 24.5,
+      "leaseBasis": "MG",
+      "buildingSF": 6400,
+      "availableSF": 1850,
+      "yearBuilt": 1912,
+      "yearRenovated": 2019,
+      "stories": 2,
+      "parkingSpaces": 6,
+      "parkingRatio": "City lot adjacent; on-street unmetered",
+      "divisible": false,
+      "frontageOn": "Centre Street",
+      "ingress": "Street-level entry, private stair to second floor",
+      "corner": true,
+      "driveTimes": [
+        { "label": "Port of Fernandina", "minutes": 3 },
+        { "label": "I-95, exit 373", "minutes": 18 }
+      ],
+      "distances": [
+        { "label": "Fernandina Harbor Marina", "miles": 0.2 },
+        { "label": "I-95", "miles": 11.4 }
+      ],
+      "tenancy": "multi",
+      "occupancyPct": 71,
+      "neighboringTenants": ["The Palace Saloon", "Amelia Island Coffee", "First Port City Bank"],
+      "headline": "Second-floor Centre Street offices above the best block downtown",
+      "summary": "1,850 SF of renovated second-floor office over prime Centre Street retail — exposed brick, tall windows over the street, and a private entrance. Walk to the courthouse, the marina, and every lunch spot that matters.",
+      "positioning": "For the law firm, design studio, or wealth office that wants a downtown Fernandina address clients remember.",
+      "photos": [
+        {
+          "src": "/photos/centre-street-office-fernandina-hero.svg",
+          "alt": "Placeholder image of a historic Centre Street office building in downtown Fernandina Beach"
+        }
+      ],
+      "status": "available",
+      "listedAt": "2026-06-02",
+      "source": "direct"
+    },
+    {
+      "id": "eighth-mixed",
+      "slug": "south-8th-street-mixed-use-fernandina",
+      "transaction": "sale-or-lease",
+      "useType": "retail",
+      "secondaryUses": ["office"],
+      "address": "1200 S 8th Street",
+      "city": "Fernandina Beach",
+      "county": "Nassau",
+      "state": "FL",
+      "zip": "32034",
+      "lat": 30.6572,
+      "lon": -81.4593,
+      "zoning": "C-2 — General Commercial",
+      "salePrice": 985000,
+      "leaseRate": 21,
+      "leaseBasis": "NNN",
+      "buildingSF": 4200,
+      "availableSF": 4200,
+      "landAcres": 0.42,
+      "yearBuilt": 1987,
+      "yearRenovated": 2021,
+      "stories": 1,
+      "parkingSpaces": 18,
+      "parkingRatio": "4.3 / 1,000 SF",
+      "divisible": true,
+      "minDivisibleSF": 1400,
+      "frontageFt": 120,
+      "frontageOn": "S 8th Street / A1A",
+      "trafficCount": 21000,
+      "trafficCountYear": 2024,
+      "trafficCountSource": "FDOT Florida Traffic Online (verify station before publishing)",
+      "ingress": "Two curb cuts, right-in right-out plus full access at 12th",
+      "corner": true,
+      "driveTimes": [
+        { "label": "Downtown Fernandina", "minutes": 4 },
+        { "label": "I-95, exit 373", "minutes": 16 }
+      ],
+      "distances": [
+        { "label": "Downtown Fernandina", "miles": 1.1 },
+        { "label": "I-95", "miles": 10.9 }
+      ],
+      "tenancy": "vacant",
+      "neighboringTenants": ["CVS", "Regions Bank", "Beach Diner"],
+      "headline": "Freestanding corner building on the island's commercial spine",
+      "summary": "A 4,200 SF freestanding building with 18 marked spaces on the 8th Street corridor every islander drives daily. Open span interior divides to two suites; new roof and HVAC in 2021.",
+      "positioning": "For the owner-user who wants island frontage without downtown rents — or the investor who wants a divisible corner with two income streams.",
+      "photos": [
+        {
+          "src": "/photos/south-8th-street-mixed-use-fernandina-hero.svg",
+          "alt": "Placeholder image of a freestanding corner commercial building on South 8th Street, Fernandina Beach"
+        }
+      ],
+      "status": "available",
+      "listedAt": "2026-04-20",
+      "source": "direct"
+    },
+    {
+      "id": "yulee-flex",
+      "slug": "us17-flex-warehouse-yulee",
+      "transaction": "lease",
+      "useType": "industrial",
+      "secondaryUses": ["flex"],
+      "address": "850312 US Highway 17",
+      "city": "Yulee",
+      "county": "Nassau",
+      "state": "FL",
+      "zip": "32097",
+      "lat": 30.6318,
+      "lon": -81.5987,
+      "zoning": "I-A — Light Industrial",
+      "leaseRate": 11.5,
+      "leaseBasis": "NNN",
+      "buildingSF": 12000,
+      "availableSF": 12000,
+      "landAcres": 2.4,
+      "yearBuilt": 2005,
+      "stories": 1,
+      "ceilingHeight": "18–22 ft clear",
+      "dockDoors": 2,
+      "driveInDoors": 3,
+      "power": "400A 3-phase",
+      "parkingSpaces": 24,
+      "divisible": true,
+      "minDivisibleSF": 4000,
+      "frontageFt": 310,
+      "frontageOn": "US-17",
+      "trafficCount": 15500,
+      "trafficCountYear": 2024,
+      "trafficCountSource": "FDOT Florida Traffic Online (verify station before publishing)",
+      "ingress": "Full access curb cut, gravel yard, fenced",
+      "driveTimes": [
+        { "label": "I-95, exit 373", "minutes": 4 },
+        { "label": "Port of Fernandina", "minutes": 17 },
+        { "label": "JAXPORT Blount Island", "minutes": 28 }
+      ],
+      "distances": [
+        { "label": "I-95", "miles": 2.1 },
+        { "label": "Port of Fernandina", "miles": 12.6 },
+        { "label": "Jacksonville International Airport", "miles": 16.9 }
+      ],
+      "tenancy": "vacant",
+      "headline": "Clear-span flex warehouse four minutes off I-95",
+      "summary": "12,000 SF of clear-span warehouse with three grade doors, two docks, and heavy power on 2.4 fenced acres of US-17 frontage. Divisible to 4,000 SF; yard storage included.",
+      "positioning": "For the contractor, distributor, or trades operator who needs I-95 logistics without Jacksonville industrial rents.",
+      "photos": [
+        {
+          "src": "/photos/us17-flex-warehouse-yulee-hero.svg",
+          "alt": "Placeholder image of a flex warehouse building on US Highway 17 in Yulee, Florida"
+        }
+      ],
+      "status": "available",
+      "listedAt": "2026-07-01",
+      "source": "direct"
+    },
+    {
+      "id": "callahan-land",
+      "slug": "us1-commercial-land-callahan",
+      "transaction": "sale",
+      "useType": "land",
+      "address": "45000 US Highway 1",
+      "city": "Callahan",
+      "county": "Nassau",
+      "state": "FL",
+      "zip": "32011",
+      "lat": 30.5589,
+      "lon": -81.8307,
+      "zoning": "C-1 — Neighborhood Commercial",
+      "zoningNote": "Comprehensive plan supports rezoning to C-2 along the US-1 corridor.",
+      "salePrice": 690000,
+      "landAcres": 8.6,
+      "frontageFt": 540,
+      "frontageOn": "US-1 / US-23",
+      "trafficCount": 19800,
+      "trafficCountYear": 2024,
+      "trafficCountSource": "FDOT Florida Traffic Online (verify station before publishing)",
+      "ingress": "Two permitted curb cuts on US-1; rail spur adjacency on the west line",
+      "driveTimes": [
+        { "label": "I-95, exit 373", "minutes": 21 },
+        { "label": "Jacksonville International Airport", "minutes": 24 },
+        { "label": "Downtown Jacksonville", "minutes": 35 }
+      ],
+      "distances": [
+        { "label": "Jacksonville International Airport", "miles": 17.2 },
+        { "label": "I-95", "miles": 14.8 },
+        { "label": "CSX mainline", "miles": 0.1 }
+      ],
+      "tenancy": "vacant",
+      "headline": "Eight and a half acres on US-1 where Callahan meets the growth line",
+      "summary": "540 feet of US-1 frontage at the western gateway of Nassau County's fastest-appreciating land market. High and dry, cleared along the road, with the CSX mainline on the back boundary.",
+      "positioning": "For the land banker or build-to-suit developer positioning ahead of the Callahan corridor's next rezoning cycle.",
+      "photos": [
+        {
+          "src": "/photos/us1-commercial-land-callahan-hero.svg",
+          "alt": "Placeholder aerial of commercial acreage along US Highway 1 in Callahan, Florida"
+        }
+      ],
+      "status": "available",
+      "listedAt": "2026-03-15",
+      "source": "direct"
+    },
+    {
+      "id": "amelia-medical",
+      "slug": "amelia-medical-suite-fernandina",
+      "transaction": "sale",
+      "useType": "medical",
+      "secondaryUses": ["office"],
+      "address": "1890 S 14th Street, Suite 104",
+      "city": "Fernandina Beach",
+      "county": "Nassau",
+      "state": "FL",
+      "zip": "32034",
+      "lat": 30.6486,
+      "lon": -81.4551,
+      "zoning": "MU-1 — Medical / Mixed Use",
+      "salePrice": 875000,
+      "noi": 61250,
+      "buildingSF": 2800,
+      "availableSF": 2800,
+      "yearBuilt": 2008,
+      "stories": 1,
+      "parkingSpaces": 14,
+      "parkingRatio": "5.0 / 1,000 SF",
+      "frontageOn": "S 14th Street",
+      "ingress": "Shared signalized entrance with the medical campus",
+      "driveTimes": [
+        { "label": "Baptist Medical Center Nassau", "minutes": 1 },
+        { "label": "Downtown Fernandina", "minutes": 6 }
+      ],
+      "distances": [
+        { "label": "Baptist Medical Center Nassau", "miles": 0.3 },
+        { "label": "I-95", "miles": 10.2 }
+      ],
+      "tenancy": "single",
+      "occupancyPct": 100,
+      "tenants": [{ "name": "Island Coastal Dermatology (sample tenant)", "sf": 2800, "expires": "2031-08-31" }],
+      "headline": "Fully leased medical suite in the hospital's front yard",
+      "summary": "A 2,800 SF purpose-built medical condo a quarter mile from Baptist Medical Center Nassau, fully leased on a long NNN term to an established practice. Stabilized income with hospital-district durability.",
+      "positioning": "For the medical-office investor who wants credit-adjacent income in a market where clinical space rarely trades.",
+      "photos": [
+        {
+          "src": "/photos/amelia-medical-suite-fernandina-hero.svg",
+          "alt": "Placeholder image of a single-story medical office suite near the hospital in Fernandina Beach"
+        }
+      ],
+      "status": "available",
+      "listedAt": "2026-06-18",
+      "source": "direct"
+    }
+  ]
+}

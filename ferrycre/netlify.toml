@@ -1,0 +1,17 @@
+# ferrycre.com — Netlify configuration.
+# If this project lives in a monorepo, set the site's base directory to
+# "ferrycre" in the Netlify UI; this file then governs the build.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# SPA fallback — prerendered .html files and functions are matched first.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
