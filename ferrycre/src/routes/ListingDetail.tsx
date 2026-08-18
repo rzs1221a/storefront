@@ -1,7 +1,9 @@
-import { useEffect, useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
+import { lazy, Suspense, useEffect, useMemo } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import LeadForm from "../components/LeadForm";
 import ListingCard from "../components/ListingCard";
+
+const MiniMap = lazy(() => import("../components/MiniMap"));
 import {
   LEASE_BASIS_LABEL,
   priceLine,
@@ -59,6 +61,7 @@ function jsonLdFor(l: CommercialListing) {
 
 export default function ListingDetail() {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const l = slug ? bySlug(slug) : undefined;
 
   useDocumentTitle(
@@ -216,7 +219,19 @@ export default function ListingDetail() {
           ) : null}
 
           <section className="mt-10">
-            <Link to={`/explore?listing=${l.slug}`} className="glass block p-6 transition-transform hover:-translate-y-0.5">
+            <h3 className="eyebrow mb-3">The position</h3>
+            <Suspense fallback={<div className="glass h-[320px]" />}>
+              <MiniMap
+                listings={[l]}
+                onOpen={() => navigate(`/explore?listing=${l.slug}`)}
+                view={{ lat: l.lat, lon: l.lon, zoom: 14.6 }}
+                heightClass="h-[320px]"
+              />
+            </Suspense>
+            <Link
+              to={`/explore?listing=${l.slug}`}
+              className="glass mt-3 block p-6 transition-transform hover:-translate-y-0.5"
+            >
               <p className="eyebrow">The instrument</p>
               <p className="mt-2 text-lg font-medium">Walk this frontage on the map →</p>
               <p className="mt-1 text-sm text-stone">

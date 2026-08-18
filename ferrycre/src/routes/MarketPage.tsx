@@ -1,7 +1,9 @@
-import { useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { lazy, Suspense, useEffect, useMemo } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import ListingCard from "../components/ListingCard";
 import LeadForm from "../components/LeadForm";
+
+const MiniMap = lazy(() => import("../components/MiniMap"));
 import { USE_TYPE_LABEL } from "../lib/commercial";
 import { listingsForCities } from "../lib/listingsSource";
 import { marketBySlug, markets } from "../lib/markets";
@@ -47,6 +49,7 @@ export default function MarketPage({ slug }: { slug: string }) {
     record({ t: "market", slug: m.slug });
   }, [m.slug]);
 
+  const navigate = useNavigate();
   const related = listingsForCities(m.cities);
   const siblings = markets.filter((x) => x.slug !== m.slug);
 
@@ -83,6 +86,24 @@ export default function MarketPage({ slug }: { slug: string }) {
               </li>
             ))}
           </ul>
+
+          <h2 className="eyebrow mb-3 mt-10">The chart</h2>
+          <Suspense fallback={<div className="glass h-[340px]" />}>
+            <MiniMap
+              listings={related.length ? related : []}
+              onOpen={(slug) => navigate(`/listings/${slug}`)}
+              view={{ lat: m.lat, lon: m.lon, zoom: m.zoom }}
+              heightClass="h-[340px]"
+            />
+          </Suspense>
+          <p className="mt-2 text-xs text-faint">
+            {m.name} framed from above{related.length ? " — marks are current listings" : ""}. The full instrument
+            lives at{" "}
+            <Link to="/explore" className="text-signal-soft hover:text-bone">
+              /explore
+            </Link>
+            .
+          </p>
 
           <h2 className="font-display mt-12 text-2xl font-semibold">Buyer &amp; tenant questions</h2>
           <div className="mt-4 space-y-6">

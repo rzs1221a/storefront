@@ -27,7 +27,10 @@ export default function Listings() {
   const [tx, setTx] = useState<Transaction | "all">("all");
   const [uses, setUses] = useState<UseType[]>([]);
   const [q, setQ] = useState("");
-  const [showMap, setShowMap] = useState(false);
+  // the chart is on the table by default where there's room for it
+  const [showMap, setShowMap] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches
+  );
 
   const usedTypes = useMemo(() => {
     const set = new Set<UseType>();

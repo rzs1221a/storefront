@@ -111,6 +111,28 @@ export default function Explore() {
       map.on("load", lift);
       map.once("error", lift);
       setTimeout(lift, 4000);
+
+      // photoreal at street level, with hysteresis so the overlay doesn't
+      // flap while the camera hovers around the threshold (the walk manages
+      // its own attach and is left alone here)
+      const PHOTOREAL_ON = 16.6;
+      const PHOTOREAL_OFF = 15.9;
+      map.on("zoomend", async () => {
+        if (disposed || walkDrift.current) return;
+        const z = map.getZoom();
+        const { attachPhotoreal, detachPhotoreal, photorealActive, photorealAvailable } = await import(
+          "../lib/photoreal"
+        );
+        if (!photorealAvailable()) return;
+        if (z >= PHOTOREAL_ON && !photorealActive()) {
+          attachPhotoreal(map).then((ok) => {
+            if (!disposed) setPhotoreal(ok && map.getZoom() >= PHOTOREAL_OFF);
+          });
+        } else if (z < PHOTOREAL_OFF && photorealActive()) {
+          detachPhotoreal();
+          if (!disposed) setPhotoreal(false);
+        }
+      });
       if (focus) setSelected(focus);
     })();
     return () => {
@@ -224,8 +246,12 @@ export default function Explore() {
         </span>
       )}
 
-      {/* the listing rail */}
-      <div className="absolute inset-x-0 bottom-0 z-10 flex gap-2 overflow-x-auto p-4 sm:inset-x-auto sm:left-4 sm:top-20 sm:bottom-auto sm:w-72 sm:flex-col sm:overflow-visible sm:p-0">
+      {/* the listing rail — steps aside on mobile while the sheet is up */}
+      <div
+        className={`absolute inset-x-0 bottom-0 z-10 gap-2 overflow-x-auto p-4 sm:inset-x-auto sm:left-4 sm:top-20 sm:bottom-auto sm:w-72 sm:flex-col sm:overflow-visible sm:p-0 ${
+          sel ? "hidden sm:flex" : "flex"
+        }`}
+      >
         {listings.map((l) => (
           <button
             key={l.id}
@@ -244,9 +270,9 @@ export default function Explore() {
         ))}
       </div>
 
-      {/* the position instrument */}
+      {/* the position instrument — right panel on desktop, bottom sheet on mobile */}
       {sel && (
-        <aside className="glass-deep absolute right-4 top-20 z-10 hidden max-h-[calc(100vh-7rem)] w-96 overflow-y-auto p-6 sm:block">
+        <aside className="glass-deep absolute z-10 overflow-y-auto p-5 max-sm:inset-x-2 max-sm:bottom-2 max-sm:max-h-[62vh] sm:right-4 sm:top-20 sm:max-h-[calc(100vh-7rem)] sm:w-96 sm:p-6">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="eyebrow">

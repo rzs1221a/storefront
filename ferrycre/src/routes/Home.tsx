@@ -1,6 +1,9 @@
-import { Link } from "react-router-dom";
+import { lazy, Suspense } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import ListingCard from "../components/ListingCard";
 import LeadForm from "../components/LeadForm";
+
+const MiniMap = lazy(() => import("../components/MiniMap"));
 import { availableListings } from "../lib/listingsSource";
 import { markets } from "../lib/markets";
 import { SITE, telHref } from "../lib/site";
@@ -12,6 +15,7 @@ export default function Home() {
     "Commercial sales and leasing across Nassau County, Florida — Fernandina Beach, Amelia Island, Yulee, and Callahan."
   );
   useCanonical("/");
+  const navigate = useNavigate();
   const listings = availableListings();
 
   return (
@@ -62,6 +66,35 @@ export default function Home() {
             walk the street on the map
           </Link>
           .
+        </p>
+      </section>
+
+      {/* the chart — lazy, below the fold, never on the critical path */}
+      <section className="mx-auto max-w-6xl px-5 py-12">
+        <div className="mb-6 flex items-end justify-between gap-4">
+          <div>
+            <p className="eyebrow">The county</p>
+            <h2 className="font-display mt-2 text-2xl font-semibold sm:text-3xl">
+              Six positions on one chart.
+            </h2>
+          </div>
+          <Link to="/explore" className="text-sm text-signal-soft hover:text-bone">
+            Open the instrument →
+          </Link>
+        </div>
+        <Suspense fallback={<div className="glass h-[420px]" />}>
+          <MiniMap
+            listings={listings}
+            onOpen={(slug) => navigate(`/listings/${slug}`)}
+            heightClass="h-[420px]"
+          />
+        </Suspense>
+        <p className="mt-3 text-xs text-faint">
+          Tap a mark for the listing. The full instrument at{" "}
+          <Link to="/explore" className="text-signal-soft hover:text-bone">
+            /explore
+          </Link>{" "}
+          adds traffic counts, frontage, drive distances, and the street-level walk.
         </p>
       </section>
 
