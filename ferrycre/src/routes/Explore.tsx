@@ -77,6 +77,10 @@ export default function Explore() {
         attributionControl: { compact: true },
       });
       mapRef.current = map;
+      // re-measure once layout settles — insurance against any late size change
+      requestAnimationFrame(() => {
+        if (!disposed) map.resize();
+      });
       armImageryFallback(map, (msg) => {
         if (!disposed) setMapTrouble(msg);
       });
@@ -134,6 +138,12 @@ export default function Explore() {
           /* map gone */
         }
       }, 8000);
+      // a slow network is not a broken one: clear the slowness notice (and
+      // only that one) once the plate actually finishes
+      map.on("idle", () => {
+        if (disposed) return;
+        setMapTrouble((prev) => (prev?.startsWith("Imagery is slow") ? null : prev));
+      });
 
       // photoreal at street level, with hysteresis so the overlay doesn't
       // flap while the camera hovers around the threshold (the walk manages
@@ -243,7 +253,10 @@ export default function Explore() {
 
   return (
     <div className="fixed inset-0 bg-paper">
-      <div ref={shell} className="absolute inset-0" role="application" aria-label="Nassau County commercial map" />
+      {/* explicit height, not absolute+inset: maplibre's own stylesheet forces
+          position:relative on this element, which collapses an inset-sized box
+          to zero height (the "black map" bug) */}
+      <div ref={shell} className="h-full w-full" role="application" aria-label="Nassau County commercial map" />
 
       {/* top chrome */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between p-4">
