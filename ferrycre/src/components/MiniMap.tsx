@@ -51,7 +51,7 @@ export default function MiniMap({
     let map: import("maplibre-gl").Map | null = null;
     (async () => {
       try {
-      const [{ default: maplibregl }, { coastStyle }] = await Promise.all([
+      const [{ default: maplibregl }, { coastStyle, armImageryFallback }] = await Promise.all([
         import("maplibre-gl"),
         import("../lib/mapStyle"),
         // the stylesheet rides with the lazy chunk, not the critical path
@@ -73,6 +73,7 @@ export default function MiniMap({
         map = new maplibregl.Map({ ...base, bounds, fitBoundsOptions: { padding: 60, maxZoom: 12 } });
       }
       map.on("error", (e) => console.warn("[ferrycre/map]", e.error ?? e));
+      armImageryFallback(map);
       listings.forEach((l) => {
         const pin = document.createElement("button");
         pin.className = "ferry-pin";

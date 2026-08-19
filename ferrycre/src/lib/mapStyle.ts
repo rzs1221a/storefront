@@ -12,6 +12,51 @@ const IMAGERY_TILES =
   "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 const VECTOR_TILES = "https://tiles.openfreemap.org/planet";
 
+/**
+ * Ad and privacy blockers block the Esri imagery host for some visitors
+ * (ERR_BLOCKED_BY_CLIENT) — observed in the field, not hypothetical. When the
+ * satellite plate can't load, the scene degrades to OpenFreeMap's dark vector
+ * basemap (same host as our building tiles, not on blocklists) instead of
+ * sitting on a silent black plate. DOM markers survive the style swap.
+ */
+export const FALLBACK_STYLE = "https://tiles.openfreemap.org/styles/dark";
+
+export function armImageryFallback(
+  map: import("maplibre-gl").Map,
+  onSwap?: (message: string) => void
+) {
+  let imageryOk = false;
+  let imageryErrors = 0;
+  let swapped = false;
+
+  const swap = () => {
+    if (swapped) return;
+    swapped = true;
+    try {
+      map.setStyle(FALLBACK_STYLE);
+      console.warn("[ferrycre/map] satellite imagery unavailable (blocked or unreachable) — falling back to chart basemap");
+      onSwap?.("Satellite imagery is blocked in this browser (likely an ad blocker) — showing the chart basemap instead.");
+    } catch {
+      /* map torn down */
+    }
+  };
+
+  map.on("data", (e) => {
+    const ev = e as { sourceId?: string; tile?: unknown };
+    if (ev.sourceId === "imagery" && ev.tile) imageryOk = true;
+  });
+  map.on("error", (e) => {
+    const ev = e as { sourceId?: string };
+    if (ev.sourceId && ev.sourceId !== "imagery") return;
+    imageryErrors += 1;
+    if (!imageryOk && imageryErrors >= 3) swap();
+  });
+  // belt and braces: some blockers fail requests without error events
+  setTimeout(() => {
+    if (!imageryOk && imageryErrors > 0) swap();
+  }, 6000);
+}
+
 export const coastStyle: StyleSpecification = {
   version: 8,
   sources: {

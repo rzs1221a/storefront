@@ -54,7 +54,7 @@ export default function Explore() {
     let disposed = false;
     (async () => {
       try {
-      const [{ default: maplibregl }, { coastStyle }] = await Promise.all([
+      const [{ default: maplibregl }, { coastStyle, armImageryFallback }] = await Promise.all([
         import("maplibre-gl"),
         import("../lib/mapStyle"),
         import("maplibre-gl/dist/maplibre-gl.css"),
@@ -77,6 +77,9 @@ export default function Explore() {
         attributionControl: { compact: true },
       });
       mapRef.current = map;
+      armImageryFallback(map, (msg) => {
+        if (!disposed) setMapTrouble(msg);
+      });
 
       // listing beacons
       listings.forEach((l) => {
@@ -123,7 +126,9 @@ export default function Explore() {
         if (disposed) return;
         try {
           if (!map.areTilesLoaded() || !map.isStyleLoaded()) {
-            setMapTrouble("Imagery is slow or unavailable — check the browser console for [ferrycre/map] lines.");
+            setMapTrouble(
+              (prev) => prev ?? "Imagery is slow or unavailable — check the browser console for [ferrycre/map] lines."
+            );
           }
         } catch {
           /* map gone */
