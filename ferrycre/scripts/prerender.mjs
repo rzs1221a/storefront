@@ -160,7 +160,7 @@ function inject(html, jsonLd, body) {
     .replace("</head>", `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>\n</head>`)
     .replace(
       '<div id="root"></div>',
-      `<div id="root"><div style="max-width:52rem;margin:0 auto;padding:6rem 1.25rem;color:#f5f5f7;background:#0a0a0e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;line-height:1.6">${body}</div></div>`
+      `<div id="root"><div style="max-width:52rem;margin:0 auto;padding:6rem 1.25rem;color:#f7f7f9;background:#12151d;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;line-height:1.6">${body}</div></div>`
     );
 }
 

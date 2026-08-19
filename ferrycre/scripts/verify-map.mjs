@@ -52,7 +52,7 @@ await page.route("**/*", async (route) => {
   return route.fulfill({ status: 200, contentType: got.ct, body: got.buf });
 });
 
-await page.goto("http://localhost:4173/explore", { waitUntil: "domcontentloaded", timeout: 60000 });
+await page.goto(`http://localhost:4173${process.env.ROUTE ?? "/explore"}`, { waitUntil: "domcontentloaded", timeout: 60000 });
 await page.waitForTimeout(BLOCK_ESRI ? 14000 : 16000);
 console.log("pins:", await page.locator(".ferry-pin").count());
 console.log("failures:", JSON.stringify(failures.slice(0, 12), null, 0));

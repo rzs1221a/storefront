@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import BackgroundMap from "./BackgroundMap";
 import { NAV, SITE, telHref, mailHref } from "../lib/site";
 import { SAMPLE_DATA } from "../lib/listingsSource";
 import { markets } from "../lib/markets";
@@ -78,7 +79,7 @@ function Header() {
 
 function Footer() {
   return (
-    <footer className="hairline mt-24 px-5 pb-10 pt-12">
+    <footer className="hairline mt-24 bg-paper/80 px-5 pb-10 pt-12 backdrop-blur-xl">
       <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-3">
         <div>
           <p className="font-display text-lg font-semibold">
@@ -154,12 +155,16 @@ export default function Layout() {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [pathname]);
   return (
-    <div className="min-h-screen bg-paper">
-      <Header />
-      <main>
-        <Outlet />
-      </main>
-      <Footer />
+    <div className="relative min-h-screen bg-paper">
+      {/* the living chart under everything; content floats over it in glass */}
+      <BackgroundMap />
+      <div className="relative z-10">
+        <Header />
+        <main>
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 }

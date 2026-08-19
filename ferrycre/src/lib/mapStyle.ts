@@ -70,15 +70,18 @@ export const coastStyle: StyleSpecification = {
     osm: { type: "vector", url: VECTOR_TILES },
   },
   layers: [
-    { id: "base", type: "background", paint: { "background-color": "#070707" } },
+    { id: "base", type: "background", paint: { "background-color": "#10131a" } },
     {
+      // Lighter grading than the residential plate: the imagery reads as a
+      // living chart, not a void — mild desaturation, near-full brightness.
       id: "imagery",
       type: "raster",
       source: "imagery",
       paint: {
-        "raster-saturation": -0.32,
-        "raster-contrast": 0.08,
-        "raster-brightness-max": 0.82,
+        "raster-saturation": -0.16,
+        "raster-contrast": 0.04,
+        "raster-brightness-max": 0.96,
+        "raster-brightness-min": 0.04,
         "raster-fade-duration": 80,
       },
     },
