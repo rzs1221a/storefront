@@ -113,9 +113,15 @@ function Footer() {
         </div>
         <div>
           <p className="eyebrow mb-3">Office</p>
+          <img
+            src="/brand/hw-commercial-lockup-cream.svg"
+            alt="Berkshire Hathaway HomeServices Heymann Williams Realty — Commercial Division"
+            width={874}
+            height={302}
+            loading="lazy"
+            className="mb-4 h-16 w-auto opacity-90"
+          />
           <p className="text-sm text-stone">
-            {SITE.brokerageShort}
-            <br />
             {SITE.officeAddress}
             <br />
             Office {SITE.officePhone}

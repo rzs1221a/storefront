@@ -38,6 +38,7 @@ export default function Explore() {
   const walkDrift = useRef<number | null>(null);
   const reduced = useRef(false);
   const [ready, setReady] = useState(false);
+  const [mapTrouble, setMapTrouble] = useState<string | null>(null);
   const [walking, setWalking] = useState(false);
   const [photoreal, setPhotoreal] = useState(false);
   const [selected, setSelected] = useState<CommercialListing | null>(null);
@@ -52,6 +53,7 @@ export default function Explore() {
   useEffect(() => {
     let disposed = false;
     (async () => {
+      try {
       const [{ default: maplibregl }, { coastStyle }] = await Promise.all([
         import("maplibre-gl"),
         import("../lib/mapStyle"),
@@ -112,6 +114,22 @@ export default function Explore() {
       map.once("error", lift);
       setTimeout(lift, 4000);
 
+      // if something upstream breaks (tile host, style, GPU), say so on
+      // screen instead of leaving a silent black plate
+      map.on("error", (e) => {
+        console.warn("[ferrycre/map]", e.error ?? e);
+      });
+      setTimeout(() => {
+        if (disposed) return;
+        try {
+          if (!map.areTilesLoaded() || !map.isStyleLoaded()) {
+            setMapTrouble("Imagery is slow or unavailable — check the browser console for [ferrycre/map] lines.");
+          }
+        } catch {
+          /* map gone */
+        }
+      }, 8000);
+
       // photoreal at street level, with hysteresis so the overlay doesn't
       // flap while the camera hovers around the threshold (the walk manages
       // its own attach and is left alone here)
@@ -134,6 +152,13 @@ export default function Explore() {
         }
       });
       if (focus) setSelected(focus);
+      } catch (err) {
+        console.error("[ferrycre/map] boot failed", err);
+        if (!disposed) {
+          setMapTrouble(`The map engine could not start: ${err instanceof Error ? err.message : String(err)}`);
+          setReady(true);
+        }
+      }
     })();
     return () => {
       disposed = true;
@@ -237,6 +262,12 @@ export default function Explore() {
         <div className="absolute inset-0 z-20 grid place-items-center bg-paper">
           <p className="text-sm text-faint">Preparing the county…</p>
         </div>
+      )}
+
+      {mapTrouble && (
+        <p className="glass pointer-events-none absolute left-1/2 top-16 z-10 max-w-md -translate-x-1/2 px-4 py-2 text-center text-xs text-stone">
+          {mapTrouble}
+        </p>
       )}
 
       {/* attribution while photoreal renders (required by Google's terms) */}

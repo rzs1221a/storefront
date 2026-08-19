@@ -15,6 +15,14 @@ export default function About() {
       <h1 className="font-display mt-2 text-3xl font-semibold sm:text-4xl">{SITE.name}</h1>
       <p className="mt-2 text-lg text-signal-soft">{SITE.title}</p>
       <p className="mt-1 text-stone">{SITE.brokerage}</p>
+      <img
+        src="/brand/hw-commercial-lockup-cream.svg"
+        alt="Berkshire Hathaway HomeServices Heymann Williams Realty — Commercial Division"
+        width={874}
+        height={302}
+        loading="lazy"
+        className="mt-6 h-20 w-auto opacity-90"
+      />
 
       {/* Her bio, in her voice, arrives via /admin. Until then the page states
           only verifiable facts — no ghost-written prose. */}

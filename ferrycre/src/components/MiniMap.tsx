@@ -50,6 +50,7 @@ export default function MiniMap({
     let disposed = false;
     let map: import("maplibre-gl").Map | null = null;
     (async () => {
+      try {
       const [{ default: maplibregl }, { coastStyle }] = await Promise.all([
         import("maplibre-gl"),
         import("../lib/mapStyle"),
@@ -71,6 +72,7 @@ export default function MiniMap({
         listings.forEach((l) => bounds.extend([l.lon, l.lat]));
         map = new maplibregl.Map({ ...base, bounds, fitBoundsOptions: { padding: 60, maxZoom: 12 } });
       }
+      map.on("error", (e) => console.warn("[ferrycre/map]", e.error ?? e));
       listings.forEach((l) => {
         const pin = document.createElement("button");
         pin.className = "ferry-pin";
@@ -78,6 +80,9 @@ export default function MiniMap({
         pin.addEventListener("click", () => onOpenRef.current(l.slug));
         new maplibregl.Marker({ element: pin }).setLngLat([l.lon, l.lat]).addTo(map!);
       });
+      } catch (err) {
+        console.error("[ferrycre/map] boot failed", err);
+      }
     })();
     return () => {
       disposed = true;
