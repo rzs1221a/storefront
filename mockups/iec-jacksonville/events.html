@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Events &middot; IEC Jacksonville</title>
+<meta name="description" content="IEC Jacksonville chapter calendar — info sessions, contractor nights, code training and lab tours.">
+<meta name="robots" content="noindex"><!-- pitch mockup, not for indexing -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Archivo', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            sans: ['"Source Sans 3"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            navy: {
+              50:'#F2F5F8', 100:'#E2E9F0', 200:'#C3D0DE', 300:'#93A9C0', 400:'#5B7B9E', 500:'#4E6D8E',
+              600:'#1E4A78', 700:'#173A5E', 800:'#102A45', 900:'#0B1E33', 950:'#071626',
+            },
+            ember: {
+              50:'#FDF6EC', 100:'#FAE8CE', 200:'#F4CE96', 300:'#EFB05C',
+              400:'#E8942F', 500:'#D97A1F', 600:'#A85413', 700:'#8F4715',
+            },
+            sand: { 50:'#FAF8F5', 100:'#F4F1EB', 200:'#E7E1D6', 300:'#D5CCBC' },
+          },
+          maxWidth: { content: '1200px' },
+        },
+      },
+    }
+</script>
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body class="bg-white text-navy-900 font-sans antialiased">
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<!-- Utility bar: contact + member login, mirrors how chapter sites surface these. -->
+<div class="bg-navy-950 text-navy-100 text-sm no-print">
+  <div class="mx-auto max-w-content px-5 sm:px-8">
+    <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 py-2">
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-1">
+        <a href="tel:+19045550100" class="flex items-center gap-2 hover:text-ember-300">
+          <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M2 3.5A1.5 1.5 0 0 1 3.5 2h1.7a1.5 1.5 0 0 1 1.46 1.14l.62 2.5a1.5 1.5 0 0 1-.74 1.67l-1.1.6a11.6 11.6 0 0 0 4.65 4.65l.6-1.1a1.5 1.5 0 0 1 1.67-.74l2.5.62A1.5 1.5 0 0 1 18 12.8v1.7a1.5 1.5 0 0 1-1.5 1.5A14.5 14.5 0 0 1 2 3.5Z"/></svg>
+          Call us: <span class="ph">(904) 555-0100</span>
+        </a>
+        <a href="mailto:info@example.org" class="hidden sm:flex items-center gap-2 hover:text-ember-300">
+          <svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h13A1.5 1.5 0 0 1 18 5.5v.3l-8 4.4-8-4.4v-.3Zm0 2.6V14.5A1.5 1.5 0 0 0 3.5 16h13a1.5 1.5 0 0 0 1.5-1.5V8.1l-7.52 4.14a1 1 0 0 1-.96 0L2 8.1Z"/></svg>
+          Email us: <span class="ph">info@iecjax.example.org</span>
+        </a>
+      </div>
+      <div class="flex items-center gap-5">
+        <a href="contact.html#interest" class="font-display font-semibold tracking-wide text-ember-300 hover:text-ember-200">
+          Get notified about the first info session &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header class="sticky top-0 z-40 bg-white border-b border-sand-200 shadow-[0_1px_3px_rgba(11,30,51,.06)] no-print">
+  <div class="mx-auto max-w-content px-5 sm:px-8">
+    <div class="flex items-center justify-between gap-4 h-[4.75rem]">
+
+      <a href="index.html" class="shrink-0" aria-label="IEC Jacksonville — home">
+        <span class="wordmark"><span class="wm-iec text-[1.6rem] text-navy-900">IEC</span><span class="wm-city text-[1.02rem] text-ember-600">JACKSONVILLE</span></span>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-7" aria-label="Primary">
+          <a href="about.html" class="font-display text-[.9rem] font-semibold uppercase tracking-[.09em] border-b-2 text-navy-800 border-transparent hover:text-ember-600 hover:border-ember-300 py-1.5 transition-colors">About</a>
+          <a href="apprenticeship.html" class="font-display text-[.9rem] font-semibold uppercase tracking-[.09em] border-b-2 text-navy-800 border-transparent hover:text-ember-600 hover:border-ember-300 py-1.5 transition-colors">Apprenticeship</a>
+          <a href="membership.html" class="font-display text-[.9rem] font-semibold uppercase tracking-[.09em] border-b-2 text-navy-800 border-transparent hover:text-ember-600 hover:border-ember-300 py-1.5 transition-colors">Membership</a>
+          <a href="events.html" aria-current="page" class="font-display text-[.9rem] font-semibold uppercase tracking-[.09em] border-b-2 text-ember-600 border-ember-500 py-1.5 transition-colors">Events</a>
+          <a href="faqs.html" class="font-display text-[.9rem] font-semibold uppercase tracking-[.09em] border-b-2 text-navy-800 border-transparent hover:text-ember-600 hover:border-ember-300 py-1.5 transition-colors">FAQs</a>
+          <a href="contact.html" class="font-display text-[.9rem] font-semibold uppercase tracking-[.09em] border-b-2 text-navy-800 border-transparent hover:text-ember-600 hover:border-ember-300 py-1.5 transition-colors">Contact</a>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="contact.html#member-login" class="btn btn-secondary btn-sm hidden sm:inline-flex">Member Login</a>
+        <button type="button" data-nav-toggle aria-expanded="false" aria-controls="mobile-nav"
+                class="lg:hidden inline-flex items-center gap-2 px-3 py-2.5 text-navy-800 border-2 border-navy-200">
+          <span data-icon-open>
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M2 4.5h16v2H2v-2Zm0 4.5h16v2H2V9Zm0 4.5h16v2H2v-2Z"/></svg>
+          </span>
+          <span data-icon-close hidden>
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M4.5 3.1 10 8.6l5.5-5.5 1.4 1.4L11.4 10l5.5 5.5-1.4 1.4L10 11.4l-5.5 5.5-1.4-1.4L8.6 10 3.1 4.5l1.4-1.4Z"/></svg>
+          </span>
+          <span class="font-display text-sm font-bold uppercase tracking-widest">Menu</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<div id="mobile-nav" class="lg:hidden fixed inset-x-0 top-0 z-50 h-full overflow-y-auto bg-navy-900 no-print">
+  <div class="px-5 sm:px-8">
+    <div class="flex h-[4.75rem] items-center justify-between">
+      <a href="index.html" aria-label="IEC Jacksonville — home"><span class="wordmark"><span class="wm-iec text-[1.25rem] text-white">IEC</span><span class="wm-city text-[.8rem] text-ember-400">JACKSONVILLE</span></span></a>
+      <button type="button" data-nav-toggle aria-expanded="true" aria-controls="mobile-nav"
+              class="inline-flex items-center gap-2 border-2 border-white/30 px-3 py-2.5 text-white">
+        <span data-icon-open hidden>
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M2 4.5h16v2H2v-2Zm0 4.5h16v2H2V9Zm0 4.5h16v2H2v-2Z"/></svg>
+        </span>
+        <span data-icon-close>
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M4.5 3.1 10 8.6l5.5-5.5 1.4 1.4L11.4 10l5.5 5.5-1.4 1.4L10 11.4l-5.5 5.5-1.4-1.4L8.6 10 3.1 4.5l1.4-1.4Z"/></svg>
+        </span>
+        <span class="font-display text-sm font-bold uppercase tracking-widest">Close</span>
+      </button>
+    </div>
+    <nav class="pb-10 pt-4" aria-label="Primary, mobile">
+        <a href="about.html" class="block border-b border-white/10 py-4 font-display text-lg font-bold uppercase tracking-[.08em] text-white hover:text-ember-300">About</a>
+        <a href="apprenticeship.html" class="block border-b border-white/10 py-4 font-display text-lg font-bold uppercase tracking-[.08em] text-white hover:text-ember-300">Apprenticeship</a>
+        <a href="membership.html" class="block border-b border-white/10 py-4 font-display text-lg font-bold uppercase tracking-[.08em] text-white hover:text-ember-300">Membership</a>
+        <a href="events.html" aria-current="page" class="block border-b border-white/10 py-4 font-display text-lg font-bold uppercase tracking-[.08em] text-ember-400">Events</a>
+        <a href="faqs.html" class="block border-b border-white/10 py-4 font-display text-lg font-bold uppercase tracking-[.08em] text-white hover:text-ember-300">FAQs</a>
+        <a href="contact.html" class="block border-b border-white/10 py-4 font-display text-lg font-bold uppercase tracking-[.08em] text-white hover:text-ember-300">Contact</a>
+      <div class="mt-8 space-y-3">
+        <a href="membership.html#apply" class="btn btn-primary w-full">Become a Member</a>
+        <a href="apprenticeship.html#apply" class="btn btn-ghost-light w-full">Start an Apprenticeship</a>
+        <a href="contact.html#member-login" class="btn btn-ghost-light w-full">Member Login</a>
+      </div>
+      <p class="mt-8 text-sm leading-relaxed text-navy-300">
+        <span class="ph">(904) 555-0100</span><br>
+        <span class="ph">info@iecjax.example.org</span>
+      </p>
+    </nav>
+  </div>
+</div>
+<main id="main">
+<section class="bg-navy-900 text-white">
+  <div class="mx-auto max-w-content px-5 sm:px-8 py-12 sm:py-16">
+    <nav aria-label="Breadcrumb" class="mb-6 text-sm text-navy-300">
+      <a href="index.html" class="hover:text-ember-300">Home</a>
+      <span class="px-2 text-navy-300">/</span>
+      <span class="text-navy-100">Events</span>
+    </nav>
+    <p class="eyebrow text-ember-400">Events</p>
+    <h1 class="mt-3 max-w-4xl font-display text-4xl sm:text-5xl font-extrabold leading-[1.05] tracking-[-.015em]">Chapter calendar</h1>
+    <div class="rule-accent mt-6"></div>
+    <p class="mt-6 max-w-3xl text-lg leading-relaxed text-navy-100">Info sessions, contractor nights, code training and lab tours. Everything the chapter runs shows up here first.</p>
+  </div>
+</section>
+
+<!-- ========================= EMPTY STATE =========================== -->
+<section class="py-16 sm:py-20">
+  <div class="mx-auto max-w-content px-5 sm:px-8">
+
+    <div class="flex flex-wrap items-end justify-between gap-4 border-b-2 border-navy-900 pb-4">
+      <h2 class="font-display text-2xl font-extrabold tracking-[-.01em] text-navy-900">Upcoming</h2>
+      <p class="font-display text-sm font-bold uppercase tracking-[.1em] text-navy-500">
+        <span class="ph">0 events scheduled</span>
+      </p>
+    </div>
+
+    <!-- Designed empty state — the whole point of this page right now. -->
+    <div class="mt-10 grid gap-10 border-2 border-dashed border-sand-300 bg-sand-50 p-8 sm:p-14 lg:grid-cols-[1.25fr_1fr] lg:items-center">
+      <div>
+        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-ember-100">
+          <svg class="h-8 w-8 text-ember-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 2v1.5H4.5A1.5 1.5 0 0 0 3 5v11a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 17 16V5a1.5 1.5 0 0 0-1.5-1.5H14V2h-2v1.5H8V2H6Zm9.5 5.5V16h-11V7.5h11ZM7 9.5h2.5V12H7V9.5Z"/></svg>
+        </div>
+        <h3 class="mt-6 font-display text-3xl sm:text-4xl font-extrabold leading-[1.1] tracking-[-.015em] text-navy-900">
+          The first info session will be announced soon.
+        </h3>
+        <p class="mt-5 max-w-2xl text-lg leading-relaxed text-navy-700">
+          IEC Jacksonville is still chartering, so there is genuinely nothing on the calendar yet
+          &mdash; and we&rsquo;d rather show you an honest empty page than a fake one. The first
+          event will be a public info session about the apprenticeship, expected
+          <span class="ph">[MONTH YEAR]</span> once the room and date are locked.
+        </p>
+        <p class="mt-4 leading-relaxed text-navy-700">
+          Leave your email and you&rsquo;ll hear about it the day it&rsquo;s scheduled.
+        </p>
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a href="contact.html#interest" class="btn btn-primary">Get notified</a>
+          <a href="apprenticeship.html" class="btn btn-secondary">Read about the program</a>
+        </div>
+      </div>
+
+      <!-- Skeleton of what a populated month will look like. -->
+      <div aria-hidden="true" class="select-none">
+        <p class="font-display text-xs font-bold uppercase tracking-[.14em] text-navy-500">
+          Preview &mdash; how listings will appear
+        </p>
+        <div class="mt-4 space-y-3 opacity-45">
+
+          <div class="flex items-center gap-4 border border-sand-300 bg-white p-4">
+            <div class="flex h-14 w-14 shrink-0 flex-col items-center justify-center bg-navy-800 text-white">
+              <span class="font-display text-[.6rem] font-bold uppercase tracking-widest">Mon</span>
+              <span class="font-display text-lg font-extrabold leading-none">00</span>
+            </div>
+            <div class="flex-1 space-y-2">
+              <div class="h-3 w-3/5 bg-sand-300"></div>
+              <div class="h-2.5 w-2/5 bg-sand-200"></div>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 border border-sand-300 bg-white p-4">
+            <div class="flex h-14 w-14 shrink-0 flex-col items-center justify-center bg-navy-800 text-white">
+              <span class="font-display text-[.6rem] font-bold uppercase tracking-widest">Mon</span>
+              <span class="font-display text-lg font-extrabold leading-none">00</span>
+            </div>
+            <div class="flex-1 space-y-2">
+              <div class="h-3 w-3/5 bg-sand-300"></div>
+              <div class="h-2.5 w-2/5 bg-sand-200"></div>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 border border-sand-300 bg-white p-4">
+            <div class="flex h-14 w-14 shrink-0 flex-col items-center justify-center bg-navy-800 text-white">
+              <span class="font-display text-[.6rem] font-bold uppercase tracking-widest">Mon</span>
+              <span class="font-display text-lg font-extrabold leading-none">00</span>
+            </div>
+            <div class="flex-1 space-y-2">
+              <div class="h-3 w-3/5 bg-sand-300"></div>
+              <div class="h-2.5 w-2/5 bg-sand-200"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Month scaffolding, kept so the calendar structure reads even when empty. -->
+    <div class="mt-14 space-y-8">
+
+      <div>
+        <h3 class="font-display text-sm font-bold uppercase tracking-[.16em] text-navy-500">
+          <span class="ph">[MONTH 1]</span>
+        </h3>
+        <p class="mt-3 border-l-2 border-sand-200 py-2 pl-4 text-navy-500">No events scheduled.</p>
+      </div>
+      <div>
+        <h3 class="font-display text-sm font-bold uppercase tracking-[.16em] text-navy-500">
+          <span class="ph">[MONTH 2]</span>
+        </h3>
+        <p class="mt-3 border-l-2 border-sand-200 py-2 pl-4 text-navy-500">No events scheduled.</p>
+      </div>
+      <div>
+        <h3 class="font-display text-sm font-bold uppercase tracking-[.16em] text-navy-500">
+          <span class="ph">[MONTH 3]</span>
+        </h3>
+        <p class="mt-3 border-l-2 border-sand-200 py-2 pl-4 text-navy-500">No events scheduled.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== WHAT WILL BE ON IT ========================= -->
+<section class="bg-sand-50 py-16 sm:py-20">
+  <div class="mx-auto max-w-content px-5 sm:px-8">
+    <p class="eyebrow text-ember-600">Coming to the calendar</p>
+    <h2 class="mt-3 font-display text-3xl sm:text-4xl font-extrabold tracking-[-.015em] text-navy-900">
+      What the chapter will run
+    </h2>
+    <div class="rule-accent mt-6"></div>
+    <p class="mt-6 max-w-3xl text-lg leading-relaxed text-navy-700">
+      These are the recurring event types the chapter is planning. None of them are scheduled yet
+      &mdash; dates depend on the chartering timeline.
+    </p>
+
+    <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+
+      <article class="flex flex-col border border-sand-200 bg-white p-6">
+        <h3 class="font-display text-xl font-bold leading-tight text-navy-900">Info Sessions</h3>
+        <p class="mt-3 flex-1 leading-relaxed text-navy-700">An hour, in the evening, for anyone considering the apprenticeship. What the program is, what it costs, who&rsquo;s hiring. Bring a parent, bring a friend, bring nothing.</p>
+        <p class="mt-5 border-t border-sand-200 pt-4 font-display text-xs font-bold uppercase tracking-[.1em] text-ember-600">Open to the public</p>
+      </article>
+      <article class="flex flex-col border border-sand-200 bg-white p-6">
+        <h3 class="font-display text-xl font-bold leading-tight text-navy-900">Contractor Nights</h3>
+        <p class="mt-3 flex-1 leading-relaxed text-navy-700">Members and industry partners in one room at a distributor&rsquo;s counter or a member&rsquo;s shop. Short program, long conversation, food. Held monthly once the chapter is chartered.</p>
+        <p class="mt-5 border-t border-sand-200 pt-4 font-display text-xs font-bold uppercase tracking-[.1em] text-ember-600">Members &amp; partners</p>
+      </article>
+      <article class="flex flex-col border border-sand-200 bg-white p-6">
+        <h3 class="font-display text-xl font-bold leading-tight text-navy-900">Lab &amp; Jobsite Tours</h3>
+        <p class="mt-3 flex-1 leading-relaxed text-navy-700">Walk the training lab, or walk a member&rsquo;s active job. The best recruiting tool the trade has is letting people see the work.</p>
+        <p class="mt-5 border-t border-sand-200 pt-4 font-display text-xs font-bold uppercase tracking-[.1em] text-ember-600">Open to the public</p>
+      </article>
+      <article class="flex flex-col border border-sand-200 bg-white p-6">
+        <h3 class="font-display text-xl font-bold leading-tight text-navy-900">Code &amp; Safety Training</h3>
+        <p class="mt-3 flex-1 leading-relaxed text-navy-700">NEC code update cycles, OSHA 10 and 30, and continuing education for license renewal. Scheduled around the state&rsquo;s renewal deadlines.</p>
+        <p class="mt-5 border-t border-sand-200 pt-4 font-display text-xs font-bold uppercase tracking-[.1em] text-ember-600">Members first, open if seats remain</p>
+      </article>
+      <article class="flex flex-col border border-sand-200 bg-white p-6">
+        <h3 class="font-display text-xl font-bold leading-tight text-navy-900">Apprentice Competition</h3>
+        <p class="mt-3 flex-1 leading-relaxed text-navy-700">Chapter-level skills competition for apprentices, with the winner advancing to the IEC national competition. Starts once there are apprentices to compete.</p>
+        <p class="mt-5 border-t border-sand-200 pt-4 font-display text-xs font-bold uppercase tracking-[.1em] text-ember-600">Apprentices</p>
+      </article>
+      <article class="flex flex-col border border-sand-200 bg-white p-6">
+        <h3 class="font-display text-xl font-bold leading-tight text-navy-900">Annual Meeting</h3>
+        <p class="mt-3 flex-1 leading-relaxed text-navy-700">Officer elections, budget, training committee report and the year ahead. One evening, voting members only.</p>
+        <p class="mt-5 border-t border-sand-200 pt-4 font-display text-xs font-bold uppercase tracking-[.1em] text-ember-600">Contractor members</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= PAST EVENTS =========================== -->
+<section class="py-16">
+  <div class="mx-auto max-w-content px-5 sm:px-8">
+    <h2 class="border-b-2 border-navy-900 pb-4 font-display text-2xl font-extrabold tracking-[-.01em] text-navy-900">
+      Past events
+    </h2>
+    <p class="mt-6 text-navy-600">
+      Nothing yet &mdash; the chapter hasn&rsquo;t held its first event. Photos and recaps will
+      archive here. <span class="ph">[Photo gallery to be added]</span>
+    </p>
+  </div>
+</section>
+
+<!-- Chapter-wide closing CTA, carried on every page. -->
+<section class="bg-navy-900 text-white">
+  <div class="mx-auto max-w-content px-5 sm:px-8 py-16 sm:py-20">
+    <div class="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+      <div>
+        <p class="eyebrow text-ember-400">Charter membership is open</p>
+        <h2 class="mt-3 font-display text-3xl sm:text-4xl font-extrabold leading-[1.1]">
+          Help build the chapter from the first meeting on.
+        </h2>
+        <p class="mt-4 max-w-2xl text-lg leading-relaxed text-navy-100">
+          Founding members set the training calendar, the class locations and the dues structure
+          for the whole chapter. Once the first apprentice class seats, those decisions are made.
+        </p>
+      </div>
+      <div class="flex flex-col gap-3 sm:flex-row lg:flex-col">
+        <a href="membership.html#apply" class="btn btn-primary flex-1">Become a Member</a>
+        <a href="apprenticeship.html#apply" class="btn btn-ghost-light flex-1">Start an Apprenticeship</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="bg-navy-950 text-navy-100">
+  <div class="mx-auto max-w-content px-5 sm:px-8 py-14 sm:py-16">
+    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.1fr]">
+
+      <div>
+        <a href="index.html" aria-label="IEC Jacksonville — home"><span class="wordmark"><span class="wm-iec text-[1.6rem] text-white">IEC</span><span class="wm-city text-[1.02rem] text-ember-400">JACKSONVILLE</span></span></a>
+        <p class="mt-4 text-sm leading-relaxed text-navy-300">
+          Independent Electrical Contractors<br>Jacksonville Chapter &middot; Northeast Florida
+        </p>
+        <address class="mt-5 not-italic text-sm leading-relaxed">
+          <span class="ph">1400 Example Industrial Blvd, Suite 200</span><br>
+          <span class="ph">Jacksonville, FL 32256</span>
+        </address>
+        <p class="mt-4 text-sm leading-relaxed">
+          <a href="tel:+19045550100" class="hover:text-ember-300"><span class="ph">(904) 555-0100</span></a><br>
+          <a href="mailto:info@example.org" class="hover:text-ember-300"><span class="ph">info@iecjax.example.org</span></a>
+        </p>
+      </div>
+
+      <div>
+        <h2 class="eyebrow text-ember-400">Chapter</h2>
+        <ul class="mt-4 space-y-2.5 text-[.95rem]">
+          <li><a href="index.html" class="hover:text-ember-300">Home</a></li>
+          <li><a href="about.html" class="hover:text-ember-300">About Us</a></li>
+          <li><a href="about.html#leadership" class="hover:text-ember-300">Board &amp; Staff</a></li>
+          <li><a href="events.html" class="hover:text-ember-300">Events</a></li>
+          <li><a href="contact.html" class="hover:text-ember-300">Contact Us</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="eyebrow text-ember-400">Training</h2>
+        <ul class="mt-4 space-y-2.5 text-[.95rem]">
+          <li><a href="apprenticeship.html" class="hover:text-ember-300">Apprenticeship</a></li>
+          <li><a href="apprenticeship.html#tracks" class="hover:text-ember-300">Career Prep</a></li>
+          <li><a href="apprenticeship.html#tracks" class="hover:text-ember-300">Low Voltage</a></li>
+          <li><a href="membership.html" class="hover:text-ember-300">Membership</a></li>
+          <li><a href="faqs.html" class="hover:text-ember-300">FAQs</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="eyebrow text-ember-400">Follow the chapter</h2>
+        <div class="mt-4 flex gap-2.5">
+          <a href="#" aria-label="IEC Jacksonville on Facebook (placeholder link)" class="flex h-9 w-9 items-center justify-center border border-white/25 text-navy-100 hover:border-ember-400 hover:text-ember-400 transition-colors"><svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M11.6 18v-6.5h2.2l.33-2.55H11.6V7.32c0-.74.2-1.24 1.26-1.24h1.35V3.8c-.23-.03-1.03-.1-1.96-.1-1.94 0-3.27 1.18-3.27 3.36v1.87H6.77V11.5h2.21V18h2.62Z"/></svg></a>
+          <a href="#" aria-label="IEC Jacksonville on Instagram (placeholder link)" class="flex h-9 w-9 items-center justify-center border border-white/25 text-navy-100 hover:border-ember-400 hover:text-ember-400 transition-colors"><svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 5.4c-1.25 0-1.4 0-1.9.03-.46.02-.7.1-.87.16-.22.09-.38.19-.54.36-.17.16-.27.32-.36.54-.06.17-.14.41-.16.87-.02.5-.03.65-.03 1.9v1.48c0 1.25.01 1.4.03 1.9.02.46.1.7.16.87.09.22.19.38.36.54.16.17.32.27.54.36.17.06.41.14.87.16.5.02.65.03 1.9.03h1.48c1.25 0 1.4-.01 1.9-.03.46-.02.7-.1.87-.16.22-.09.38-.19.54-.36.17-.16.27-.32.36-.54.06-.17.14-.41.16-.87.02-.5.03-.65.03-1.9V9.26c0-1.25-.01-1.4-.03-1.9-.02-.46-.1-.7-.16-.87a1.45 1.45 0 0 0-.36-.54 1.45 1.45 0 0 0-.54-.36c-.17-.06-.41-.14-.87-.16-.5-.02-.65-.03-1.9-.03H10Zm0-1.4h1.48c1.27 0 1.44.01 1.94.03.5.03.84.1 1.14.22.31.12.57.28.83.54.26.26.42.52.54.83.12.3.19.64.22 1.14.02.5.03.67.03 1.94v1.48c0 1.27-.01 1.44-.03 1.94-.03.5-.1.84-.22 1.14-.12.31-.28.57-.54.83-.26.26-.52.42-.83.54-.3.12-.64.19-1.14.22-.5.02-.67.03-1.94.03H10c-1.27 0-1.44-.01-1.94-.03-.5-.03-.84-.1-1.14-.22a2.85 2.85 0 0 1-.83-.54 2.85 2.85 0 0 1-.54-.83c-.12-.3-.19-.64-.22-1.14C5.31 11.42 5.3 11.25 5.3 9.98V8.5c0-1.27.01-1.44.03-1.94.03-.5.1-.84.22-1.14.12-.31.28-.57.54-.83.26-.26.52-.42.83-.54.3-.12.64-.19 1.14-.22.5-.02.67-.03 1.94-.03Zm.74 2.68a3.08 3.08 0 1 0 0 6.16 3.08 3.08 0 0 0 0-6.16Zm0 1.4a1.68 1.68 0 1 1 0 3.36 1.68 1.68 0 0 1 0-3.36Zm3.24-1.68a.72.72 0 1 1-1.44 0 .72.72 0 0 1 1.44 0Z"/></svg></a>
+          <a href="#" aria-label="IEC Jacksonville on LinkedIn (placeholder link)" class="flex h-9 w-9 items-center justify-center border border-white/25 text-navy-100 hover:border-ember-400 hover:text-ember-400 transition-colors"><svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.94 7.5H4.5V16h2.44V7.5ZM5.72 4a1.42 1.42 0 1 0 0 2.83 1.42 1.42 0 0 0 0-2.83ZM16 11.4c0-2.33-1.24-3.42-2.9-3.42-1.34 0-1.94.74-2.27 1.26V7.5H8.4c.03.69 0 8.5 0 8.5h2.43v-4.75c0-.21.02-.43.08-.58.17-.43.56-.87 1.22-.87.86 0 1.2.65 1.2 1.6V16H16v-4.6Z"/></svg></a>
+          <a href="#" aria-label="IEC Jacksonville on YouTube (placeholder link)" class="flex h-9 w-9 items-center justify-center border border-white/25 text-navy-100 hover:border-ember-400 hover:text-ember-400 transition-colors"><svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M17.2 6.6a1.88 1.88 0 0 0-1.32-1.33C14.7 4.95 10 4.95 10 4.95s-4.7 0-5.88.32A1.88 1.88 0 0 0 2.8 6.6C2.5 7.78 2.5 10 2.5 10s0 2.22.3 3.4a1.88 1.88 0 0 0 1.32 1.33c1.18.32 5.88.32 5.88.32s4.7 0 5.88-.32a1.88 1.88 0 0 0 1.32-1.33c.3-1.18.3-3.4.3-3.4s0-2.22-.3-3.4ZM8.5 12.25v-4.5L12.4 10l-3.9 2.25Z"/></svg></a>
+        </div>
+        <p class="mt-3 text-xs leading-relaxed text-navy-300">
+          <span class="ph">Social accounts not yet created</span>
+        </p>
+        <h2 class="eyebrow mt-8 text-ember-400">National</h2>
+        <p class="mt-3 text-[.95rem] leading-relaxed">
+          <a href="https://www.ieci.org/" class="underline decoration-ember-500 underline-offset-4 hover:text-ember-300">
+            Independent Electrical Contractors, Inc. &nearr;
+          </a>
+        </p>
+      </div>
+
+    </div>
+
+    <div class="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 text-sm sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-navy-300">&copy; <span class="ph">2026</span> IEC Jacksonville. All rights reserved.</p>
+      <ul class="flex flex-wrap items-center gap-x-6 gap-y-2">
+        <li><a href="privacy.html" class="hover:text-ember-300">Privacy Policy</a></li>
+        <li><a href="terms.html" class="hover:text-ember-300">Terms of Use</a></li>
+        <li><a href="accessibility.html" class="hover:text-ember-300">Accessibility Statement</a></li>
+      </ul>
+    </div>
+
+    <p class="mt-8 border border-ember-500/40 bg-ember-500/10 px-4 py-3 text-xs leading-relaxed text-ember-200">
+      <strong class="font-display font-bold uppercase tracking-widest">Mockup notice</strong> &mdash;
+      this is a static design mockup for IEC Jacksonville. Names, dates, addresses, figures and
+      photographs are placeholders. No form on this site submits anywhere.
+    </p>
+  </div>
+</footer>
+</main>
+<script src="assets/site.js"></script>
+</body>
+</html>

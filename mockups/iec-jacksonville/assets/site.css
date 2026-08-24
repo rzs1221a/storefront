@@ -1,0 +1,178 @@
+/* IEC Jacksonville — pitch mockup
+   Brand tokens + the handful of components Tailwind utilities don't cover.
+   Everything else is Tailwind (CDN). No build step. */
+
+:root {
+  --navy-950: #071626;
+  --navy-900: #0B1E33;
+  --navy-800: #102A45;
+  --navy-700: #173A5E;
+  --navy-600: #1E4A78;
+  --navy-500: #4E6D8E;
+  --navy-300: #93A9C0;
+  --navy-200: #C3D0DE;
+  --ember-500: #D97A1F;   /* decoration only — fails AA behind text */
+  --ember-cta: #A85413;   /* accent that carries white text (5.33:1) */
+  --ember-400: #E8942F;
+  --ember-300: #EFB05C;
+  --sand-50:  #FAF8F5;
+  --sand-100: #F4F1EB;
+  --sand-200: #E7E1D6;
+}
+
+html { scroll-behavior: smooth; }
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+/* Fallback so the page is still readable if the Tailwind CDN can't load. */
+body { font-family: "Source Sans 3", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--navy-900); background: #fff; margin: 0; }
+h1, h2, h3, h4, h5, .font-display { font-family: Archivo, ui-sans-serif, system-ui, -apple-system, "Segoe UI Semibold", sans-serif; }
+
+/* ---- Skip link ---------------------------------------------------------- */
+.skip-link {
+  position: absolute; left: -9999px; top: 0; z-index: 100;
+  background: var(--navy-900); color: #fff; padding: .75rem 1.25rem;
+  font-weight: 700; letter-spacing: .02em;
+}
+.skip-link:focus { left: 0; }
+
+/* Visible focus everywhere, on the warm accent so it reads on navy and white. */
+a:focus-visible, button:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible, summary:focus-visible {
+  outline: 3px solid var(--ember-400);
+  outline-offset: 2px;
+}
+
+/* ---- Eyebrow / section label -------------------------------------------- */
+.eyebrow {
+  font-family: Archivo, ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700; font-size: .8125rem; letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+/* ---- Buttons ------------------------------------------------------------ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  font-family: Archivo, ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700; font-size: .9375rem; letter-spacing: .04em; text-transform: uppercase;
+  padding: .875rem 1.75rem; border: 2px solid transparent; cursor: pointer;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+  text-decoration: none; line-height: 1.1;
+}
+.btn-primary { background: var(--ember-cta); color: #fff; border-color: var(--ember-cta); }
+.btn-primary:hover { background: #8F4715; border-color: #8F4715; }
+
+.btn-navy { background: var(--navy-800); color: #fff; border-color: var(--navy-800); }
+.btn-navy:hover { background: var(--navy-600); border-color: var(--navy-600); }
+
+/* Secondary — used for Member Login in the header. */
+.btn-secondary { background: transparent; color: var(--navy-800); border-color: var(--navy-200); }
+.btn-secondary:hover { background: var(--navy-800); color: #fff; border-color: var(--navy-800); }
+
+.btn-ghost-light { background: transparent; color: #fff; border-color: rgba(255,255,255,.45); }
+.btn-ghost-light:hover { background: #fff; color: var(--navy-900); border-color: #fff; }
+
+.btn-sm { padding: .625rem 1.125rem; font-size: .8125rem; }
+
+/* ---- Placeholder markers ------------------------------------------------
+   Every unresolved fact in this mockup is wrapped in one of these so nobody
+   mistakes filler for a decision. */
+.ph {
+  background: #FDF3E3;
+  border-bottom: 2px dotted var(--ember-400);
+  color: #8F4715;
+  font-weight: 600;
+  padding: 0 .2em;
+  overflow-wrap: anywhere;
+}
+.ph-block {
+  background: #FDF3E3;
+  border: 2px dashed var(--ember-300);
+  color: #8F4715;
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+}
+
+/* Image placeholder: hatched navy block with a corner marker. */
+.img-ph {
+  position: relative;
+  background-color: var(--navy-800);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255,255,255,.055) 0 12px,
+    rgba(255,255,255,0) 12px 24px
+  );
+  overflow: hidden;
+}
+.img-ph::after {
+  content: "IMAGE PLACEHOLDER";
+  position: absolute; top: 0; left: 0;
+  background: var(--ember-cta); color: #fff;
+  font-family: Archivo, ui-sans-serif, system-ui, sans-serif;
+  font-size: .6875rem; font-weight: 700; letter-spacing: .14em;
+  padding: .375rem .75rem;
+  z-index: 2;
+}
+.img-ph-caption {
+  font-family: Archivo, ui-sans-serif, system-ui, sans-serif;
+  color: rgba(255,255,255,.78);
+  font-size: .8125rem; letter-spacing: .09em; text-transform: uppercase;
+  text-align: center; line-height: 1.6;
+}
+
+/* Portrait placeholder for board/staff cards. */
+.avatar-ph {
+  aspect-ratio: 1 / 1;
+  background-color: var(--navy-700);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(255,255,255,.06) 0 10px,
+    rgba(255,255,255,0) 10px 20px
+  );
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.74);
+  font-family: Archivo, ui-sans-serif, system-ui, sans-serif;
+  font-size: .625rem; font-weight: 700; letter-spacing: .12em;
+  text-align: center; padding: .5rem;
+}
+
+/* ---- Wordmark ----------------------------------------------------------- */
+.wordmark { display: inline-flex; align-items: baseline; gap: .4rem; text-decoration: none; line-height: 1; }
+.wordmark .wm-iec {
+  font-family: Archivo, ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800; letter-spacing: -.02em;
+}
+.wordmark .wm-city {
+  font-family: Archivo, ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500; letter-spacing: .13em;
+}
+
+/* ---- Accordion ---------------------------------------------------------- */
+.acc-panel { display: none; }
+.acc-panel.is-open { display: block; }
+.acc-trigger .acc-icon { transition: transform .18s ease; }
+.acc-trigger[aria-expanded="true"] .acc-icon { transform: rotate(45deg); }
+
+/* ---- Mobile nav --------------------------------------------------------- */
+#mobile-nav { display: none; }
+#mobile-nav.is-open { display: block; }
+body.nav-locked { overflow: hidden; }
+
+/* ---- Misc --------------------------------------------------------------- */
+.rule-accent { width: 3.5rem; height: 4px; background: var(--ember-500); }
+
+/* Faux form controls — this mockup has no backend, nothing submits. */
+.field {
+  width: 100%; padding: .75rem .875rem;
+  border: 1px solid #CBD5E0; background: #fff; color: var(--navy-900);
+  font-family: inherit; font-size: 1rem;
+}
+.field::placeholder { color: #8A96A3; }
+.field:focus { border-color: var(--navy-600); }
+.field-label {
+  display: block; margin-bottom: .375rem;
+  font-family: Archivo, ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600; font-size: .8125rem; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--navy-700);
+}
+
+@media print { .no-print { display: none !important; } }
