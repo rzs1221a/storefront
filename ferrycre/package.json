@@ -1,0 +1,55 @@
+{
+  "name": "ferrycre",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "ferrycre.com — Antoinette Ferry, Commercial Sales & Leasing, Nassau County FL.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build && node scripts/prerender.mjs",
+    "prerender": "node scripts/prerender.mjs",
+    "og": "node scripts/og.mjs",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Edge versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 iOS versions"
+  ],
+  "dependencies": {
+    "@deck.gl/core": "^9.3.4",
+    "@deck.gl/geo-layers": "^9.3.4",
+    "@deck.gl/mapbox": "^9.3.4",
+    "@loaders.gl/3d-tiles": "^4.4.2",
+    "@loaders.gl/core": "^4.4.2",
+    "maplibre-gl": "^4.7.1",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-router-dom": "^7.18.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@netlify/blobs": "^8.1.0",
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/node": "^24.12.3",
+    "@types/nodemailer": "^6.4.17",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^10.3.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "nodemailer": "^6.9.16",
+    "playwright": "^1.62.1",
+    "sharp": "^0.35.1",
+    "tailwindcss": "^4.3.0",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.59.2",
+    "vite": "^8.0.12",
+    "zod": "^3.24.1"
+  }
+}

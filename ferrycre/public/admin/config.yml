@@ -1,0 +1,174 @@
+# Decap CMS — invite-only editing for Antoinette.
+# Requires Netlify Identity (invite-only) + Git Gateway enabled on the site.
+backend:
+  name: git-gateway
+  branch: claude/ferrycre-commercial-build-fixp0v # production deploys from this branch; change to main when the project moves to her own repo
+
+media_folder: "public/photos"
+public_folder: "/photos"
+
+site_url: https://ferrycre.com
+display_url: https://ferrycre.com
+
+publish_mode: simple
+
+collections:
+  - name: "site"
+    label: "Site Content"
+    files:
+      - name: "profile"
+        label: "Your Details (contact, title, bio)"
+        file: "src/data/profile.json"
+        description: "Name, title, phone, email, license, and bio. These propagate to the header, footer, and lead flows automatically."
+        fields:
+          - { name: name, label: "Name", widget: string }
+          - { name: title, label: "Displayed title", widget: string, hint: "Exactly as you want it shown, e.g. Director of Commercial Sales & Leasing" }
+          - { name: titleConfirmed, label: "Title confirmed by you", widget: boolean }
+          - { name: brokerage, label: "Brokerage (full legal)", widget: string }
+          - { name: brokerageShort, label: "Brokerage (short)", widget: string }
+          - { name: officeId, label: "Office ID", widget: string }
+          - { name: officeAddress, label: "Office address", widget: string }
+          - { name: officePhone, label: "Office phone", widget: string }
+          - { name: phone, label: "Your direct phone (displayed)", widget: string }
+          - { name: phoneE164, label: "Your direct phone (dialing format, +1…)", widget: string }
+          - { name: email, label: "Email", widget: string }
+          - { name: licenseNumber, label: "Florida license number", widget: string, hint: "Required on advertising. Shown in the footer." }
+          - { name: licenseConfirmed, label: "License number confirmed", widget: boolean }
+          - { name: domain, label: "Site domain", widget: string }
+          - { name: corporatePage, label: "BHHS corporate profile URL", widget: string }
+          - { name: memberships, label: "Memberships", widget: list, field: { name: item, label: "Membership", widget: string } }
+          - { name: bio, label: "Bio (your own words)", widget: text }
+          - { name: bioConfirmed, label: "Bio written by you (turns the bio on)", widget: boolean }
+          - { name: serviceAreas, label: "Service areas", widget: list, field: { name: item, label: "Area", widget: string } }
+          - { name: franchiseDisclosure, label: "Franchise disclosure (footer)", widget: text }
+          - { name: consentText, label: "Contact-consent language (forms)", widget: text, hint: "Shown next to the consent checkbox and logged with every submission." }
+
+      - name: "listings"
+        label: "Listings"
+        file: "src/data/listings.json"
+        description: "The six. Full commercial detail per record — leave price-per-SF blank; the site computes it."
+        fields:
+          - { name: sample, label: "Sample data (turn OFF once real listings are in)", widget: boolean }
+          - { name: note, label: "Internal note", widget: text, required: false }
+          - name: listings
+            label: "Listings"
+            widget: list
+            summary: "{{fields.address}} — {{fields.city}}"
+            fields:
+              - { name: id, label: "ID (short, stable)", widget: string }
+              - { name: slug, label: "URL slug (address-derived, never change once live)", widget: string }
+              - { name: transaction, label: "Transaction", widget: select, options: ["sale", "lease", "sale-or-lease"] }
+              - { name: useType, label: "Use type", widget: select, options: ["office", "retail", "industrial", "flex", "medical", "hospitality", "multifamily", "land", "special-purpose"] }
+              - { name: secondaryUses, label: "Secondary uses", widget: select, multiple: true, required: false, options: ["office", "retail", "industrial", "flex", "medical", "hospitality", "multifamily", "land", "special-purpose"] }
+              - { name: address, label: "Address", widget: string }
+              - { name: city, label: "City", widget: string }
+              - { name: county, label: "County", widget: string, default: "Nassau" }
+              - { name: state, label: "State", widget: string, default: "FL" }
+              - { name: zip, label: "ZIP", widget: string }
+              - { name: lat, label: "Latitude", widget: number, value_type: float }
+              - { name: lon, label: "Longitude", widget: number, value_type: float }
+              - { name: parcelId, label: "Parcel ID", widget: string, required: false }
+              - { name: zoning, label: "Zoning (code — plain-language gloss)", widget: string, required: false }
+              - { name: zoningNote, label: "Zoning note", widget: text, required: false }
+              - { name: salePrice, label: "Sale price ($)", widget: number, required: false }
+              - { name: leaseRate, label: "Lease rate ($/SF/yr)", widget: number, value_type: float, required: false }
+              - { name: leaseBasis, label: "Lease basis", widget: select, required: false, options: ["NNN", "MG", "FSG", "IG", "absolute-net"] }
+              - { name: noi, label: "NOI ($/yr)", widget: number, required: false }
+              - { name: buildingSF, label: "Building SF", widget: number, required: false }
+              - { name: availableSF, label: "Available SF", widget: number, required: false }
+              - { name: landAcres, label: "Land (acres)", widget: number, value_type: float, required: false }
+              - { name: yearBuilt, label: "Year built", widget: number, required: false }
+              - { name: yearRenovated, label: "Year renovated", widget: number, required: false }
+              - { name: stories, label: "Stories", widget: number, required: false }
+              - { name: ceilingHeight, label: "Clear height", widget: string, required: false }
+              - { name: dockDoors, label: "Dock doors", widget: number, required: false }
+              - { name: driveInDoors, label: "Drive-in doors", widget: number, required: false }
+              - { name: power, label: "Power", widget: string, required: false }
+              - { name: parkingSpaces, label: "Parking spaces", widget: number, required: false }
+              - { name: parkingRatio, label: "Parking ratio / note", widget: string, required: false }
+              - { name: divisible, label: "Divisible", widget: boolean, required: false }
+              - { name: minDivisibleSF, label: "Min divisible SF", widget: number, required: false }
+              - { name: frontageFt, label: "Frontage (ft)", widget: number, required: false }
+              - { name: frontageOn, label: "Frontage on", widget: string, required: false }
+              - { name: trafficCount, label: "Traffic count (AADT)", widget: number, required: false }
+              - { name: trafficCountYear, label: "Traffic count year", widget: number, required: false }
+              - { name: trafficCountSource, label: "Traffic count source (FDOT station — cite it)", widget: string, required: false }
+              - { name: ingress, label: "Ingress", widget: string, required: false }
+              - { name: corner, label: "Corner", widget: boolean, required: false }
+              - name: driveTimes
+                label: "Drive times"
+                widget: list
+                required: false
+                fields:
+                  - { name: label, label: "To", widget: string }
+                  - { name: minutes, label: "Minutes", widget: number }
+              - name: distances
+                label: "Distances (miles)"
+                widget: list
+                required: false
+                fields:
+                  - { name: label, label: "To", widget: string }
+                  - { name: miles, label: "Miles", widget: number, value_type: float }
+              - { name: tenancy, label: "Tenancy", widget: select, required: false, options: ["single", "multi", "vacant", "owner-user"] }
+              - { name: occupancyPct, label: "Occupancy %", widget: number, required: false }
+              - name: tenants
+                label: "Tenants"
+                widget: list
+                required: false
+                fields:
+                  - { name: name, label: "Tenant", widget: string }
+                  - { name: sf, label: "SF", widget: number }
+                  - { name: expires, label: "Lease expires", widget: string, required: false }
+              - { name: neighboringTenants, label: "Neighboring tenants", widget: list, required: false, field: { name: item, label: "Tenant", widget: string } }
+              - { name: headline, label: "Headline", widget: string }
+              - { name: summary, label: "Summary (2–3 sentences, yours)", widget: text }
+              - { name: positioning, label: "Who this property is FOR", widget: text, required: false }
+              - name: photos
+                label: "Photos"
+                widget: list
+                fields:
+                  - { name: src, label: "Photo", widget: image }
+                  - { name: alt, label: "Description (alt text)", widget: string }
+                  - { name: caption, label: "Caption", widget: string, required: false }
+              - name: documents
+                label: "Documents (flyer, survey, P&L)"
+                widget: list
+                required: false
+                fields:
+                  - { name: label, label: "Label", widget: string }
+                  - { name: href, label: "File URL", widget: string }
+              - { name: status, label: "Status", widget: select, options: ["available", "under-contract", "leased", "sold"] }
+              - { name: listedAt, label: "Listed date (YYYY-MM-DD)", widget: string, required: false }
+              - { name: listingAgent, label: "Listing agent of record (leave blank if Antoinette)", widget: string, required: false }
+              - { name: source, label: "Source", widget: select, options: ["mls-nefmls", "mls-aincar", "buildout", "direct"] }
+              - { name: mlsNumber, label: "MLS number", widget: string, required: false }
+
+      - name: "markets"
+        label: "Market Pages"
+        file: "src/data/markets.json"
+        description: "The geo pages. The intro prose is the SEO workhorse — unique per market, never templated."
+        fields:
+          - { name: note, label: "Internal note", widget: text, required: false }
+          - name: markets
+            label: "Markets"
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - { name: slug, label: "URL slug (never change once live)", widget: string }
+              - { name: name, label: "Name", widget: string }
+              - { name: shortName, label: "Short name", widget: string }
+              - { name: h1, label: "Page heading", widget: string }
+              - { name: tagline, label: "Tagline", widget: string }
+              - { name: lat, label: "Latitude", widget: number, value_type: float }
+              - { name: lon, label: "Longitude", widget: number, value_type: float }
+              - { name: zoom, label: "Map zoom", widget: number, value_type: float }
+              - { name: cities, label: "Listing cities included", widget: list, field: { name: item, label: "City", widget: string } }
+              - { name: useTypes, label: "Typical use types", widget: select, multiple: true, options: ["office", "retail", "industrial", "flex", "medical", "hospitality", "multifamily", "land", "special-purpose"] }
+              - { name: corridors, label: "Notable corridors", widget: list, field: { name: item, label: "Corridor", widget: string } }
+              - { name: intro, label: "Intro prose (150–200 words, unique)", widget: text }
+              - name: faqs
+                label: "FAQs"
+                widget: list
+                fields:
+                  - { name: q, label: "Question", widget: string }
+                  - { name: a, label: "Answer", widget: text }

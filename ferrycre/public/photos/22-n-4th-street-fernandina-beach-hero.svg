@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Placeholder image — photography pending">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14161c"/>
+      <stop offset="0.72" stop-color="#0a0a0e"/>
+      <stop offset="1" stop-color="#2a1424"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#g)"/>
+  <g stroke="#a85484" stroke-opacity="0.22" stroke-width="1">
+    <line x1="0" y1="330" x2="800" y2="290"/>
+    <line x1="0" y1="352" x2="800" y2="318"/>
+  </g>
+  <circle cx="672" cy="86" r="5" fill="#a85484"/>
+  <text x="48" y="352" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="30" font-weight="600" fill="#f5f5f7">22 N 4th St, Fernandina</text>
+  <text x="48" y="384" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="17" fill="#c98cad">Historic Mixed-Use · 3,745 SF · c.1883</text>
+  <text x="48" y="412" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-size="13" fill="#7e808c">Photography pending</text>
+</svg>

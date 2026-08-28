@@ -1,0 +1,132 @@
+{
+  "sample": false,
+  "note": "LIVE INVENTORY — the firm's active commercial listings in the AINCAR MLS, per Antoinette's inventory email of 2026-08-18 with details corroborated from the public listing record. Statuses should be re-verified against the MLS before any material update. The Callahan parcel is listed with the facts that are public (price, address, status) — acreage, parcel ID, and exact coordinates need Antoinette's confirmation. Additional inventory held in her own name can be added here or through /admin.",
+  "listings": [
+    {
+      "id": "s3rd-city-mart-unit-b",
+      "slug": "5-s-3rd-street-unit-b-fernandina-beach",
+      "transaction": "sale",
+      "useType": "retail",
+      "secondaryUses": ["office", "special-purpose"],
+      "address": "5 S 3rd Street, Unit B",
+      "city": "Fernandina Beach",
+      "county": "Nassau",
+      "state": "FL",
+      "zip": "32034",
+      "lat": 30.66925,
+      "lon": -81.4618,
+      "zoning": "C-3 — Central Business District",
+      "zoningNote": "Downtown Fernandina's most flexible commercial district; broad retail, office, and service uses by right.",
+      "salePrice": 899000,
+      "buildingSF": 1511,
+      "yearBuilt": 1884,
+      "tenancy": "vacant",
+      "headline": "A storefront condo in the 1884 City Mart Building, one block off Centre Street",
+      "summary": "Unit B of the historic City Mart Building — 1,511 square feet of ground-level commercial space with double glass doors and breezeway access, in the heart of the Fernandina Beach historic district. C-3 zoning keeps nearly every downtown use on the table.",
+      "positioning": "For the owner-user who wants a permanent address in the historic district, or the investor who wants downtown Fernandina retail frontage in a building that has anchored the block since 1884.",
+      "photos": [
+        {
+          "src": "/photos/5-s-3rd-street-unit-b-fernandina-beach-hero.svg",
+          "alt": "Stylized placeholder graphic for 5 S 3rd Street Unit B, Fernandina Beach — property photography pending"
+        }
+      ],
+      "status": "available",
+      "source": "mls-aincar",
+      "mlsNumber": "116590",
+      "listingAgent": "Sara Terry"
+    },
+    {
+      "id": "sr200-yulee-land",
+      "slug": "state-road-200-yulee-land",
+      "transaction": "sale",
+      "useType": "land",
+      "address": "State Road 200 (unaddressed parcel)",
+      "city": "Yulee",
+      "county": "Nassau",
+      "state": "FL",
+      "zip": "32097",
+      "lat": 30.6282,
+      "lon": -81.555,
+      "parcelId": "52-3N-27-4890-0073-0000",
+      "zoning": "T-3.5 — Nassau County transect",
+      "zoningNote": "No water or sewer to the site today — verify the utility extension path with the county before underwriting a use.",
+      "salePrice": 500000,
+      "landAcres": 2.0,
+      "frontageFt": 180,
+      "frontageOn": "SR-200 / A1A",
+      "headline": "Two acres of A1A frontage in the path of Yulee's growth",
+      "summary": "A two-acre parcel (roughly 180 by 485 feet) fronting State Road 200, about two miles from the Wildlight development and the county's fastest-growing corridor. Raw land on the road that carries Nassau County's commercial future.",
+      "positioning": "For the buyer banking the SR-200 corridor — hold it as the corridor builds toward it, or bring a use and start the utility conversation now.",
+      "photos": [
+        {
+          "src": "/photos/state-road-200-yulee-land-hero.svg",
+          "alt": "Stylized placeholder graphic for the State Road 200 parcel in Yulee — property photography pending"
+        }
+      ],
+      "status": "available",
+      "source": "mls-aincar",
+      "mlsNumber": "114361",
+      "listingAgent": "Craig Brewis"
+    },
+    {
+      "id": "sr200-callahan-land",
+      "slug": "state-road-200-callahan-land",
+      "transaction": "sale",
+      "useType": "land",
+      "address": "State Road 200 (unaddressed parcel)",
+      "city": "Callahan",
+      "county": "Nassau",
+      "state": "FL",
+      "zip": "32011",
+      "lat": 30.562,
+      "lon": -81.821,
+      "zoningNote": "Parcel details (acreage, zoning, exact location) pending confirmation — inquire for the full package.",
+      "salePrice": 500000,
+      "headline": "Commercial land on the SR-200 corridor at Callahan",
+      "summary": "Vacant commercial land on State Road 200 at the west end of Nassau County, where the A1A corridor meets the US-1 crossroads at Callahan — the junction that carries traffic between Jacksonville, the coast, and southeast Georgia.",
+      "positioning": "For the buyer who wants corridor land at the county's western gateway, at half the entry price of comparable ground closer to the coast.",
+      "photos": [
+        {
+          "src": "/photos/state-road-200-callahan-land-hero.svg",
+          "alt": "Stylized placeholder graphic for the State Road 200 parcel in Callahan — property photography pending"
+        }
+      ],
+      "status": "available",
+      "source": "mls-aincar",
+      "mlsNumber": "116892"
+    },
+    {
+      "id": "n4th-historic",
+      "slug": "22-n-4th-street-fernandina-beach",
+      "transaction": "sale",
+      "useType": "office",
+      "secondaryUses": ["retail", "hospitality"],
+      "address": "22 N 4th Street",
+      "city": "Fernandina Beach",
+      "county": "Nassau",
+      "state": "FL",
+      "zip": "32034",
+      "lat": 30.66985,
+      "lon": -81.46095,
+      "zoning": "C-3 — Central Business District",
+      "zoningNote": "Flexible C-3 zoning allows commercial, mixed-use, and live-work configurations.",
+      "salePrice": 1649000,
+      "buildingSF": 3745,
+      "yearBuilt": 1883,
+      "tenancy": "owner-user",
+      "headline": "A renovated c.1883 landmark in the historic district, zoned for nearly anything",
+      "summary": "3,745 square feet across a comprehensively renovated Victorian in the Fernandina Beach Historic District, with an elevator serving its multi-level design. C-3 zoning opens commercial, mixed-use, and live-work configurations two blocks from Centre Street.",
+      "positioning": "For the buyer who wants a flagship address — a firm, a gallery, a boutique hospitality concept, or a live-work residence in one of downtown's landmark buildings.",
+      "photos": [
+        {
+          "src": "/photos/22-n-4th-street-fernandina-beach-hero.svg",
+          "alt": "Stylized placeholder graphic for 22 N 4th Street, Fernandina Beach — property photography pending"
+        }
+      ],
+      "status": "available",
+      "source": "mls-aincar",
+      "mlsNumber": "114746",
+      "listingAgent": "Kelly May"
+    }
+  ]
+}
