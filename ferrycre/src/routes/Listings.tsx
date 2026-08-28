@@ -61,8 +61,8 @@ export default function Listings() {
       <p className="eyebrow">Inventory</p>
       <h1 className="font-display mt-2 text-3xl font-semibold sm:text-4xl">Current listings</h1>
       <p className="mt-3 max-w-2xl text-stone">
-        A small, curated book of business — every record carries the commercial fields that matter:
-        traffic counts with their FDOT citation, frontage, ingress, zoning, power, and tenancy.
+        A small, curated book of business — every record carries the commercial fields that matter,
+        from zoning and frontage to tenancy, and nothing that hasn't been verified.
       </p>
 
       {/* plain-phrase search — type the way you talk */}

@@ -16,7 +16,7 @@ export default function Home() {
 
   return (
     <>
-      {/* her, her market, her six */}
+      {/* her, her market, her inventory */}
       <section className="mx-auto max-w-6xl px-5 pb-16 pt-40 sm:pt-44">
         <p className="eyebrow">Nassau County · Florida</p>
         <h1 className="font-display mt-4 max-w-3xl text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
@@ -71,7 +71,7 @@ export default function Home() {
         <div className="glass max-w-md p-6">
           <p className="eyebrow">The county</p>
           <h2 className="font-display mt-2 text-2xl font-semibold sm:text-3xl">
-            Six positions on the chart behind this page.
+            Every position on the chart behind this page.
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-stone">
             The marks are her current listings. The full instrument adds traffic counts, frontage,

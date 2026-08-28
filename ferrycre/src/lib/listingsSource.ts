@@ -2,7 +2,7 @@
  * Single switch-point for listing data — the same seam the residential site
  * proved, retargeted to hand-authored commercial records.
  *
- * Default (and launch state): six hand-authored records in
+ * Default (and launch state): the firm's live records in
  * src/data/listings.json. No API, no feed, no latency — and full control of
  * every commercial field, which no residential feed carries anyway.
  *

@@ -112,7 +112,10 @@ export type CommercialListing = {
 
   // status
   status: ListingStatus;
-  listedAt: string;
+  /** ISO date the listing went live, when known. */
+  listedAt?: string;
+  /** Listing agent of record when it isn't Antoinette — company listings she represents. */
+  listingAgent?: string;
   source: ListingSource;
   mlsNumber?: string;
 };

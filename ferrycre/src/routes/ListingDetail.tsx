@@ -36,7 +36,7 @@ function jsonLdFor(l: CommercialListing) {
         "@type": "RealEstateListing",
         name: l.headline,
         url: `${SITE.domain}/listings/${l.slug}`,
-        datePosted: l.listedAt,
+        ...(l.listedAt ? { datePosted: l.listedAt } : {}),
         about: {
           "@type": "Place",
           name: l.address,
@@ -241,8 +241,9 @@ export default function ListingDetail() {
           </section>
 
           <p className="mt-10 text-xs leading-relaxed text-faint">
-            Listed by {SITE.name}, {SITE.brokerage}.{l.mlsNumber ? ` MLS #${l.mlsNumber}.` : ""} Listed{" "}
-            {l.listedAt}. All information deemed reliable but not guaranteed; verify independently.
+            Listed by {l.listingAgent ?? SITE.name}, {SITE.brokerage}.{l.mlsNumber ? ` MLS #${l.mlsNumber}.` : ""}
+            {l.listedAt ? ` Listed ${l.listedAt}.` : ""} All information deemed reliable but not guaranteed; verify
+            independently.
           </p>
         </div>
 

@@ -2,7 +2,7 @@
 # Requires Netlify Identity (invite-only) + Git Gateway enabled on the site.
 backend:
   name: git-gateway
-  branch: main # set to the deployed branch
+  branch: claude/ferrycre-commercial-build-fixp0v # production deploys from this branch; change to main when the project moves to her own repo
 
 media_folder: "public/photos"
 public_folder: "/photos"
@@ -138,7 +138,8 @@ collections:
                   - { name: label, label: "Label", widget: string }
                   - { name: href, label: "File URL", widget: string }
               - { name: status, label: "Status", widget: select, options: ["available", "under-contract", "leased", "sold"] }
-              - { name: listedAt, label: "Listed date (YYYY-MM-DD)", widget: string }
+              - { name: listedAt, label: "Listed date (YYYY-MM-DD)", widget: string, required: false }
+              - { name: listingAgent, label: "Listing agent of record (leave blank if Antoinette)", widget: string, required: false }
               - { name: source, label: "Source", widget: select, options: ["mls-nefmls", "mls-aincar", "buildout", "direct"] }
               - { name: mlsNumber, label: "MLS number", widget: string, required: false }
 

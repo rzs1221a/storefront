@@ -42,7 +42,7 @@ const warnings = [];
 const slugs = new Set();
 for (const l of listings) {
   const where = `listing "${l.id ?? l.slug ?? "?"}"`;
-  for (const field of ["id", "slug", "transaction", "useType", "address", "city", "county", "state", "zip", "lat", "lon", "headline", "summary", "photos", "status", "listedAt", "source"]) {
+  for (const field of ["id", "slug", "transaction", "useType", "address", "city", "county", "state", "zip", "lat", "lon", "headline", "summary", "photos", "status", "source"]) {
     if (l[field] === undefined || l[field] === null || l[field] === "") errors.push(`${where}: missing required field "${field}"`);
   }
   if (slugs.has(l.slug)) errors.push(`${where}: duplicate slug "${l.slug}"`);
@@ -271,7 +271,7 @@ for (const l of listings) {
           "@type": "RealEstateListing",
           name: l.headline,
           url,
-          datePosted: l.listedAt,
+          ...(l.listedAt ? { datePosted: l.listedAt } : {}),
           about: {
             "@type": "Place",
             name: l.address,
@@ -302,7 +302,7 @@ ${l.trafficCount ? `<p style="font-size:.8em;opacity:.6">Traffic source: ${esc(l
 ${(l.distances ?? []).length ? `<h2>Logistics</h2><p>${l.distances.map((d) => `${esc(d.label)}: ${d.miles} mi`).join(" · ")}</p>` : ""}
 ${(l.driveTimes ?? []).length ? `<p>${l.driveTimes.map((d) => `${esc(d.label)}: ${d.minutes} min drive`).join(" · ")}</p>` : ""}
 ${(l.neighboringTenants ?? []).length ? `<p>Nearby: ${l.neighboringTenants.map(esc).join(", ")}.</p>` : ""}
-<p>Listed by ${esc(profile.name)}, ${esc(profile.brokerage)}.${l.mlsNumber ? ` MLS #${esc(l.mlsNumber)}.` : ""} Call ${esc(profile.phone)}.</p>
+<p>Listed by ${esc(l.listingAgent ?? profile.name)}, ${esc(profile.brokerage)}.${l.mlsNumber ? ` MLS #${esc(l.mlsNumber)}.` : ""} Call ${esc(profile.phone)}.</p>
 ${footerHtml}`,
   });
 }
